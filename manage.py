@@ -2,10 +2,15 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+import socket
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.base')
+    if socket.gethostname() == 'suijin.oderland.com':
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.production')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.local')
+
+        
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -19,3 +24,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
