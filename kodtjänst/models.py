@@ -32,6 +32,7 @@ class Kodverk(models.Model):
                      ('engelska','engelska')]
 
     är_ett_urval = models.BooleanField(null=True)
+    urval_refernce = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     syfte = models.TextField(max_length=1000, null=True)
     rubrik_på_kodverk = models.CharField(max_length=255, null=True)
     kort_beskrivning = models.TextField(max_length=1000, null=True)
