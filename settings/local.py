@@ -18,19 +18,6 @@ DATABASES = {
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql', 
-#         'NAME': 'vgrinfor_begrepp',
-#         'USER': 'vgrinfor_admin',
-#         'PASSWORD': 'YqvyYGm5cJMLmzt',
-#         'HOST': 'vgrinformatik.se',   # Or an IP Address that your DB is hosted on
-#         'PORT': '3306',
-#         'DEFAULT-CHARACTER-SET' : 'utf8',
-        
-#     }
-# }
-
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 logger.info(f'PROJECT_PATH --> {PROJECT_PATH}')
 TEMPLATE_DIRS = ['/templates/','/templates/admin/']
