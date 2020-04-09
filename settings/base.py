@@ -52,7 +52,7 @@ ROOT_URLCONF = 'settings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates/ordbok','templates/admin',],
+        'DIRS': ['templates/ordbok',],
         'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
