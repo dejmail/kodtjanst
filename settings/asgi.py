@@ -8,9 +8,14 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/asgi/
 """
 
 import os
+import sys
+import socket
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.base')
+if socket.gethostname() == 'suijin.oderland.com':
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.production')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.local')
 
 application = get_asgi_application()
