@@ -19,7 +19,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_ROOT = '/home/vgrinfor/public_html/kodtjanst/static'
 STATICFILES_DIRS = ['/home/vgrinfor/kodtjanst/static',]
-STATIC_URL = '/kodjanst/static/'
+STATIC_URL = '/kodtjanst/static/'
 
 # Email settings
 
