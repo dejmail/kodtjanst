@@ -52,7 +52,7 @@ ROOT_URLCONF = 'settings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates/ordbok',],
+        'DIRS': ['templates/kodtjanst','templates/admin'],
         'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
@@ -61,6 +61,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'loaders' : [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+        ],
         },
     },
 ]
