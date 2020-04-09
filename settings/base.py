@@ -25,7 +25,7 @@ SECRET_KEY = 'c8-vxfv$-i!yruqix%jn1!3b6-2#a_wgc=fsym4s@=)lm$q5q1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['vgrinformatik.se', '127.0.0.1']
+ALLOWED_HOSTS = ['vgrinformatik.se', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -56,7 +56,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['templates/ordbok','templates/admin',],
-        'APP_DIRS': True,
+        'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
