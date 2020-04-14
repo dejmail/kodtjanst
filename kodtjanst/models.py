@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 
 
 class Kodtext(models.Model):
+
+    class Meta:
+        verbose_name_plural = "Kodtexter"
     
     kodtext = models.CharField(max_length=255)
     kod = models.CharField(max_length=255)
@@ -16,11 +19,17 @@ class Kodtext(models.Model):
 
 class MappadTillKodtext(models.Model):
 
+    class Meta:
+        verbose_name_plural = "Mappad Kodtexter"
+
     code = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.PROTECT)
     mappad_id = models.CharField(max_length=255)
     mappad_kodverk = models.URLField()
 
 class ExternaKodverk(models.Model):
+
+    class Meta:
+        verbose_name_plural = "Externa Kodverk"
 
     namn = models.CharField(max_length=255)
     url = models.URLField()
@@ -28,8 +37,26 @@ class ExternaKodverk(models.Model):
 
 class Kodverk(models.Model):
 
+    class Meta:
+        verbose_name_plural = "Kodverk"
+
     SPRÅK_CHOICES = [('svenska','svenska'),
                      ('engelska','engelska')]
+
+    kodverk_typer = [('Inget','Inget'),
+                     ('Administrativ','Administrativ'),
+                     ('Klinisk','Klinisk')]
+
+    kodverk_ägare = [('Inera','Inera'),
+                     ('Socialstyrelsen','Socialstyrelsen'),
+                     ('Västra Götalandsregionen','Västra Götalandsregionen')]
+
+    intervall = [('Årligen','Årligen'), 
+                 ('Månadsvis','Månadsvis'), 
+                 ('Veckovis','Veckovis'),
+                 ('Dagligen','Dagligen'),
+                 ('Vid behov', 'Vid behov'),
+                 ('Ej aktuellt', 'Ej aktuellt')]
 
     är_ett_urval = models.BooleanField(null=True)
     urval_reference = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
@@ -42,17 +69,17 @@ class Kodverk(models.Model):
     identifier = models.CharField(max_length=255,null=True)
     version = models.FloatField(null=True)
     källa = models.CharField(max_length=255,null=True)
-    typ_av_kodverk = models.CharField(max_length=255,null=True)
+    typ_av_kodverk = models.CharField(max_length=255,null=True, choices=kodverk_typer)
     ämnesområde = models.CharField(max_length=255,null=True)
     #Länk till Kodverk - det blir url
     instruktion_för_kodverket = models.CharField(max_length=255,null=True)
     ändrad_av = models.ForeignKey(User, on_delete=models.PROTECT)
-    ägare = models.CharField(max_length=255,null=True)
+    ägare = models.CharField(max_length=255,null=True, choices=kodverk_ägare)
     ansvarig = models.CharField(max_length=255,null=True)
     mappning_för_rapportering = models.BooleanField(null=True)
     #Sökord
     språk = models.CharField(max_length=25, choices=SPRÅK_CHOICES, default='svenska',null=True)
-    uppdateringsintervall =  models.DurationField(null=True)
+    uppdateringsintervall =  models.DurationField(null=True, choices=intervall)
     version_av_källa = models.CharField(max_length=50,null=True)
     system_som_använderkodverket = models.CharField(max_length=255,null=True)
     kategori = models.CharField(max_length=255,null=True)
