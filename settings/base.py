@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'kodtjanst',
-    'django_extensions',
+    'crispy_forms',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +53,7 @@ ROOT_URLCONF = 'settings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates/kodtjanst','templates/admin'],
+        'DIRS': ['templates','templates/admin'],
         'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
@@ -68,6 +69,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'settings.wsgi.application'
 
@@ -106,7 +109,3 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
