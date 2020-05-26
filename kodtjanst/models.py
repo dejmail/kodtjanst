@@ -10,10 +10,10 @@ class Kodtext(models.Model):
     
     kodtext = models.CharField(max_length=255)
     kod = models.CharField(max_length=255)
-    definition = models.TextField(max_length=500, null=True)
-    andra_definition = models.TextField(max_length=500, null=True)
+    definition = models.TextField(max_length=500, null=True, blank=True)
+    andra_definition = models.TextField(max_length=500, null=True, blank=True)
     kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.PROTECT, default=11)
-    position = models.IntegerField()
+    position = models.PositiveIntegerField()
     ändrat_av = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
 
