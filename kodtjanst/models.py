@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Kodtext(models.Model):
@@ -13,6 +14,8 @@ class Kodtext(models.Model):
     andra_definition = models.TextField(max_length=500, null=True)
     kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.PROTECT, default=11)
     position = models.IntegerField()
+    ändrat_av = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
+    status = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.code_text
@@ -64,7 +67,7 @@ class Kodverk(models.Model):
                    ('Urval','Urval')]
 
     kodverk_variant = models.CharField(null=False, max_length=12, choices=kodverk_typ)
-    urval_reference = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    urval_reference = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     syfte = models.TextField(max_length=1000, null=True)
     rubrik_på_kodverk = models.CharField(max_length=255, null=True)
     kort_beskrivning = models.TextField(max_length=1000, null=True)
@@ -72,7 +75,7 @@ class Kodverk(models.Model):
     giltig_tom = models.DateField(null=True)
     kodschema = models.CharField(max_length=255,null=True)
     identifier = models.CharField(max_length=255,null=True)
-    version = models.FloatField(null=True)
+    version = models.FloatField(validators=[MinValueValidator(0.01)], null=True)
     källa = models.CharField(max_length=255,null=True)
     typ_av_kodverk = models.CharField(max_length=255,null=True, choices=kodverk_typer)
     ämnesområde = models.CharField(max_length=255,null=True)
