@@ -58,7 +58,12 @@ class Kodverk(models.Model):
                  ('Vid behov', 'Vid behov'),
                  ('Ej aktuellt', 'Ej aktuellt')]
 
-    är_ett_urval = models.BooleanField(null=True)
+    kodverk_typ = [('Kodverk','Kodverk'), 
+                   ('Kodset','Kodset'), 
+                   ('Alfa respons','Alfa respons'), 
+                   ('Urval','Urval')]
+
+    kodverk_variant = models.CharField(null=False, max_length=12, choices=kodverk_typ)
     urval_reference = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     syfte = models.TextField(max_length=1000, null=True)
     rubrik_på_kodverk = models.CharField(max_length=255, null=True)

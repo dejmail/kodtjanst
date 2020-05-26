@@ -11,7 +11,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME' : 'kodverk_databas.sqlite3'
-
     }
 }
 
@@ -20,12 +19,15 @@ DEBUG = True
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 logger.info(f'PROJECT_PATH --> {PROJECT_PATH}')
-TEMPLATE_DIRS = ['/templates/','/templates/admin/']
+
+TEMPLATES[0]['DIRS'].append('templates/kodtjanst')
+
 
 STATICFILES_DIRS = [
     "static",
+    '/mnt/c/Users/liath1/coding/kodtjänst/static',
 ]
-
+#STATIC_ROOT = '/mnt/c/Users/liath1/coding/kodtjänst/static'
 STATIC_URL = '/static/'
 
 # Email settings
@@ -35,5 +37,5 @@ STATIC_URL = '/static/'
 EMAIL_HOST = 'mail.vgrinformatik.se'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'info@vgrinformatik.se'
-EMAIL_HOST_PASSWORD = 'XrT5bsRq@[ks'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
