@@ -87,7 +87,7 @@ class Kodverk(models.Model):
     mappning_för_rapportering = models.BooleanField(null=True)
     #Sökord
     språk = models.CharField(max_length=25, choices=SPRÅK_CHOICES, default='svenska',null=True)
-    uppdateringsintervall =  models.DurationField(null=True, choices=intervall)
+    uppdateringsintervall =  models.CharField(max_length=20, null=True, choices=intervall)
     version_av_källa = models.CharField(max_length=50,null=True)
     system_som_använderkodverket = models.CharField(max_length=255,null=True)
     kategori = models.CharField(max_length=255,null=True)
