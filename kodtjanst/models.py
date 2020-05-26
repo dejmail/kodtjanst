@@ -18,7 +18,7 @@ class Kodtext(models.Model):
     status = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return self.code_text
+        return self.kodtext
 
 class MappadTillKodtext(models.Model):
 
