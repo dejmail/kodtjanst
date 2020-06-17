@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'kodtjanst',
     'crispy_forms',
     'import_export',
+    'django_extensions',
+    'django_mysql'
 ]
 
 MIDDLEWARE = [
