@@ -2,7 +2,7 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from .models import Kodverk, Kodtext
 
-from .models import Kodverk, Kodtext, ExternaKodverk, MappadTillKodtext
+from .models import Kodverk, Kodtext, ExternaKodverk, MappadTillKodtext, Nyckelord
 from import_export import resources
 
 admin.site.site_header = "OLLI Kodtjänst Admin"
@@ -21,10 +21,10 @@ class KodverkResource(resources.ModelResource):
     class Meta:
         model = Kodverk
 
-class KodverkManager(ImportExportModelAdmin):
+class KodverkManager(ImportExportModelAdmin):  
 
     list_display = ('kodverk_variant',
-                    'urval_reference',
+                    'urval_referens',
                     'syfte',
                     'rubrik_på_kodverk',
                     'kort_beskrivning',
@@ -34,11 +34,11 @@ class KodverkManager(ImportExportModelAdmin):
                     'identifier',
                     'version',
                     'källa',
-                    'typ_av_kodverk',
-                    'ämnesområde',
+                    'kodverk_variant',
+                    'ämne',
                     'instruktion_för_kodverket',
                     'ändrad_av',
-                    'ägare',
+                    'ägare_av_kodverk',
                     'ansvarig',
                     'mappning_för_rapportering',
                     'språk',
@@ -52,4 +52,5 @@ admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext,KodtextManager)
 admin.site.register(ExternaKodverk)
 admin.site.register(MappadTillKodtext)
+admin.site.register(Nyckelord)
 
