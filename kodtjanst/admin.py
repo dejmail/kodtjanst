@@ -45,7 +45,8 @@ class KodverkManager(ImportExportModelAdmin):
                     'version_av_källa',
                     'system_som_använderkodverket',
                     'kategori',
-                    'beskrivning_av_informationsbehov')
+                    'beskrivning_av_informationsbehov',
+                    'extra_data')
     
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
