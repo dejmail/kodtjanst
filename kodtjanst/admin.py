@@ -35,7 +35,6 @@ class KodverkManager(ImportExportModelAdmin):
                     'version',
                     'källa',
                     'kodverk_variant',
-                    'ämne',
                     'instruktion_för_kodverket',
                     'ändrad_av',
                     'ägare_av_kodverk',
@@ -49,7 +48,7 @@ class KodverkManager(ImportExportModelAdmin):
                     'beskrivning_av_informationsbehov')
     
 admin.site.register(Kodverk, KodverkManager)
-admin.site.register(Kodtext,KodtextManager)
+admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodverk)
 admin.site.register(MappadTillKodtext)
 admin.site.register(Nyckelord)
