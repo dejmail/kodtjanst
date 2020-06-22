@@ -13,7 +13,7 @@ class KodtextManager(admin.ModelAdmin):
 
     list_display = ('kodtext', 
                     'definition',
-                    'andra_definition',
+                    'annan_kodtext',
                     'kodverk',)
 
 class KodverkResource(resources.ModelResource):
