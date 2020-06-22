@@ -56,9 +56,9 @@ class Kodverk(models.Model):
                      ('Administrativ','Administrativ'),
                      ('Klinisk','Klinisk')]
 
-    kodverk_ägare = [('Inera','Inera'),
-                     ('Socialstyrelsen','Socialstyrelsen'),
-                     ('Västra Götalandsregionen','Västra Götalandsregionen')]
+    #kodverk_ägare = [('Inera','Inera'),
+    #                 ('Socialstyrelsen','Socialstyrelsen'),
+    #                 ('Västra Götalandsregionen','Västra Götalandsregionen')]
 
     intervall = [('Årligen','Årligen'), 
                  ('Månadsvis','Månadsvis'), 
@@ -67,10 +67,10 @@ class Kodverk(models.Model):
                  ('Vid behov', 'Vid behov'),
                  ('Ej aktuellt', 'Ej aktuellt')]
 
-    kodverk_typ = [('Kodverk','Kodverk'), 
-                   ('Kodset','Kodset'), 
-                   ('Alfa respons','Alfa respons'), 
-                   ('Urval','Urval')]
+#    kodverk_typ = [('Kodverk','Kodverk'), 
+#                   ('code set','code sett'), 
+#                   ('Alfa respons','Alfa respons'), 
+#                   ('Urval','Urval')]
 
     ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True)
     beskrivning_av_informationsbehov = models.TextField(null=True)
@@ -82,7 +82,7 @@ class Kodverk(models.Model):
     extra_data = JSONField(null=True)
     kategori = models.CharField(max_length=255,null=True)
     kodschema = models.CharField(max_length=255,null=True)
-    kodverk_variant = models.CharField(max_length=12, choices=kodverk_typ, null=True, blank=True)
+    kodverk_variant = models.CharField(max_length=12, null=True, blank=True)
     kort_beskrivning = models.TextField(max_length=1000, null=True)
     källa = models.CharField(max_length=255,null=True)
     mappning_för_rapportering = models.BooleanField(null=True)
@@ -97,7 +97,7 @@ class Kodverk(models.Model):
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True)
     version_av_källa = models.CharField(max_length=50,null=True)
-    ägare_av_kodverk = models.CharField(max_length=255,null=True, choices=kodverk_ägare)
+    ägare_av_kodverk = models.CharField(max_length=255,null=True)#, choices=kodverk_ägare)
     #ämnesområde = models.CharField(max_length=255,null=True)
     ändrad_av = models.ForeignKey(User, on_delete=models.PROTECT, related_name='ändrad_av_person')
 
