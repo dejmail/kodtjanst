@@ -10,11 +10,11 @@ class Kodtext(models.Model):
     class Meta:
         verbose_name_plural = "Kodtexter"
     
-    andra_definition = models.TextField(max_length=500, null=True, blank=True)
+    annan_kodtext = models.TextField(max_length=500, null=True, blank=True)
     definition = models.TextField(max_length=500, null=True, blank=True)
     extra_data = JSONField(null=True)
     kod = models.CharField(max_length=255, null=True)
-    kodtext = models.CharField(max_length=255)
+    kodtext = models.CharField(max_length=255, null=True)
     kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.PROTECT, default=11)
     kommentar = models.TextField(null=True)
     position = models.PositiveIntegerField(null=True)
