@@ -1,0 +1,135 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, Roboto, “Helvetica Neue”, Arial, sans-serif, “Apple Color Emoji”, “Segoe UI Emoji”, “Segoe UI Symbol”;
+  /* default is 1rem or 16px */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  }
+   
+  /* Increase all font sizes on mobile */
+  @media (max-width: 767px) { 
+   
+  body {
+  /* default is 1rem or 16px */
+  font-size: 12px;
+  }
+   
+  }
+
+
+nav {
+    margin-bottom: 4em;
+}
+
+@keyframes blinker {
+    from {opacity: 1.0;}
+    to {opacity: 0.0;}
+  }
+  
+.blink {
+    text-decoration: blink;
+    animation-name: blinker;
+    animation-duration: 0.6s;
+    animation-iteration-count:infinite;
+    animation-timing-function:ease-in-out;
+    animation-direction: alternate;
+  }
+
+  .top-buffer-10 { margin-top:10px; }
+
+  .top-buffer-15 { margin-top:15px; }
+
+  .top-buffer-20 { margin-top:20px; }
+
+  .top-buffer-30 { margin-top:30px; }
+
+  .red-semi-transparent{
+    background-color: rgba(255, 0, 0, 0.6);
+  }
+
+  .btn-avrådd {
+      border-color: #f44336;
+      background-color: rgba(255, 0, 0, 0.8);
+      color: white;
+      border-radius: 4px;
+    }
+
+.btn-grön {
+      border-color: rgb(105, 189, 27);
+      background-color: rgb(105, 189, 27);
+      color: rgb(0, 0, 0);
+      border-radius: 4px;
+    }
+
+.btn-oklart {
+      border-color: rgb(255, 126, 41);
+      background-color: rgb(255, 126, 41);
+      color: black;
+      border-radius: 4px;
+    }
+
+  .btn-gul {
+      border-color: rgb(240, 209, 35);
+      background-color: rgb(240, 209, 35);
+      color: black;
+      border-radius: 4px;
+    }
+
+    .btn-light-blue{
+      border-color: rgb(222,234,246);
+      background-color: rgb(222,234,246);
+      color: black;
+      border-radius: 4px;
+    }
+  
+  
+  .text-warning-light{
+    background-color: rgb(241, 241, 131);
+  }
+
+  .table-success-light{
+    background-color: rgb(114, 211, 127);
+  }
+
+  .text-danger-light{
+    background-color: rgb(238, 129, 129);
+  }
+
+  .table-light_blue{
+    background-color: rgb(222,234,246);
+  }
+
+  ul:nth-of-type(1) {
+    list-style-position: inside;
+    padding: 0;
+  }
+  
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    opacity : 1;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "“Segoe UI”", Roboto, "“Helvetica Neue”", Arial, sans-serif, "“Apple Color Emoji”", "“Segoe UI Emoji”", "“Segoe UI Symbol”"
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    color: #fff;
+    background-color: rgb(114, 211, 127);
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+  }
+
+#tooltiptext span.red{
+  background-color: red !important;
+}
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+  
