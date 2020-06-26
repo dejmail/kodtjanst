@@ -98,7 +98,7 @@ class KodtextManager(admin.ModelAdmin):
     
     kodverk_grupp.short_description = 'Kodverk'
 
-    search_fields = ('kodverk_grupp', 'kodtext')
+    search_fields = ('kodverk', 'kodtext')
 
     def save_model(self, request, obj, form, change):
             if not obj.pk:
