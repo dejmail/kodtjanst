@@ -98,7 +98,11 @@ class KodtextManager(admin.ModelAdmin):
     
     kodverk_grupp.short_description = 'Kodverk'
 
+<<<<<<< HEAD
     search_fields = ('kodverk__rubrik_på_kodverk', 'kodtext')
+=======
+    search_fields = ('kodverk', 'kodtext')
+>>>>>>> c6099102d464635b5635305baa786ebcbe015467
 
     def save_model(self, request, obj, form, change):
             if not obj.pk:
