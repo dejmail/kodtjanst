@@ -5,6 +5,8 @@ from django.contrib.auth import (
 
 )
 
+from .models import MappadTillKodtext
+
 User = get_user_model()
 
 class UserLoginForm(forms.Form):
@@ -25,3 +27,12 @@ class UserLoginForm(forms.Form):
             if not user.is_active:
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
+
+class MappadTillKodtextForm(forms.ModelForm):
+
+    kodverk = forms.CharField(disabled=True)
+
+    class Meta:
+        model = MappadTillKodtext
+        fields = '__all__'
+        
