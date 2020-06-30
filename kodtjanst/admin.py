@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 
 
 from .models import Kodverk, Kodtext, ExternaKodverk, MappadTillKodtext, Nyckelord
+from .forms import MappadTillKodtextForm
 from import_export import resources
 
 from pdb import set_trace
@@ -83,10 +84,9 @@ class KodtextManager(admin.ModelAdmin):
     ]
 
     def kodverk_grupp(self, obj):
-        #set_trace()
         display_text = ", ".join([
             "<a href={}>{}</a>".format(
-                reverse('admin:{}_{}_change'.format(obj._meta.app_label, obj._meta.related_objects[1].name),
+                reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
                 args=(obj.kodverk.id,)),
                 obj.kodverk.rubrik_på_kodverk)
             #for kodv in obj.kodverk
@@ -160,20 +160,57 @@ class KodverkManager(ImportExportModelAdmin):
 
 class MappadtillKodtextManager(admin.ModelAdmin):
 
-    #sform = InventoryForm
+    form = MappadTillKodtextForm
 
     list_display = ('get_kodtext',
                     'mappad_id',
                     'mappad_text',
-                    'resolving_url',
-                    'kommentar')
+                    'resolving_url',                    
+                    'kommentar',
+                    'kodverk_grupp')
     
     def get_kodtext(self, obj):
         return obj.kodtext.kodtext
     
     get_kodtext.short_description = 'Kodtext'
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        
+        if db_field.name == "kodtext":
+            kwargs["queryset"] = Kodtext.objects.all()
+        return super(MappadtillKodtextManager, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(MappadtillKodtextManager, self).get_form(request, obj, **kwargs)
+        form.base_fields['kodverk'].initial =  Kodverk.objects.filter(rubrik_på_kodverk=obj.kodtext.kodverk.rubrik_på_kodverk).values()[0].get('rubrik_på_kodverk')
+        return form
+    
+    def save(self, commit=True):
+        extra_field = self.cleaned_data.get('kodverk', None)
+        # ...do something with extra_field here...
+        return super(form, self).save(commit=commit)
+    
+    def kodverk_grupp(self, obj):
+        
+        display_text = ", ".join([
+            "<a href={}>{}</a>".format(
+                reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
+                args=(obj.kodtext.kodverk.id,)),
+                obj.kodtext.kodverk.rubrik_på_kodverk)
+           
+        ]).replace(' ' ,'_')
+        print(display_text)
+    
+    kodverk_grupp.short_description = 'Kodverk'
+
+# class MyInvoiceAdminForm(forms.ModelForm):
+#     kodtext = CustomMappadKodtextField(queryset=Kodtext.objects.all()) 
+#     class Meta:
+#           model = Invoice
+
+# class CustomMappadKodtextField(forms.ModelChoiceField):
+#      def label_from_instance(self, obj):
+#          return "%s" % (obj.kodtext)
 
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
