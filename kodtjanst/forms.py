@@ -35,4 +35,3 @@ class MappadTillKodtextForm(forms.ModelForm):
     class Meta:
         model = MappadTillKodtext
         fields = '__all__'
-        
