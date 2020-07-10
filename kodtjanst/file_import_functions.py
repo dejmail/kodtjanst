@@ -267,8 +267,6 @@ sheets_to_avoid = ['Instruktioner',
 
 def main_import_function(incoming_file):
 
-    engine = create_engine('mysql+mysqldb://vgrinfor_admin:YqvyYGm5cJMLmzt@suijin.oderland.com/vgrinfor_kodtjanst', echo=False, pool_pre_ping=True)
-
     kodverk_max_index = max_rows_in_table('kodtjanst_kodverk', engine)
     kodtext_max_index = max_rows_in_table('kodtjanst_kodtext', engine)
     external_links_max_index = max_rows_in_table('kodtjanst_mappadtillkodtext', engine)
