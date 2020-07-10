@@ -22,34 +22,7 @@ class KodtextInline(admin.TabularInline):
     fieldsets = [
     [None, {
     'fields': [('kodtext', 'annan_kodtext', 'kod', 'status')],
-    }]
-    # [None, {
-    # 'fields': [('kod', 'status')],
-    # }],
-    # [None, {
-    # 'classes': ['collapse'],
-    # 'fields' : ['definition',
-    #             'kommentar',
-    #             ('extra_data', 'position'),
-    #             ]
-    # }]
-    ]   
-
-    # fieldsets = [
-    # [None, {
-    # 'fields': [('kodtext', 'annan_kodtext')],
-    # }],
-    # [None, {
-    # 'fields': [('kod', 'status')],
-    # }],
-    # [None, {
-    # 'classes': ['collapse'],
-    # 'fields' : ['definition',
-    #             'kommentar',
-    #             ('extra_data', 'position'),
-    #             ]
-    # }]
-    # ]   
+    }]]
 
     def has_changed(self):
         """Returns True for new instances, calls super() for ones that exist in db.
@@ -106,12 +79,7 @@ class KodtextManager(admin.ModelAdmin):
                 obj.added_by = request.user
             super().save_model(request, obj, form, change)
 
-class KodverkResource(resources.ModelResource):
-
-    class Meta:
-        model = Kodverk
-
-class KodverkManager(ImportExportModelAdmin):  
+class KodverkManager(admin.ModelAdmin):  
 
     inlines = [KodtextInline]
 
@@ -202,15 +170,6 @@ class MappadtillKodtextManager(admin.ModelAdmin):
         print(display_text)
     
     kodverk_grupp.short_description = 'Kodverk'
-
-# class MyInvoiceAdminForm(forms.ModelForm):
-#     kodtext = CustomMappadKodtextField(queryset=Kodtext.objects.all()) 
-#     class Meta:
-#           model = Invoice
-
-# class CustomMappadKodtextField(forms.ModelChoiceField):
-#      def label_from_instance(self, obj):
-#          return "%s" % (obj.kodtext)
 
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
