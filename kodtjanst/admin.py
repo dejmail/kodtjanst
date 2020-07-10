@@ -28,8 +28,6 @@ class KodtextInline(admin.TabularInline):
     fieldsets = [
     [None, {
     'fields': [('kodtext', 'annan_kodtext', 'kod', 'status')],
-    }]
- 
 
     def has_changed(self):
         """Returns True for new instances, calls super() for ones that exist in db.
@@ -106,7 +104,8 @@ class ImportMixin(object):
                base_formats.XLSX)
 
 
-class KodverkManager(ImportExportModelAdmin):  
+class KodverkManager(admin.ModelAdmin):  
+
 
     inlines = [KodtextInline]
 
