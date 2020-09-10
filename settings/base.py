@@ -24,6 +24,8 @@ SECRET_KEY = 'c8-vxfv$-i!yruqix%jn1!3b6-2#a_wgc=fsym4s@=)lm$q5q1'
 
 ALLOWED_HOSTS = ['vgrinformatik.se', '127.0.0.1', 'localhost']
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,8 +39,18 @@ INSTALLED_APPS = [
     'crispy_forms',
     'import_export',
     'django_extensions',
-    'django_mysql'
+    'django_mysql',
+    'data_wizard',
+    'data_wizard.sources',
 ]
+
+DATA_WIZARD = {
+    'BACKEND': 'data_wizard.backends.threading',
+    'LOADER': ['data_wizard.loaders.FileLoader', 'kodtjanst.loaders.CustomIterLoader'],
+    'IDMAP': 'data_wizard.idmap.existing',   # 'data_wizard.idmap.existing' in 2.0
+    'AUTHENTICATION': 'rest_framework.authentication.SessionAuthentication',
+    'PERMISSION': 'rest_framework.permissions.IsAdminUser',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,6 +88,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'settings.wsgi.application'
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
