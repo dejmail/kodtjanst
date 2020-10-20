@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'vgrinfor_kodtjanst',
+        'NAME': 'vgrinfor_kodtjanst_backup',
         'USER': 'vgrinfor_admin',
         'PASSWORD': 'YqvyYGm5cJMLmzt',
         'HOST': 'suijin.oderland.com',   # Or an IP Address that your DB is hosted on

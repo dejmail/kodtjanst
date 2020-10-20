@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
-#from .fields import JSONField
-from django_mysql.models import JSONField, Model
+from .fields import JSONField
 from pdb import set_trace
 
 statuser = [("Design","Design"),
@@ -56,6 +55,10 @@ class ExternaKodverk(models.Model):
 
 class Kodverk(models.Model):
 
+    def save_model(self, request, obj, form, change):
+        obj.added_by = request.user
+        super().save_model(request, obj, form, change)
+
     class Meta:
         verbose_name_plural = "Kodverk"
 
@@ -92,7 +95,7 @@ class Kodverk(models.Model):
     beskrivning_av_informationsbehov = models.TextField(null=True,blank=True)
     giltig_från = models.DateField(null=True, blank=True)
     giltig_tom = models.DateField(null=True, blank=True)
-    kommentar = models.TextField(null=True,blank=True)
+    kommentar = models.TextField(null=True, blank=True)
     identifier = models.CharField(max_length=255,null=True, blank=True)
     instruktion_för_kodverket = models.CharField(max_length=255,null=True,blank=True)
     extra_data = JSONField(null=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan kan hierarkiska nivåer', blank=True)
@@ -111,10 +114,10 @@ class Kodverk(models.Model):
     system_som_använderkodverket = models.CharField(max_length=255,null=True,blank=True)
     uppdateringsintervall =  models.CharField(max_length=20, null=True, choices=intervall, blank=True)
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
-    version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, blank=True)
+    version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, blank=True, default=None)
     version_av_källa = models.CharField(max_length=50,null=True, blank=True)
     ägare_av_kodverk = models.CharField(max_length=255,null=True)#, choices=kodverk_ägare)
-    #ämnesområde = models.CharField(max_length=255,null=True)
+#    ämnesområde = models.CharField(max_length=255,null=True, blank=True)
     ändrad_av = models.ForeignKey(User, on_delete=models.PROTECT, related_name='ändrad_av_person')
 
     def __str__(self):

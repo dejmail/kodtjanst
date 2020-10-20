@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'kodtjanst',
     'crispy_forms',
-    'import_export',
     'django_extensions',
-    'django_mysql',
+    'data_wizard',
+    'data_wizard.sources',
 ]
 
 MIDDLEWARE = [

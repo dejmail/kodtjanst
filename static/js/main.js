@@ -5,7 +5,7 @@ const target_div = $('#mitten-span-middle-column');
 function endpoint_check() {
 
     if (document.domain == "127.0.0.1") { 
-		const endpoint = 'kodtjanst';
+		const endpoint = '';
 		return endpoint
     } else {
 		const endpoint = document.URL;
