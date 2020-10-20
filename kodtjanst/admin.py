@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.response import TemplateResponse
 
 
-from .models import Kodverk, Kodtext, ExternaKodverk, MappadTillKodtext, Nyckelord
+from .models import *
 from .forms import MappadTillKodtextForm
 from import_export import resources
 from import_export.formats import base_formats
@@ -28,6 +28,8 @@ class KodtextInline(admin.TabularInline):
     fieldsets = [
     [None, {
     'fields': [('kodtext', 'annan_kodtext', 'kod', 'status')],
+    }
+    ]]
 
     def has_changed(self):
         """Returns True for new instances, calls super() for ones that exist in db.
@@ -279,3 +281,4 @@ admin.site.register(Kodtext, KodtextManager)
 #admin.site.register(ExternaKodverk)
 admin.site.register(MappadTillKodtext, MappadtillKodtextManager)
 admin.site.register(Nyckelord)
+admin.site.register(Ämne)

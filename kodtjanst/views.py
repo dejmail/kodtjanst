@@ -1,8 +1,17 @@
+import re
+import logging
+from kodtjanst.logging import setup_logging
+
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.urls import path 
 from django.db import connection, transaction
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.utils.html import format_html
+
 
 from .forms import UserLoginForm
 from .models import Kodverk, Kodtext, MappadTillKodtext
@@ -15,6 +24,10 @@ from django.contrib.auth import (
     login,
     logout
 )
+
+logger = logging.getLogger(__name__)
+
+RE_PATTERN = re.compile(r'\s+')
 
 @login_required
 def home(request):
@@ -46,53 +59,98 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
+
+
+
 def retur_general_sök(url_parameter):
     cursor = connection.cursor()
     ''' need to reduce the number of fields being returned, we are not using all of them,
     but this also affects the parsing as it is position based, so need to be careful'''
     sql_statement = f'''SELECT kodtjanst_kodverk.rubrik_på_kodverk,\
-                                nyckelord,\
-                                status,\
-                                syfte,\
-                                kodtjanst_ämne.domän_namn AS dömän_namn,\
-                                kodtjanst_kodtext.kodtext,\
-                                kodtjanst_kodtext.annan_kodtext,\
-                                kodtjanst_kodtext.definition,\
+                               kodtjanst_kodverk.nyckelord,\
+                               kodtjanst_kodverk.status,\
+                               kodtjanst_kodverk.syfte,\
+                               kodtjanst_ämne.domän_namn,\
+                               kodtjanst_kodtext.kod,\
+                               kodtjanst_kodtext.kodtext,\
+                               kodtjanst_kodtext.annan_kodtext,\
+                               kodtjanst_kodtext.definition\
                         FROM kodtjanst_kodverk\
                             LEFT JOIN kodtjanst_kodtext\
-                                ON kodtjanst_kodtext.id = kodtjanst_koverkid\
+                                ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
                             LEFT JOIN kodtjanst_ämne\
-                                ON kodtjanst_kodverk.id = kodtjanst_ämne_id\
+                                ON kodtjanst_kodverk.id = kodtjanst_ämne.kodverk_id\
                         WHERE (kodtjanst_kodverk.rubrik_på_kodverk LIKE "%{url_parameter}%")\
                         OR (kodtjanst_kodverk.syfte LIKE "%{url_parameter}%")\
-                        OR (kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%"\
-                        OR (kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
-                        OR (kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
-                        OR (kodtjanst_kodtext.definition LIKE "%{url_parameter}%";'''
-    
-    # column_names = ['begrepp_id',
-    #                 'definition',
-    #                 'term',
-    #                 'begrepp_status', 
-    #                 'synonym_begrepp_id',
-    #                 'synonym',
-    #                 'synonym_status']
+                        OR (kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%")\
+                        OR (kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%")\
+                        OR (kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%")\
+                        OR (kodtjanst_kodtext.definition LIKE "%{url_parameter}%");'''
 
-    clean_statement = re.sub(re_pattern, ' ', sql_statement)
+    clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
+    logger.debug(clean_statement)
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
     return result
 
-def kodverk_view(request):
+def attach_column_names_to_search_result(search_result):
 
+    search_column_names = ['rubrik_på_kodverk',
+                           'nyckelord',
+                           'kodverk_status',
+                           'syfte',
+                           'dömän_namn',
+                           'kod',
+                           'kodtext',
+                           'annan_kodtext',
+                           'kodtext_definition']
+
+    return_list_dict = []
+    for return_result in search_result:
+        return_list_dict.append(dict(zip(search_column_names, return_result)))
+    
+    return return_list_dict
+
+def highlight_search_term_i_definition(search_term, result_dict_list):
+    
+    for idx, result in enumerate(result_dict_list):
+        for key, value in result.items():
+            if value is None:
+                pass
+            else:
+                match = re.match(search_term, value, flags=re.IGNORECASE)
+                if match:
+                    #logger.debug(f'found string with search value - {value}')
+                    #set_trace()
+                    return_string = ''.join([value[0:match.start()],'<mark>', value[match.start():match.end()], '</mark>', value[match.end():]])
+                    print(return_string)
+                    #result_dict_list[idx][key] = return_string
+                    result_dict_list[idx].update({key : return_string})
+    print(result_dict_list)
+    return result_dict_list
+
+
+def kodverk_view(request):
     url_parameter = request.GET.get("q")
     
     if request.is_ajax():
         #data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
-        data_dict = retur_general_sök(url_parameter)
-        return JsonResponse(data=data_dict, safe=False)
+        sql_search = retur_general_sök(url_parameter)
+        search_result = attach_column_names_to_search_result(sql_search)
+        search_result = highlight_search_term_i_definition(url_parameter, search_result)
+        html = render_to_string(
+            template_name="kodverk_partial_result.html", context={'kodverk': search_result,                                                            
+                                                            'searched_for_term' : url_parameter})
+
+        return JsonResponse(data=html, safe=False)
+        #html = render_to_string(
+        #   template_name="kodverk_partial_result.html", context={'kodverk': data_dict,
+                                                               #'synonym' : return_synonym_list_dict,
+        #                                                       'searched_for_term' : url_parameter}
+    #)
+    #    return html#, render(request, "term-results-partial.html", context=data_dict)
 
     # elif request.method == 'GET':
     #     data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
