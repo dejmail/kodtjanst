@@ -42,14 +42,6 @@ INSTALLED_APPS = [
     'data_wizard.sources',
 ]
 
-DATA_WIZARD = {
-    'BACKEND': 'data_wizard.backends.threading',
-    'LOADER': ['data_wizard.loaders.FileLoader', 'kodtjanst.loaders.CustomIterLoader'],
-    'IDMAP': 'data_wizard.idmap.existing',   # 'data_wizard.idmap.existing' in 2.0
-    'AUTHENTICATION': 'rest_framework.authentication.SessionAuthentication',
-    'PERMISSION': 'rest_framework.permissions.IsAdminUser',
-}
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

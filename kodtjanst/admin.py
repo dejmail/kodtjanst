@@ -13,8 +13,6 @@ from .forms import MappadTillKodtextForm
 from import_export import resources
 from import_export.formats import base_formats
 
-from .file_import_functions import main_import_function
-
 from pdb import set_trace
 
 admin.site.site_header = "KOLLI Admin"
@@ -31,10 +29,10 @@ class KodtextInline(admin.TabularInline):
     }
     ]]
 
-    def has_changed(self):
-        """Returns True for new instances, calls super() for ones that exist in db.
-        Prevents forms with defaults being recognized as empty/unchanged."""
-        return not self.instance.pk or super().has_changed()
+    # def has_changed(self):
+    #     """Returns True for new instances, calls super() for ones that exist in db.
+    #     Prevents forms with defaults being recognized as empty/unchanged."""
+    #     return not self.instance.pk or super().has_changed()
 
 class KodtextManager(admin.ModelAdmin):
 
@@ -98,7 +96,7 @@ class KodverkResource(resources.ModelResource):
 
     def before_import(self, dataset, dry_run):
         print('trying to catch the file post POST')
-        set_trace()
+        #set_trace()
 
 class ImportMixin(object):
     
@@ -191,9 +189,9 @@ class KodverkManager(admin.ModelAdmin):
                     data = force_str(data, self.from_encoding)
                 dataset = input_format.create_dataset(data)
             except UnicodeDecodeError as e:
-                return HttpResponse(_(u"<h1>Imported file has a wrong encoding: %s</h1>" % e))
+                return HttpResponse(_(f"<h1>Imported file has a wrong encoding: {e}</h1>"))
             except Exception as e:
-                return HttpResponse(_(u"<h1>%s encountered while trying to read file: %s</h1>" % (type(e).__name__, import_file.name)))
+                return HttpResponse(_(f"<h1>{type(e).__name__} encountered while trying to read file: {import_file.name}</h1>"))
             
                         # prepare kwargs for import data, if needed
             res_kwargs = self.get_import_resource_kwargs(request, form=form, *args, **kwargs)
