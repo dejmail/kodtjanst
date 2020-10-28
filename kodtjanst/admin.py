@@ -1,5 +1,5 @@
 from django.contrib import admin
-from import_export.admin import ImportExportModelAdmin
+#from import_export.admin import ImportExportModelAdmin
 from .models import Kodverk, Kodtext
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -10,8 +10,8 @@ from django.template.response import TemplateResponse
 
 from .models import *
 from .forms import MappadTillKodtextForm
-from import_export import resources
-from import_export.formats import base_formats
+#from import_export import resources
+#from import_export.formats import base_formats
 
 from .file_import_functions import main_import_function
 
@@ -86,24 +86,24 @@ class KodtextManager(admin.ModelAdmin):
                 obj.added_by = request.user
             super().save_model(request, obj, form, change)
 
-class KodtextResource(resources.ModelResource):
+# class KodtextResource(resources.ModelResource):
 
-    class Meta:
-        model = Kodtext
+#     class Meta:
+#         model = Kodtext
 
-class KodverkResource(resources.ModelResource):
+# class KodverkResource(resources.ModelResource):
 
-    class Meta:
-        model = Kodverk
+#     class Meta:
+#         model = Kodverk
 
-    def before_import(self, dataset, dry_run):
-        print('trying to catch the file post POST')
-        set_trace()
+#     def before_import(self, dataset, dry_run):
+#         print('trying to catch the file post POST')
+#         set_trace()
 
-class ImportMixin(object):
+# class ImportMixin(object):
     
-    formats = (base_formats.XLS,
-               base_formats.XLSX)
+#     formats = (base_formats.XLS,
+#                base_formats.XLSX)
 
 
 class KodverkManager(admin.ModelAdmin):  
@@ -111,7 +111,7 @@ class KodverkManager(admin.ModelAdmin):
 
     inlines = [KodtextInline]
 
-    resource_class = KodverkResource
+    #resource_class = KodverkResource
 
     save_on_top = True
 
