@@ -30,6 +30,10 @@ STATIC_ROOT = '/home/vgrinfor/public_html/kodtjanst/static'
 STATICFILES_DIRS = ['/home/vgrinfor/kodtjanst/static',]
 STATIC_URL = '/kodtjanst/static/'
 
+# Template directories
+TEMPLATES[0]['DIRS'].append('templates/kodtjanst')
+
+
 # Email settings
 
 EMAIL_HOST = 'mail.vgrinformatik.se'
