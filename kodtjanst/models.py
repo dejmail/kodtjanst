@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
-from .fields import JSONField
+from django.db.models import JSONField
 from pdb import set_trace
 
 statuser = [("Design","Design"),
@@ -98,7 +98,7 @@ class Kodverk(models.Model):
     kommentar = models.TextField(null=True, blank=True)
     identifier = models.CharField(max_length=255,null=True, blank=True)
     instruktion_för_kodverket = models.CharField(max_length=255,null=True,blank=True)
-    extra_data = JSONField(null=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan kan hierarkiska nivåer', blank=True)
+    extra_data = JSONField(null=True, blank=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan kan hierarkiska nivåer')
     kategori = models.CharField(max_length=255,null=True)
     kodschema = models.CharField(max_length=255,null=True, blank=True)
     kodverk_variant = models.CharField(max_length=14, null=True, blank=True, choices=kodverk_typ)
