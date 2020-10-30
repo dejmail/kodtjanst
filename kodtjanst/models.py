@@ -21,7 +21,7 @@ class Kodtext(models.Model):
     extra_data = JSONField(null=True)
     kod = models.CharField(max_length=255, null=True,blank=True)
     kodtext = models.CharField(max_length=255, null=True)
-    kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE, default=11)
+    kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
     kommentar = models.TextField(null=True)
     position = models.PositiveIntegerField(null=True)
     status = models.CharField(max_length=50, blank=True, null=True, choices=statuser)
