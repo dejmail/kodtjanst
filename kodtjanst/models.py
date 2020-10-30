@@ -21,7 +21,7 @@ class Kodtext(models.Model):
     extra_data = JSONField(null=True)
     kod = models.CharField(max_length=255, null=True,blank=True)
     kodtext = models.CharField(max_length=255, null=True)
-    kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.PROTECT, default=11)
+    kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE, default=11)
     kommentar = models.TextField(null=True)
     position = models.PositiveIntegerField(null=True)
     status = models.CharField(max_length=50, blank=True, null=True, choices=statuser)
@@ -35,7 +35,7 @@ class MappadTillKodtext(models.Model):
     class Meta:
         verbose_name_plural = "Mappad Kodtexter"
 
-    kodtext = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.PROTECT)
+    kodtext = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
     mappad_id = models.CharField(max_length=255)
     mappad_text = models.CharField(max_length=255)
     resolving_url = models.URLField()
@@ -128,7 +128,7 @@ class Nyckelord(models.Model):
     class Meta:
         verbose_name_plural = "Nyckelord"
 
-    kodverk_id = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.PROTECT)
+    kodverk_id = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
     nyckelord = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
@@ -138,7 +138,7 @@ class Ämne(models.Model):
     class Meta:     
         verbose_name_plural = "Ämnesområde"
 
-    kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.PROTECT, blank=True, null=True)
+    kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
     domän_id = models.AutoField(primary_key=True)
     domän_kontext = models.TextField(null=True)
     domän_namn = models.CharField(max_length=255)       
