@@ -4,7 +4,6 @@ from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import django_mysql.models
 
 
 class Migration(migrations.Migration):
@@ -34,7 +33,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('andra_definition', models.TextField(blank=True, max_length=500, null=True)),
                 ('definition', models.TextField(blank=True, max_length=500, null=True)),
-                ('extra_data', django_mysql.models.JSONField(default=dict, null=True)),
+                ('extra_data', models.JSONField(default=dict, null=True)),
                 ('kod', models.CharField(max_length=255, null=True)),
                 ('kodtext', models.CharField(max_length=255)),
                 ('kommentar', models.TextField(null=True)),
@@ -55,7 +54,7 @@ class Migration(migrations.Migration):
                 ('kommentar', models.TextField(null=True)),
                 ('identifier', models.CharField(max_length=255, null=True)),
                 ('instruktion_för_kodverket', models.CharField(max_length=255, null=True)),
-                ('extra_data', django_mysql.models.JSONField(default=dict, null=True)),
+                ('extra_data', models.JSONField(default=dict, null=True)),
                 ('kategori', models.CharField(max_length=255, null=True)),
                 ('kodschema', models.CharField(max_length=255, null=True)),
                 ('kodverk_variant', models.CharField(blank=True, choices=[('Kodverk', 'Kodverk'), ('Kodset', 'Kodset'), ('Alfa respons', 'Alfa respons'), ('Urval', 'Urval')], max_length=12, null=True)),

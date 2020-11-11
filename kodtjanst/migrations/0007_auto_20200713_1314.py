@@ -2,7 +2,7 @@
 
 import django.core.validators
 from django.db import migrations, models
-import django_mysql.models
+
 
 
 class Migration(migrations.Migration):
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='kodverk',
             name='extra_data',
-            field=django_mysql.models.JSONField(blank=True, default=dict, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan kan hierarkiska nivåer', null=True),
+            field=models.JSONField(blank=True, default=dict, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan kan hierarkiska nivåer', null=True),
         ),
         migrations.AlterField(
             model_name='kodverk',
