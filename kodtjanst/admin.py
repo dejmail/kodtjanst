@@ -10,6 +10,7 @@ from django.template.response import TemplateResponse
 
 from .models import *
 from .forms import MappadTillKodtextForm
+from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
 
 from pdb import set_trace
 
@@ -34,14 +35,15 @@ class KodtextInline(admin.TabularInline):
 
 class KodtextManager(admin.ModelAdmin):
 
-    list_display = ('kodtext', 
+    list_display = ('id',
+                    'kodtext', 
                     'kodverk_grupp',
                     'definition',
                     'annan_kodtext',
                     'extra_data'
                     )
 
-    list_filter = ('status',)
+    list_filter = ('status', DuplicateKodtextFilter,)
 
     fieldsets = [
         ['Main', {
@@ -64,7 +66,7 @@ class KodtextManager(admin.ModelAdmin):
             "<a href={}>{}</a>".format(
                 reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
                 args=(obj.kodverk.id,)),
-                obj.kodverk.rubrik_på_kodverk)
+                obj.kodverk.titel_på_kodverk)
             #for kodv in obj.kodverk
         ])
         
@@ -74,7 +76,7 @@ class KodtextManager(admin.ModelAdmin):
     
     kodverk_grupp.short_description = 'Kodverk'
 
-    search_fields = ('kodverk__rubrik_på_kodverk', 'kodtext')
+    search_fields = ('kodverk__titel_på_kodverk', 'kodtext')
 
     def save_model(self, request, obj, form, change):
             if not obj.pk:
@@ -89,34 +91,34 @@ class KodverkManager(admin.ModelAdmin):
 
     save_on_top = True
 
-    list_display = ('rubrik_på_kodverk',
+    list_display = ('id',
+                    'titel_på_kodverk',
                     'status',
                     'kodverk_variant',
                     'urval_referens',
                     'syfte',
-                    'kort_beskrivning',
                     'version',
-                    'ägare_av_kodverk',
+                    'ägare_till_kodverk',
                     'ansvarig',
                     'kategori')
 
     exclude = ['ändrad_av',]
 
-    list_filter = ('ägare_av_kodverk','kodverk_variant')
+    list_filter = ('ägare_till_kodverk','kodverk_variant', DuplicatKodverkFilter)
 
-    search_fields = ('rubrik_på_kodverk','kategori')
+    search_fields = ('id','titel_på_kodverk','kategori')
 
     fieldsets = [
         ['Main', {
-        'fields': [('rubrik_på_kodverk', 'status', 'kodverk_variant', 'urval_referens'),
-        ('identifier', 'kodschema','instruktion_för_kodverket')]}],
+        'fields': [('titel_på_kodverk', 'status', 'kodverk_variant', 'urval_referens'),
+        ('identifier', 'instruktion_för_kodverket')]}],
         [None, {
-        'fields': [('syfte', 'kort_beskrivning'),
-        ('beskrivning_av_informationsbehov', 'kommentar'),
+        'fields': [('syfte'),
+        ('beskrivning_av_informationsbehov'),
         ('giltig_från', 'giltig_tom'),
-        ('kategori', 'nyckelord', 'språk'),
-        ('källa', 'version_av_källa', 'system_som_använderkodverket'),
-        ('ägare_av_kodverk', 'version', 'uppdateringsintervall', 'mappning_för_rapportering'),
+        ('kategori', 'ägare_till_kodverk'),
+        ('hämtnings_källa', 'version_av_källa'),
+        ('version', 'uppdateringsintervall', 'mappning_för_rapportering'),
         'extra_data'],
         }],
     ]
@@ -229,7 +231,7 @@ class MappadtillKodtextManager(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(MappadtillKodtextManager, self).get_form(request, obj, **kwargs)
-        form.base_fields['kodverk'].initial =  Kodverk.objects.filter(rubrik_på_kodverk=obj.kodtext.kodverk.rubrik_på_kodverk).values()[0].get('rubrik_på_kodverk')
+        form.base_fields['kodverk'].initial =  Kodverk.objects.filter(titel_på_kodverk=obj.kodtext.kodverk.titel_på_kodverk).values()[0].get('titel_på_kodverk')
         return form
     
     def save(self, commit=True):
@@ -243,7 +245,7 @@ class MappadtillKodtextManager(admin.ModelAdmin):
             "<a href={}>{}</a>".format(
                 reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
                 args=(obj.kodtext.kodverk.id,)),
-                obj.kodtext.kodverk.rubrik_på_kodverk)
+                obj.kodtext.kodverk.titel_på_kodverk)
            
         ]).replace(' ' ,'_')
         print(display_text)

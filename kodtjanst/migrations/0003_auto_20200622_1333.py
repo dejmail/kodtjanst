@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='kodverk',
-            name='ägare_av_kodverk',
+            name='ägare_till_kodverk',
             field=models.CharField(max_length=255, null=True),
         ),
     ]

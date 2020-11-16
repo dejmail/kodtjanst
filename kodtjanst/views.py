@@ -66,7 +66,7 @@ def retur_general_sök(url_parameter):
     cursor = connection.cursor()
     ''' need to reduce the number of fields being returned, we are not using all of them,
     but this also affects the parsing as it is position based, so need to be careful'''
-    sql_statement = f'''SELECT kodtjanst_kodverk.rubrik_på_kodverk,\
+    sql_statement = f'''SELECT kodtjanst_kodverk.titel_på_kodverk,\
                                kodtjanst_kodverk.nyckelord,\
                                kodtjanst_kodverk.status,\
                                kodtjanst_kodverk.syfte,\
@@ -80,7 +80,7 @@ def retur_general_sök(url_parameter):
                                 ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
                             LEFT JOIN kodtjanst_ämne\
                                 ON kodtjanst_kodverk.id = kodtjanst_ämne.kodverk_id\
-                        WHERE (kodtjanst_kodverk.rubrik_på_kodverk LIKE "%{url_parameter}%")\
+                        WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%")\
                         OR (kodtjanst_kodverk.syfte LIKE "%{url_parameter}%")\
                         OR (kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%")\
                         OR (kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%")\
@@ -96,7 +96,7 @@ def retur_general_sök(url_parameter):
 
 def attach_column_names_to_search_result(search_result):
 
-    search_column_names = ['rubrik_på_kodverk',
+    search_column_names = ['titel_på_kodverk',
                            'nyckelord',
                            'kodverk_status',
                            'syfte',

@@ -17,18 +17,18 @@ from django.core.exceptions import ObjectDoesNotExist
 kodverk_header_map = {'urval_reference': 'Värde från KV - finns det koppling till ett regionalt KV?',
                         'syfte': 'Syfte',
                         'json-codeset_nummer': 'Code set-nummer',
-                        'rubrik_på_kodverk': 'Tillhör codeset / DTA - obligatoriskt om det är från Millennium',
+                        'titel_på_kodverk': 'Tillhör codeset / DTA - obligatoriskt om det är från Millennium',
                         'giltig_från': 'Datum - obligatorisk',
                         'version': 'Version',
                         'ämnesområde': 'Konsumenter - obligatorisk',
                         'kommentar': 'Kommentar',
-                        'ägare_av_kodverk':     'Ägare - obligatorisk',
+                        'ägare_till_kodverk':     'Ägare - obligatorisk',
                         'ansvarig_id': 'Inlagt i filen av - obligatoriskt med kontaktperson',
                         'urval_referens': 'Kodverksrelation - vid koppling till ett regionalt utvecklat kodverk',
                         'system_som_använderkodverket': 'System/modul - obligatorisk',
                         'json-dcw': 'Tillhör DCW - obligatoriskt om det är från Millennium',
                         'status': 'Status',
-                        'nyckelord': 'Förslag på sökord/nyckelord till databasen - fyll i detta så gott ni kan!'}
+                        'nyckelord': 'Förslag på sökord/ägare_till_kodverk till databasen - fyll i detta så gott ni kan!'}
 
 kodverk_excel_db_map = {value:key for key,value in kodverk_header_map.items()}
 
@@ -47,18 +47,18 @@ def clean_data_dictionary(model, data_dictionary, json_field):
 class KodverkSerializer(serializers.ModelSerializer):
 
     syfte = serializers.CharField(source="Syfte")#, style={'base_template': 'textarea.html'})
-    rubrik_på_kodverk = serializers.CharField(source='Tillhör codeset / DTA - obligatoriskt om det är från Millennium')
+    titel_på_kodverk = serializers.CharField(source='Tillhör codeset / DTA - obligatoriskt om det är från Millennium')
     giltig_från = serializers.DateField(source='Datum - obligatorisk')
     version = serializers.FloatField(source='Version', required=False, allow_null=True)
     ämnesområde = serializers.CharField(source='Konsumenter - obligatorisk', allow_blank=True, allow_null=True, required=False)
     kommentar = serializers.CharField(source='Kommentar', style={'base_template': 'textarea.html'}, allow_blank=True, allow_null=True, required=False)
-    ägare_av_kodverk = serializers.CharField(source='Ägare - obligatorisk')
+    ägare_till_kodverk = serializers.CharField(source='Ägare - obligatorisk')
     ansvarig_id = serializers.CharField(source='Inlagt i filen av - obligatoriskt med kontaktperson', allow_null=True, required=False)
     ändrad_av = serializers.CharField(required=False)
     urval_referens = serializers.CharField(source='Kodverksrelation - vid koppling till ett regionalt utvecklat kodverk', allow_blank=True, allow_null=True, required=False)
     system_som_använderkodverket = serializers.CharField(source='System/modul - obligatorisk', allow_blank=True, allow_null=True, required=False)
     status = serializers.CharField(source='Status', allow_blank=True, allow_null=True, required=False)
-    nyckelord = serializers.CharField(source='Förslag på sökord/nyckelord till databasen - fyll i detta så gott ni kan!')
+    nyckelord = serializers.CharField(source='Förslag på sökord/ägare_till_kodverk till databasen - fyll i detta så gott ni kan!')
 
     def create(self, validated_data):  
         
