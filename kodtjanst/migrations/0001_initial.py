@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
                 ('kort_beskrivning', models.TextField(max_length=1000, null=True)),
                 ('källa', models.CharField(max_length=255, null=True)),
                 ('mappning_för_rapportering', models.BooleanField(null=True)),
-                ('titel_på_kodverk', models.CharField(max_length=255, null=True)),
+                ('rubrik_på_kodverk', models.CharField(max_length=255, null=True)),
                 ('senaste_ändring', models.DateField(blank=True, null=True)),
                 ('språk', models.CharField(choices=[('svenska', 'svenska'), ('engelska', 'engelska')], default='svenska', max_length=25, null=True)),
                 ('status', models.CharField(blank=True, max_length=25, null=True)),
