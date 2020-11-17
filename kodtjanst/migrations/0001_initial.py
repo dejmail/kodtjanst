@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
                 ('uppdateringsintervall', models.CharField(choices=[('Årligen', 'Årligen'), ('Månadsvis', 'Månadsvis'), ('Veckovis', 'Veckovis'), ('Dagligen', 'Dagligen'), ('Vid behov', 'Vid behov'), ('Ej aktuellt', 'Ej aktuellt')], max_length=20, null=True)),
                 ('version', models.FloatField(null=True, validators=[django.core.validators.MinValueValidator(0.01)])),
                 ('version_av_källa', models.CharField(max_length=50, null=True)),
-                ('ägare_till_kodverk', models.CharField(choices=[('Inera', 'Inera'), ('Socialstyrelsen', 'Socialstyrelsen'), ('Västra Götalandsregionen', 'Västra Götalandsregionen')], max_length=255, null=True)),
+                ('ägare_av_kodverk', models.CharField(choices=[('Inera', 'Inera'), ('Socialstyrelsen', 'Socialstyrelsen'), ('Västra Götalandsregionen', 'Västra Götalandsregionen')], max_length=255, null=True)),
                 ('ansvarig', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='ansvarig_person', to=settings.AUTH_USER_MODEL)),
                 ('urval_referens', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='kodtjanst.Kodverk')),
                 ('ändrad_av', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='ändrad_av_person', to=settings.AUTH_USER_MODEL)),
