@@ -15,4 +15,10 @@ class Migration(migrations.Migration):
             old_name='rubrik_på_kodverk',
             new_name='titel_på_kodverk',
         ),
+        migrations.RenameField(
+            model_name='kodverk',
+            old_name='ägare_av_kodverk',
+            new_name='ägare_till_kodverk',
+        ),
+    
     ]

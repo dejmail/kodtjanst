@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='kodverk',
-            name='ägare_till_kodverk',
+            name='ägare_av_kodverk',
             field=models.CharField(choices=[('Inera', 'Inera'), ('Socialstyrelsen', 'Socialstyrelsen'), ('Västra Götalandsregionen', 'Västra Götalandsregionen'), ('Skatteverket', 'Skatteverket')], max_length=255, null=True),
         ),
     ]
