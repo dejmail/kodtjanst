@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import path
 
-from kodtjanst import views as kodverk_views
+from kodtjanst import views
 
 
 urlpatterns = [
-    path("", kodverk_views.kodverk_view, name="kodverk"),
-    path("kodverk_metadata/", kodverk_views.kodverk_metadata_view, name="kodverk_metadata"),
-    path('login/', kodverk_views.login_view, name='login'),
-    path('logout/', kodverk_views.logout_view, name='logout'),
+    path("", views.kodverk_sok, name="kodverk_sok"),
+    #path("kodverk_sök/", views.kodverk_sök, name="kodverk_sök"),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path("kodverk_komplett_metadata/", views.kodverk_komplett_metadata, name="kodverk_komplett_metadata"),
     ]

@@ -1,4 +1,5 @@
 {% load static %}
+
 {% block mitten-span %}
 {% spaceless %}
 {% if kodverk %}
@@ -10,24 +11,25 @@
             <thead>
             <tr>
                 <th>Kodverk</th>
-                <th>Nyckelord</th>
-                <th>Status</th>
+                <!-- <th>Nyckelord</th> -->
                 <th>Syfte</th>
-                <th>Domän namn</th>
+                <!-- <th>Status</th> -->
+                 <!-- <th>Domän namn</th>
                 <th>Kodtext</th>
-                <th>Annan Kodtext</th>
+                <th>Annan Kodtext</th> -->
             </tr>
             </thead>
             <tbody id="myTable">
             {% for info in kodverk %}
                 <tr>
-                    <td>{{info.titel_på_kodverk}}</td>
-                    <td>{{info.nyckelord}}</td>
-                    <td>{{info.status}}</td>
+                    <td><a href="{% url 'kodverk_komplett_metadata' %}?q={{kodverk.id}}" id={{info.kodverk.id}}>{{info.titel_på_kodverk}}</td>
+                    <!-- <td>{{info.nyckelord}}</td> -->
                     <td>{{info.syfte}}</td>
-                    <td>{{info.domän_namn}}</td>
+                    <!-- <td>{{info.status}}</td> -->
+                    
+                    <!-- <td>{{info.domän_namn}}</td>
                     <td>{{info.kodtext}}</td>
-                    <td>{{info.annan_kodtext}}</td>
+                    <td>{{info.annan_kodtext}}</td> -->
                 </tr>
             {% endfor %}
     
