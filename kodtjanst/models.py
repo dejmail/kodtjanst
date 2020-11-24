@@ -57,15 +57,11 @@ class ExternaKodverk(models.Model):
 
 class Kodverk(models.Model):
 
-    def save_model(self, request, obj, form, change):
-        obj.added_by = request.user
-        super().save_model(request, obj, form, change)
-
     class Meta:
         verbose_name_plural = "Kodverk"
 
-    SPRÅK_CHOICES = [('svenska','svenska'),
-                     ('engelska','engelska')]
+    # SPRÅK_CHOICES = [('svenska','svenska'),
+    #                  ('engelska','engelska')]
 
     kodverk_typer = [('Inget','Inget'),
                      ('Administrativ','Administrativ'),
@@ -83,11 +79,8 @@ class Kodverk(models.Model):
                  ('Vid behov', 'Vid behov'),
                  ('Ej aktuellt', 'Ej aktuellt')]
 
-    statuser = [("Design","Design"),
-                ("Bygg", "Bygg"),
-                ("Beslutad", "Beslutad"),
-                ("Utjast", "Utkast"),
-                ("Okänt", "Okänt")]
+    statuser = [("Publicera ej","Publicera ej"),
+                ("Beslutad", "Beslutad")]
 
     kodverk_typ = [('kodverk','kodverk'), 
                    ('code set','code set'), 
@@ -102,7 +95,7 @@ class Kodverk(models.Model):
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
     hämtnings_källa = models.CharField(max_length=255,null=True, blank=True)
 
-    version_av_källa = models.CharField(max_length=50, null=True)
+    version_av_källa = models.CharField(max_length=50, null=True, blank=True)
     kategori = models.CharField(max_length=255,null=True)
     instruktion_för_kodverket = models.CharField(max_length=255,null=True,blank=True)
     kodverk_variant = models.CharField(max_length=14, null=True, blank=True, choices=kodverk_typ)
@@ -144,7 +137,7 @@ class Nyckelord(models.Model):
     class Meta:
         verbose_name_plural = "Nyckelord"
 
-    kodverk_id = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
+    kodverk_id = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
     nyckelord = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
