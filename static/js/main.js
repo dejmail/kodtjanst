@@ -86,12 +86,12 @@ document.body.addEventListener("click", function(e) {
 function getPage(link_url) {
 
 	console.log('entering ajax getPage function');
+	debugger;
 	$.ajax({
 		type: "GET",
 		dataType: "html",
 		url: link_url,
 	}).done(function(data, textStatus, jqXHR) {
-		//debugger;
 		$("#mitten-span-middle-column").empty();
 		var data = data.replace('\n','').replace('  ', '').replace('\"', "");
 		$('#mitten-span-middle-column').html(data.slice(1,-1));

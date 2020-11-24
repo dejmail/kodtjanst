@@ -59,14 +59,12 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
-
-
-
 def retur_general_sök(url_parameter):
     cursor = connection.cursor()
     ''' need to reduce the number of fields being returned, we are not using all of them,
     but this also affects the parsing as it is position based, so need to be careful'''
-    sql_statement = f'''SELECT kodtjanst_kodverk.titel_på_kodverk,\
+    sql_statement = f'''SELECT kodtjanst_kodverk.id,\
+                               kodtjanst_kodverk.titel_på_kodverk,\
                                kodtjanst_kodverk.nyckelord,\
                                kodtjanst_kodverk.status,\
                                kodtjanst_kodverk.syfte,\
@@ -93,6 +91,42 @@ def retur_general_sök(url_parameter):
     result = cursor.fetchall()
     
     return result
+
+def retur_komplett_förklaring_custom_sql(url_parameter):
+
+    cursor = connection.cursor()
+    sql_statement = f'''SELECT * from kodtjanst_kodverk,\
+                                            syfte,\
+                                            beskrivning_av_informationsbehov,\
+                                            identifier,\
+                                            titel_på_kodverk,\
+                                            ägare_till_kodverk,\
+                                            version,\
+                                            hämtnings_källa,\
+                                            version_av_källa,\
+                                            kategori,\
+                                            instruktion_för_kodverket,\
+                                            kodverk_variant,\
+                                            status,\
+                                            uppdateringsintervall,\
+                                            mappning_för_rapportering,\
+                                            ansvarig_förvaltare,\
+                                            datum_skapat,\
+                                            senaste_ändring,\
+                                            giltig_från,\
+                                            giltig_tom,\
+                                            ändrad_av,\
+                                            ansvarig,\
+                                            urval_referens,\
+                                            WHERE\
+                                            kodtjanst_kodverk.id = {url_parameter};'''
+    clean_statement = re.sub(re_pattern, ' ', sql_statement)
+    cursor.execute(clean_statement)
+    result = cursor.fetchall()
+    
+    return result
+
+
 
 def attach_column_names_to_search_result(search_result):
 
@@ -124,17 +158,20 @@ def highlight_search_term_i_definition(search_term, result_dict_list):
                     #logger.debug(f'found string with search value - {value}')
                     #set_trace()
                     return_string = ''.join([value[0:match.start()],'<mark>', value[match.start():match.end()], '</mark>', value[match.end():]])
-                    print(return_string)
+                    #print(return_string)
                     #result_dict_list[idx][key] = return_string
                     result_dict_list[idx].update({key : return_string})
-    print(result_dict_list)
+    #print(result_dict_list)
     return result_dict_list
 
 
-def kodverk_view(request):
+def kodverk_sok(request):
     url_parameter = request.GET.get("q")
     
+    #print('entering the kodverk_sök function')
+    
     if request.is_ajax():
+        
         #data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
         sql_search = retur_general_sök(url_parameter)
@@ -163,5 +200,57 @@ def kodverk_view(request):
         kodverk = Kodverk.objects.none()
     return render(request, "kodverk.html", {})
 
-def kodverk_metadata_view(request):
-    return render(request, "kodverk_metadata_view.html", context)
+def kodverk_komplett_metadata(request):
+
+    url_parameter = request.GET.get("q")
+    if url_parameter:
+        exact_kodverk_request = retur_komplett_förklaring_custom_sql(url_parameter)
+        kodverk_full = extract_columns_from_query_and_return_set(exact_kodverk_request, 0, -5)
+        
+        #domän_full = extract_columns_from_query_and_return_set(exact_term_request, -2, 0)
+        
+        result_column_names = ['syfte',
+                               'beskrivning_av_informationsbehov',
+                               'identifier',
+                               'titel_på_kodverk',
+                               'ägare_till_kodverk',
+                               'version',
+                               'hämtnings_källa'
+                               'version_av_källa',
+                               'kategori',
+                               'instruktion_för_kodverket',
+                               'kodverk_variant',
+                               'status',
+                               'uppdateringsintervall',
+                               'mappning_för_rapportering',
+                               'ansvarig_förvaltare',
+                               'datum_skapat',
+                               'senaste_ändring',
+                               'giltig_från',
+                               'giltig_tom',
+                               'ändrad_av',
+                               'ansvarig',
+                               'urval_referens',]
+
+        kodverk_column_names = result_column_names[:-5]
+        return_list_dict = []
+        for return_result in kodverk_full:
+            return_list_dict.append(dict(zip(kodverk_column_names, return_result)))
+        
+
+        # domän_column_names = result_column_names[-2:]
+        # return_domän_list_dict = []
+        # for return_result in domän_full:
+        #     return_domän_list_dict.append(dict(zip(domän_column_names, return_result)))
+
+        # mäta_förklaring_träff(sök_term=url_parameter, request=request)
+
+        #status_färg_dict = {'begrepp' :färg_status_dict.get(return_list_dict[0].get('status'))}
+
+        template_context = {'kodverk_full': return_list_dict[0]}
+                            
+                            #'domän_full' : return_domän_list_dict,
+                            #'färg_status' : status_färg_dict}
+        
+        html = render_to_string(template_name="term_forklaring.html", context=template_context)
+    return render(request, "kodverk_komplett_metadata.html", context={})

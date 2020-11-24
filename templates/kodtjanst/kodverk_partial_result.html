@@ -1,4 +1,5 @@
 {% load static %}
+
 {% block mitten-span %}
 {% spaceless %}
 {% if kodverk %}
@@ -13,7 +14,7 @@
                 <!-- <th>Nyckelord</th> -->
                 <th>Syfte</th>
                 <!-- <th>Status</th> -->
-           <!-- <th>Domän namn</th>
+                 <!-- <th>Domän namn</th>
                 <th>Kodtext</th>
                 <th>Annan Kodtext</th> -->
             </tr>
@@ -21,7 +22,7 @@
             <tbody id="myTable">
             {% for info in kodverk %}
                 <tr>
-                    <td>{{info.titel_på_kodverk}}</td>
+                    <td><a href="{% url 'kodverk_komplett_metadata' %}?q={{kodverk.id}}" id={{info.kodverk.id}}>{{info.titel_på_kodverk}}</td>
                     <!-- <td>{{info.nyckelord}}</td> -->
                     <td>{{info.syfte}}</td>
                     <!-- <td>{{info.status}}</td> -->

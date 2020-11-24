@@ -4,10 +4,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import JSONField
 from pdb import set_trace
 
-statuser = [("Design","Design"),
-            ("Bygg", "Bygg"),
+statuser = [('Publicera ej','Publicera ej'),
             ("Beslutad", "Beslutad"),
-            ("Utjast", "Utkast"),
+            ("Utkast", "Utkast"),
             ("Okänt", "Okänt")]
 
 
