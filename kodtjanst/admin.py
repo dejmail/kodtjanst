@@ -6,7 +6,8 @@ from django.utils.safestring import mark_safe
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.template.response import TemplateResponse
-
+from django import forms
+from django.forms import ModelChoiceField
 
 from .models import *
 from .forms import MappadTillKodtextForm
@@ -32,6 +33,26 @@ class KodtextInline(admin.TabularInline):
     #     """Returns True for new instances, calls super() for ones that exist in db.
     #     Prevents forms with defaults being recognized as empty/unchanged."""
     #     return not self.instance.pk or super().has_changed()
+
+class NyckelOrdInline(admin.TabularInline):
+    model = Nyckelord
+    extra = 1
+
+    fieldsets = [
+    [None, {
+    'fields': [('nyckelord')],
+    }
+    ]]
+
+class ÄmneInline(admin.TabularInline):
+    model = Ämne
+    extra = 1
+
+    fieldsets = [
+    [None, {
+    'fields': [('domän_namn', 'domän_kontext')],
+    }
+    ]]
 
 class KodtextManager(admin.ModelAdmin):
 
@@ -84,10 +105,16 @@ class KodtextManager(admin.ModelAdmin):
                 obj.added_by = request.user
             super().save_model(request, obj, form, change)
 
+
+def make_unpublished(modeladmin, request, queryset):
+    
+    queryset.update(status='Publicera ej')
+make_unpublished.short_description = "Markera kodverk som Publicera ej"
+
 class KodverkManager(admin.ModelAdmin):  
 
 
-    inlines = [KodtextInline]
+    inlines = [KodtextInline, NyckelOrdInline, ÄmneInline]
 
     save_on_top = True
 
@@ -104,7 +131,9 @@ class KodverkManager(admin.ModelAdmin):
 
     exclude = ['ändrad_av',]
 
-    list_filter = ('ägare_till_kodverk','kodverk_variant', DuplicatKodverkFilter)
+    actions = [make_unpublished]
+
+    list_filter = ('ägare_till_kodverk','kodverk_variant', DuplicatKodverkFilter, 'status')
 
     search_fields = ('id','titel_på_kodverk','kategori')
 
@@ -122,6 +151,11 @@ class KodverkManager(admin.ModelAdmin):
         'extra_data'],
         }],
     ]
+
+    def save_model(self, request, obj, form, change):
+        
+        obj.ändrad_av_id = request.user.id
+        super().save_model(request, obj, form, change)
 
     def get_import_formats(self):
             """
@@ -207,6 +241,12 @@ class KodverkManager(admin.ModelAdmin):
         request.current_app = self.admin_site.name
         return TemplateResponse(request, [self.import_template_name], context)
 
+
+class KodtextIdandTextField(forms.ModelChoiceField):
+
+     def label_from_instance(self, obj):
+         return f"{obj.id} - {obj.kodtext}"
+
 class MappadtillKodtextManager(admin.ModelAdmin):
 
     form = MappadTillKodtextForm
@@ -223,16 +263,37 @@ class MappadtillKodtextManager(admin.ModelAdmin):
     
     get_kodtext.short_description = 'Kodtext'
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        
+
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):    
+        #set_trace()
         if db_field.name == "kodtext":
             kwargs["queryset"] = Kodtext.objects.all()
-        return super(MappadtillKodtextManager, self).formfield_for_foreignkey(db_field, request, **kwargs)
+            return KodtextIdandTextField(queryset=Kodtext.objects.all())
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+        # return super(MappadtillKodtextManager, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(MappadtillKodtextManager, self).get_form(request, obj, **kwargs)
         form.base_fields['kodverk'].initial =  Kodverk.objects.filter(titel_på_kodverk=obj.kodtext.kodverk.titel_på_kodverk).values()[0].get('titel_på_kodverk')
+        #set_trace()
+        #form.base_fields['kodtext_text'] =  Kodtext.objects.filter(kodtext=obj.kodtext.kodtext)
         return form
+
+    # def get_fieldsets(self, request, obj=None):
+    #     fieldsets = super(MappadtillKodtextManager, self).get_fieldsets(request, obj)
+    #     set_trace()
+    #     form = self.get_formset(request).form
+    #     set_trace()
+    #     return fieldsets
+
+    # def get_form(self, request, obj=None, **kwargs):
+    #     set_trace()
+    #     form = super(InvoiceAdmin, self).get_form(request, obj, **kwargs)
+    #     form.base_fields['person'].label_from_instance = lambda obj: "{} {}".format(obj.id, obj.first_name)
+    #     return form
     
     def save(self, commit=True):
         extra_field = self.cleaned_data.get('kodverk', None)
