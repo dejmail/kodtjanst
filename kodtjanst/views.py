@@ -62,17 +62,10 @@ def retur_general_sök(url_parameter):
     cursor = connection.cursor()
     ''' need to reduce the number of fields being returned, we are not using all of them,
     but this also affects the parsing as it is position based, so need to be careful'''
-    sql_statement = f'''SELECT kodtjanst_kodverk.id,\
+    sql_statement = f'''SELECT DISTINCT kodtjanst_kodverk.id,\
                                kodtjanst_kodverk.titel_på_kodverk,\
-                               kodtjanst_kodverk.nyckelord,\
-                               kodtjanst_kodverk.syfte,\
-                               kodtjanst_kodverk.status,\
-                               kodtjanst_ämne.domän_namn,\
-                               kodtjanst_kodtext.kod,\
-                               kodtjanst_kodtext.kodtext,\
-                               kodtjanst_kodtext.annan_kodtext,\
-                               kodtjanst_kodtext.definition\
-                        FROM kodtjanst_kodverk\
+                               kodtjanst_kodverk.syfte\
+                            FROM kodtjanst_kodverk\
                             LEFT JOIN kodtjanst_kodtext\
                                 ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
                             LEFT JOIN kodtjanst_ämne\
@@ -87,7 +80,6 @@ def retur_general_sök(url_parameter):
 
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
     #logger.debug(clean_statement)
-    print(clean_statement)
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
@@ -177,6 +169,8 @@ def kodverk_sok(request):
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
         sql_search = retur_general_sök(url_parameter)
         search_result = attach_column_names_to_search_result(sql_search)
+
+        
         # search_result = highlight_search_term_i_definition(url_parameter, search_result)
         html = render_to_string(
             template_name="kodverk_partial_result.html", context={'kodverk': search_result,                                                            
