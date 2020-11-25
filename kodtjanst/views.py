@@ -2,7 +2,6 @@ import re
 import logging
 from kodtjanst.logging import setup_logging
 
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
@@ -86,7 +85,7 @@ def retur_general_sök(url_parameter):
                         OR (kodtjanst_kodtext.definition LIKE "%{url_parameter}%");'''
 
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
-    logger.debug(clean_statement)
+    #logger.debug(clean_statement)
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
@@ -95,32 +94,31 @@ def retur_general_sök(url_parameter):
 def retur_komplett_förklaring_custom_sql(url_parameter):
 
     cursor = connection.cursor()
-    sql_statement = f'''SELECT * from kodtjanst_kodverk,\
-                                            syfte,\
-                                            beskrivning_av_informationsbehov,\
-                                            identifier,\
-                                            titel_på_kodverk,\
-                                            ägare_till_kodverk,\
-                                            version,\
-                                            hämtnings_källa,\
-                                            version_av_källa,\
-                                            kategori,\
-                                            instruktion_för_kodverket,\
-                                            kodverk_variant,\
-                                            status,\
-                                            uppdateringsintervall,\
-                                            mappning_för_rapportering,\
-                                            ansvarig_förvaltare,\
-                                            datum_skapat,\
-                                            senaste_ändring,\
-                                            giltig_från,\
-                                            giltig_tom,\
-                                            ändrad_av,\
-                                            ansvarig,\
-                                            urval_referens,\
-                                            WHERE\
-                                            kodtjanst_kodverk.id = {url_parameter};'''
-    clean_statement = re.sub(re_pattern, ' ', sql_statement)
+    sql_statement = f'''SELECT syfte,\
+                               beskrivning_av_informationsbehov,\
+                               identifier,\
+                               titel_på_kodverk,\
+                               ägare_till_kodverk,\
+                               version,\
+                               hämtnings_källa,\
+                               version_av_källa,\
+                               kategori,\
+                               instruktion_för_kodverket,\
+                               kodverk_variant,\
+                               status,\
+                               uppdateringsintervall,\
+                               mappning_för_rapportering,\
+                               ansvarig_förvaltare,\
+                               datum_skapat,\
+                               senaste_ändring,\
+                               giltig_från,\
+                               giltig_tom,\
+                               ändrad_av_id,\
+                               ansvarig_id,\
+                               urval_referens_id\
+                        FROM kodtjanst_kodverk\
+                        WHERE kodtjanst_kodverk.id = {url_parameter};'''
+    clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
@@ -130,15 +128,16 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
 
 def attach_column_names_to_search_result(search_result):
 
-    search_column_names = ['titel_på_kodverk',
+    search_column_names = ['id',
+                           'titel_på_kodverk',
                            'nyckelord',
-                           'kodverk_status',
+                           'status',
                            'syfte',
-                           'dömän_namn',
+                           'domän_namn',
                            'kod',
                            'kodtext',
                            'annan_kodtext',
-                           'kodtext_definition']
+                           'definition']
 
     return_list_dict = []
     for return_result in search_result:
@@ -176,7 +175,7 @@ def kodverk_sok(request):
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
         sql_search = retur_general_sök(url_parameter)
         search_result = attach_column_names_to_search_result(sql_search)
-        search_result = highlight_search_term_i_definition(url_parameter, search_result)
+        # search_result = highlight_search_term_i_definition(url_parameter, search_result)
         html = render_to_string(
             template_name="kodverk_partial_result.html", context={'kodverk': search_result,                                                            
                                                             'searched_for_term' : url_parameter})
@@ -203,40 +202,44 @@ def kodverk_sok(request):
 def kodverk_komplett_metadata(request):
 
     url_parameter = request.GET.get("q")
-    if url_parameter:
-        exact_kodverk_request = retur_komplett_förklaring_custom_sql(url_parameter)
-        kodverk_full = extract_columns_from_query_and_return_set(exact_kodverk_request, 0, -5)
-        
-        #domän_full = extract_columns_from_query_and_return_set(exact_term_request, -2, 0)
-        
-        result_column_names = ['syfte',
-                               'beskrivning_av_informationsbehov',
-                               'identifier',
-                               'titel_på_kodverk',
-                               'ägare_till_kodverk',
-                               'version',
-                               'hämtnings_källa'
-                               'version_av_källa',
-                               'kategori',
-                               'instruktion_för_kodverket',
-                               'kodverk_variant',
-                               'status',
-                               'uppdateringsintervall',
-                               'mappning_för_rapportering',
-                               'ansvarig_förvaltare',
-                               'datum_skapat',
-                               'senaste_ändring',
-                               'giltig_från',
-                               'giltig_tom',
-                               'ändrad_av',
-                               'ansvarig',
-                               'urval_referens',]
+    
+    if request.is_ajax():
+        if url_parameter:
+            exact_kodverk_request = retur_komplett_förklaring_custom_sql(url_parameter)
+            #kodverk_full = extract_columns_from_query_and_return_set(exact_kodverk_request, 0, 0)
+            
+            #domän_full = extract_columns_from_query_and_return_set(exact_term_request, -2, 0)
+            
+            result_column_names = ['syfte',
+                                'beskrivning_av_informationsbehov',
+                                'identifier',
+                                'titel_på_kodverk',
+                                'ägare_till_kodverk',
+                                'version',
+                                'hämtnings_källa'
+                                'version_av_källa',
+                                'kategori',
+                                'instruktion_för_kodverket',
+                                'kodverk_variant',
+                                'status',
+                                'uppdateringsintervall',
+                                'mappning_för_rapportering',
+                                'ansvarig_förvaltare',
+                                'datum_skapat',
+                                'senaste_ändring',
+                                'giltig_från',
+                                'giltig_tom',
+                                'ändrad_av',
+                                'ansvarig',
+                                'urval_referens',]
 
-        kodverk_column_names = result_column_names[:-5]
-        return_list_dict = []
-        for return_result in kodverk_full:
-            return_list_dict.append(dict(zip(kodverk_column_names, return_result)))
-        
+            #kodverk_column_names = result_column_names[:-5]
+            
+            return_list_dict = []
+            
+            for return_result in exact_kodverk_request:
+                return_list_dict.append(dict(zip(result_column_names, return_result)))
+            
 
         # domän_column_names = result_column_names[-2:]
         # return_domän_list_dict = []
@@ -246,11 +249,25 @@ def kodverk_komplett_metadata(request):
         # mäta_förklaring_träff(sök_term=url_parameter, request=request)
 
         #status_färg_dict = {'begrepp' :färg_status_dict.get(return_list_dict[0].get('status'))}
+            
+            template_context = {'kodverk_full': return_list_dict[0]}
+                                
+                                #'domän_full' : return_domän_list_dict,
+                                #'färg_status' : status_färg_dict}
+            
+            html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
+        return render(request, "kodverk_komplett_metadata.html", context=template_context)
 
-        template_context = {'kodverk_full': return_list_dict[0]}
-                            
-                            #'domän_full' : return_domän_list_dict,
-                            #'färg_status' : status_färg_dict}
-        
-        html = render_to_string(template_name="term_forklaring.html", context=template_context)
-    return render(request, "kodverk_komplett_metadata.html", context={})
+def extract_columns_from_query_and_return_set(search_result, start, stop):
+
+    reduced_list = []
+    for record in search_result:
+        if start==0:
+            reduced_list.append(record[:stop])
+        elif stop==0:
+            reduced_list.append(record[start:])
+        else:
+            reduced_list.append(record[start:stop])
+    
+    reduced_set = set([tuple(i) for i in reduced_list])
+    return reduced_set
