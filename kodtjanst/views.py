@@ -65,8 +65,8 @@ def retur_general_sök(url_parameter):
     sql_statement = f'''SELECT kodtjanst_kodverk.id,\
                                kodtjanst_kodverk.titel_på_kodverk,\
                                kodtjanst_kodverk.nyckelord,\
-                               kodtjanst_kodverk.status,\
                                kodtjanst_kodverk.syfte,\
+                               kodtjanst_kodverk.status,\
                                kodtjanst_ämne.domän_namn,\
                                kodtjanst_kodtext.kod,\
                                kodtjanst_kodtext.kodtext,\
@@ -77,15 +77,17 @@ def retur_general_sök(url_parameter):
                                 ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
                             LEFT JOIN kodtjanst_ämne\
                                 ON kodtjanst_kodverk.id = kodtjanst_ämne.kodverk_id\
-                        WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%")\
-                        OR (kodtjanst_kodverk.syfte LIKE "%{url_parameter}%")\
-                        OR (kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%")\
-                        OR (kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%")\
-                        OR (kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%")\
-                        OR (kodtjanst_kodtext.definition LIKE "%{url_parameter}%");'''
+                        WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodtext.definition LIKE "%{url_parameter}%")
+                        AND kodtjanst_kodverk.status = 'Beslutad';'''
 
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
     #logger.debug(clean_statement)
+    print(clean_statement)
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
@@ -95,27 +97,27 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
 
     cursor = connection.cursor()
     sql_statement = f'''SELECT syfte,\
-                               beskrivning_av_informationsbehov,\
-                               identifier,\
-                               titel_på_kodverk,\
-                               ägare_till_kodverk,\
-                               version,\
-                               hämtnings_källa,\
-                               version_av_källa,\
-                               kategori,\
-                               instruktion_för_kodverket,\
-                               kodverk_variant,\
-                               status,\
-                               uppdateringsintervall,\
-                               mappning_för_rapportering,\
-                               ansvarig_förvaltare,\
-                               datum_skapat,\
-                               senaste_ändring,\
-                               giltig_från,\
-                               giltig_tom,\
-                               ändrad_av_id,\
-                               ansvarig_id,\
-                               urval_referens_id\
+                            beskrivning_av_informationsbehov,\
+                            identifier,\
+                            titel_på_kodverk,\
+                            ägare_till_kodverk,\
+                            version,\
+                            hämtnings_källa,\
+                            version_av_källa,\
+                            kategori,\
+                            instruktion_för_kodverket,\
+                            kodverk_variant,\
+                            status,\
+                            uppdateringsintervall,\
+                            mappning_för_rapportering,\
+                            ansvarig_förvaltare,\
+                            datum_skapat,\
+                            senaste_ändring,\
+                            giltig_från,\
+                            giltig_tom,\
+                            ändrad_av_id,\
+                            ansvarig_id,\
+                            urval_referens_id\
                         FROM kodtjanst_kodverk\
                         WHERE kodtjanst_kodverk.id = {url_parameter};'''
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
@@ -131,8 +133,8 @@ def attach_column_names_to_search_result(search_result):
     search_column_names = ['id',
                            'titel_på_kodverk',
                            'nyckelord',
-                           'status',
                            'syfte',
+                           'status',
                            'domän_namn',
                            'kod',
                            'kodtext',
@@ -211,27 +213,27 @@ def kodverk_komplett_metadata(request):
             #domän_full = extract_columns_from_query_and_return_set(exact_term_request, -2, 0)
             
             result_column_names = ['syfte',
-                                'beskrivning_av_informationsbehov',
-                                'identifier',
-                                'titel_på_kodverk',
-                                'ägare_till_kodverk',
-                                'version',
-                                'hämtnings_källa'
-                                'version_av_källa',
-                                'kategori',
-                                'instruktion_för_kodverket',
-                                'kodverk_variant',
-                                'status',
-                                'uppdateringsintervall',
-                                'mappning_för_rapportering',
-                                'ansvarig_förvaltare',
-                                'datum_skapat',
-                                'senaste_ändring',
-                                'giltig_från',
-                                'giltig_tom',
-                                'ändrad_av',
-                                'ansvarig',
-                                'urval_referens',]
+                              'beskrivning_av_informationsbehov',
+                              'identifier',
+                              'titel_på_kodverk',
+                              'ägare_till_kodverk',
+                              'version',
+                              'hämtnings_källa',
+                              'version_av_källa',
+                              'kategori',
+                              'instruktion_för_kodverket',
+                              'kodverk_variant',
+                              'status',
+                              'uppdateringsintervall',
+                              'mappning_för_rapportering',
+                              'ansvarig_förvaltare',
+                              'datum_skapat',
+                              'senaste_ändring',
+                              'giltig_från',
+                              'giltig_tom',
+                              'ändrad_av_id',
+                              'ansvarig_id',
+                             'urval_referens_id']
 
             #kodverk_column_names = result_column_names[:-5]
             
