@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 
 from django.core.exceptions import ObjectDoesNotExist
+#from rest_framework.authentication import obtain_jwt_token
 #import numpy as np
 
 
@@ -35,6 +36,7 @@ kodverk_excel_db_map = {value:key for key,value in kodverk_header_map.items()}
 
 def clean_data_dictionary(model, data_dictionary, json_field):
 
+    
     fields_notin_model = [i.lower() for i in data_dictionary.keys() if i.lower() not in dir(model)]
     new_dictionary = {key.lower():value for key,value in data_dictionary.items() if key in dir(model)}
     temp_dict = {json_field:''}
@@ -43,6 +45,42 @@ def clean_data_dictionary(model, data_dictionary, json_field):
         temp_dict[json_field] = temp_dict[json_field] + f'"{extra_data}" : "{data_dictionary.get(json_field)}", '
     new_dictionary.update(temp_dict)
     return new_dictionary, fields_notin_model
+
+class SnomedSerialiser(serializers.ModelSerializer):
+    
+    def create(self, validated_data):  
+        set_trace()    
+        try:           
+            db_keys_mapped_validated_data = {kodverk_excel_db_map.get(keys, keys):values for keys,values in validated_data.items()}
+            mapped_validated_data, fields_not_in_model = clean_data_dictionary(Kodverk, data_dictionary=db_keys_mapped_validated_data, json_field='extra_data')
+            mapped_validated_data['ändrad_av'] = User.objects.get(id=self.context.get('data_wizard').get('run').user_id)
+            return Kodverk.objects.create(**mapped_validated_data)
+        except Exception as e:
+            print(f'Found an error creating the data, but passing on it - {e}')
+
+    def update(self, obj, validated_data):
+        print('update method')
+        set_trace()
+
+    def fail(self, key, **kwargs):
+        print('fail method')
+        set_trace()
+
+    def data(self):
+        print('data method')
+        set_trace()
+
+    class Meta:
+        model = Kodtext
+        fields = '__all__'
+        # Optional - see options below
+        data_wizard = {
+            'header_row': 0,
+            'start_row': 1,
+            'show_in_list': True,
+            'idmap': data_wizard.idmap.existing,
+        }
+
 
 class KodverkSerializer(serializers.ModelSerializer):
 
@@ -61,7 +99,7 @@ class KodverkSerializer(serializers.ModelSerializer):
     nyckelord = serializers.CharField(source='Förslag på sökord/ägare_till_kodverk till databasen - fyll i detta så gott ni kan!')
 
     def create(self, validated_data):  
-        
+        set_trace()
         try:           
             db_keys_mapped_validated_data = {kodverk_excel_db_map.get(keys, keys):values for keys,values in validated_data.items()}
             mapped_validated_data, fields_not_in_model = clean_data_dictionary(Kodverk, data_dictionary=db_keys_mapped_validated_data, json_field='extra_data')
@@ -102,5 +140,9 @@ data_wizard.register(Kodtext)
 
 # Use custom name & serializer
 data_wizard.register("Kodverk Gäng Default Mall Omvandlare", KodverkSerializer)
+data_wizard.register("Snomed Omvandlare", SnomedSerialiser)
+
+data_wizard.set_loader(Kodtext, "kodtjanst.loaders.CustomJsonUrlLoader")
+
 #data_wizard.register("Kodtext - Custom Serializer", KodtextSerializer)
 #data_wizard.set_loader(Kodverk, "kodtjant.loaders.CustomIterLoader")

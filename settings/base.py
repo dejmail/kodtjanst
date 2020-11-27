@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import rest_framework
+# from kodtjanst.parsers import JSONParser
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,6 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'c8-vxfv$-i!yruqix%jn1!3b6-2#a_wgc=fsym4s@=)lm$q5q1'
+
+
 
 ALLOWED_HOSTS = ['vgrinformatik.se', '127.0.0.1', 'localhost']
 
@@ -74,7 +78,26 @@ TEMPLATES = [
     },
 ]
 
+# DATA_WIZARD = {
+#     'BACKEND': 'data_wizard.backends.threading',
+#     'LOADER': ['data_wizard.loaders.FileLoader','kodtjanst.loaders.CustomJsonUrlLoader'],
+#     'IDMAP': 'data_wizard.idmap.never',   # 'data_wizard.idmap.existing' in 2.0
+#     'AUTHENTICATION': 'rest_framework.authentication.SessionAuthentication',
+#     'PERMISSION': 'rest_framework.permissions.IsAdminUser',
+# }
 
+# from kodtjanst.parsers import SnomedJSONParser
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_PARSER_CLASSES': [
+#         'rest_framework.parsers.JSONParser',
+#         # 'parsers.SnomedJSONParser',
+#         # 'rest_framework.parsers.FileUploadParser',
+#         #'rest_framework.parsers.DjangoMultiPartParser',
+#         'rest_framework.parsers.FormParser'
+
+#     ]
+# }
 
 WSGI_APPLICATION = 'settings.wsgi.application'
 

@@ -1,5 +1,8 @@
 from django.contrib.admin import SimpleListFilter
+from django.db.models import Count
+
 from pdb import set_trace
+from .models import Kodtext
 
 class DuplicatKodverkFilter(SimpleListFilter):
     """
@@ -23,18 +26,24 @@ class DuplicatKodverkFilter(SimpleListFilter):
 class DuplicateKodtextFilter(SimpleListFilter):
     """
         This filter is being used in django admin panel.
-        """
-    title = 'Duplicates'
+    """
+    
+    title = 'Kodtext dubbletter'
     parameter_name = 'kodtext'
 
     def lookups(self, request, model_admin):
-            return (
-                ('duplicates', 'Duplicates'),
-            )
+
+        return (('dubbletter', 'Dubbletter'),)
 
     def queryset(self, request, queryset):
+        
         if not self.value():
             return queryset
-        if self.value().lower() == 'duplicates':
+        if self.value().lower() == 'dubbletter':
+            duplicate_names = Kodtext.objects.values('kodtext').annotate(Count('kodtext')).order_by().filter(kodtext__count__gt=1)
             #set_trace()
-            return queryset.filter().exclude(kodtext__in=[element_id.get('kodtext') for element_id in queryset.values("kodtext").distinct()])
+            # You can then retrieve all these duplicate objects using this query:
+            print(len(duplicate_names))
+            duplicate_objects = Kodtext.objects.filter(kodtext__in=[item['kodtext'] for item in duplicate_names]).order_by('kodtext','kodverk')
+
+            return duplicate_objects
