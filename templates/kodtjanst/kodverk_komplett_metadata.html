@@ -147,9 +147,12 @@
 {% block extra_javascript %}
 {{ super }}
 
-<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<!-- <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script> -->
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" media="screen">
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+
+
+<link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}" media="screen">
 
 <script>
 
@@ -195,13 +198,18 @@ function format (d) {
  } );
 
  $( document ).ready(function() {
-
-
+    // setTimeout(function() {
+         
     var table = $('#kodtext_tabell').DataTable({
         "stateSave" : true,
-        "retrieve" : true
+        "retrieve" : true,
+        "initComplete": function(){ 
+        $("#kodtext_tabell").show(); 
+    }
     } );
 
+// }, 10);
+});
     
 //     $.ajax({
 //         type: "GET",
@@ -219,7 +227,7 @@ function format (d) {
 //             $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen kodtext från servern");
 //         }
 //     });
-});
+// 
 
 </script>
 

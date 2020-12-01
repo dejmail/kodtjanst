@@ -132,4 +132,13 @@ nav {
   .tooltip:hover .tooltiptext {
     visibility: visible;
   }
+
+
+.komplett_metadata_tabell>tbody>tr>td, .komplett_metadata_tabell>tbody>tr>th, .komplett_metadata_tabell>tfoot>tr>td, .komplett_metadata_tabell>tfoot>tr>th, .komplett_metadata_tabell>thead>tr>td, .komplett_metadata_tabell>thead>tr>th {
+    padding: 2px;
+}
+
+#kodtext_tabell {
+  display: none;
+}
   
