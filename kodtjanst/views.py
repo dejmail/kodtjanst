@@ -167,15 +167,8 @@ def kodverk_sok(request):
         #data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
         kodverk_column_names = ['id',
-                            'titel_på_kodverk',
-                            'nyckelord',
-                            'status',
-                            'syfte',
-                            'domän_namn',
-                            'kod',
-                            'kodtext',
-                            'annan_kodtext',
-                            'definition']
+                                'titel_på_kodverk',
+                                'syfte']
         sql_search = retur_general_sök(url_parameter)
         search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
         # search_result = highlight_search_term_i_definition(url_parameter, search_result)
