@@ -126,19 +126,17 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
     return result
 
 
+def return_kodtext_related_to_kodverk(url_parameter):
 
-def attach_column_names_to_search_result(search_result):
+    cursor = connection.cursor()
+    sql_statement = f'''SELECT * from kodtjanst_kodtext WHERE kodtjanst_kodtext.kodverk_id = {url_parameter};'''
+    cursor.execute(sql_statement)
+    result = cursor.fetchall()
 
-    search_column_names = ['id',
-                           'titel_på_kodverk',
-                           'nyckelord',
-                           'status',
-                           'syfte',
-                           'domän_namn',
-                           'kod',
-                           'kodtext',
-                           'annan_kodtext',
-                           'definition']
+    return result
+
+
+def attach_column_names_to_search_result(search_result, search_column_names):
 
     return_list_dict = []
     for return_result in search_result:
@@ -174,8 +172,18 @@ def kodverk_sok(request):
         
         #data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
+        kodverk_column_names = ['id',
+                            'titel_på_kodverk',
+                            'nyckelord',
+                            'status',
+                            'syfte',
+                            'domän_namn',
+                            'kod',
+                            'kodtext',
+                            'annan_kodtext',
+                            'definition']
         sql_search = retur_general_sök(url_parameter)
-        search_result = attach_column_names_to_search_result(sql_search)
+        search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
         # search_result = highlight_search_term_i_definition(url_parameter, search_result)
         html = render_to_string(
             template_name="kodverk_partial_result.html", context={'kodverk': search_result,                                                            
@@ -251,8 +259,25 @@ def kodverk_komplett_metadata(request):
 
         #status_färg_dict = {'begrepp' :färg_status_dict.get(return_list_dict[0].get('status'))}
             
+            kodtext_search_result = return_kodtext_related_to_kodverk(url_parameter)
+            kodtext_column_names = ['annan_kodtext',
+                                    'datum_skapat',
+                                    'definition',
+                                    'extra_data',
+                                    'kod',
+                                    'kodtext',
+                                    'kodverk',
+                                    'kommentar',
+                                    'position',
+                                    'senaste_ändring',
+                                    'status',
+                                    'ändrad_av']
+
+            kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
+            
             template_context = {'kodverk_full': return_list_dict[0],
-                                'kodverk_id' : url_parameter}
+                                'kodverk_id' : url_parameter,
+                                'kodtext_full' : kodtext_dict}
                                 #'domän_full' : return_domän_list_dict,
                                 #'färg_status' : status_färg_dict}
             
@@ -278,6 +303,7 @@ def extract_columns_from_query_and_return_set(search_result, start, stop):
     reduced_set = set([tuple(i) for i in reduced_list])
     return reduced_set
 
+import json
 def return_kodtext_as_json(request):
 
     url_parameter = request.GET.get("q")
@@ -285,7 +311,7 @@ def return_kodtext_as_json(request):
     if (request.is_ajax()) or (request.method == 'GET'):
     
         kodtext = Kodtext.objects.filter(kodverk_id=int(url_parameter))
-                
+               
         post_kodtext = serializers.serialize('json', kodtext)
-        
-        return HttpResponse(post_kodtext, content_type="application/json")
+   
+        return HttpResponse(post_kodtext)
