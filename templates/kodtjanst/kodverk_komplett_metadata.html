@@ -113,18 +113,25 @@
                     <th></th>
                     <th>Kod</th>
                     <th>Kodtext</th>
-                    <th>Annan kodtext</th>
-                    <th>Definition</th>
                 </tr>
             </thead>
+            <tbody>
+            {% for i in kodtext_full %}
+            <tr>
+                <td></td>
+                <td>{{i.kod}}</td>
+                <td>{{i.kodtext}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
             <tfoot>
                 <tr>
                     <th></th>
                     <th>Kod</th>
                     <th>Kodtext</th>
-                    <th>Annan kodtext</th>
-                    <th>Definition</th>
                 </tr>
+        
+            
             </tfoot>
         </table>
     
@@ -136,8 +143,6 @@
 
 {% block extra_javascript %}
 {{ super }}
-
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
 <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
 
@@ -169,49 +174,6 @@ function format (d) {
     '</table>';
 };
 
-function get_json_data(term_id) {
-    
-    var json_data = $.ajax({
-                type: "GET",
-                dataType: "json",
-                url: '/kodtext_json/?q='+term_id,
-                success: function(data,textStatus,jqXHR) {
-                    console.log('JSON loaded successfully, statusCode =', textStatus);
-                },
-                complete : function(data,textStatus,jqXHR) {
-                    console.log('JSON request complete, statusCode =', textStatus);
-                    
-                },
-                fail : function(data,textStatus,jqXHR) {        
-                    $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen kodtext från servern");
-                }
-    });    
-    return json_data;
-};
-
- function instantiate_table() {
-
-    var data = get_json_data('{{kodverk_id}}')
-    var table = $('#kodtext_tabell').DataTable( {
-        "retrieve": true,
-        "ajax": data.responseJSON,
-        "columns": [
-            {
-                "className": 'details-control',
-                "orderable": false,
-                "data": '',
-                "defaultContent": 'Inga data'
-            },
-            { 'data' : "fields.kod" },
-            { 'data' : "fields.kodtext" },
-            { 'data' : "fields.annan_kodtext"},
-            { 'data' : "fields.definition" }
-        ],
-        "order": [[1, 'asc']]
-    } )
-    return data.responseJSON;
-};
-
  // Add event listener for opening and closing details
  $('#kodtext_tabell tbody').on('click', 'td.details-control', function () {
      var tr = $(this).closest('tr');
@@ -229,7 +191,30 @@ function get_json_data(term_id) {
      }
  } );
 
+ $( document ).ready(function() {
 
+
+    var table = $('#kodtext_tabell').DataTable({
+        "stateSave" : true,
+        "retrieve" : true
+    } );
+//     $.ajax({
+//         type: "GET",
+//         dataType: "json",
+//         url: '/kodtext_json/?q={{kodverk_id}}',
+//         success: function(data,textStatus,jqXHR) {
+//             console.log('JSON loaded successfully, statusCode =', textStatus);
+//             instantiate_table(data);
+//         },
+//         complete : function(data,textStatus,jqXHR) {
+//             console.log('JSON request complete, statusCode =', textStatus);
+            
+//         },
+//         fail : function(data,textStatus,jqXHR) {        
+//             $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen kodtext från servern");
+//         }
+//     });
+});
 
 </script>
 
