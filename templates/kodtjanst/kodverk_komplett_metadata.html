@@ -1,9 +1,11 @@
-{% extends 'kodverk_partial_result.html' %}
+{% extends "kodverk_partial_result.html" %}
+{% load static %}
 
 {% block mitten-span %}
 
 {% if kodverk_full %}
 
+            
             <table id="komplett_metadata_tabell" class="table table-bordered">
             <tbody>
                     <tr>
@@ -65,11 +67,11 @@
 
                 <tr>
                     <td><button class="btn btn-warning" style="font-family: frutiger; background-color: #f2a900;" id="opponera_button">Kommentera</button></td>
-                    <td><button class="btn btn-success" style="font-family: frutiger; background-color: #4a773c;" id="bekräfta_button">Verifiera användning</button><button type="button" style="float:right;font-family:frutiger; background-color:#006298;"  class="btn btn-info btn-lg" data-toggle="modal" data-target="#Comment">Hjälp</button></td>
+                    <td><button class="btn btn-success" style="font-family: frutiger; background-color: #4a773c;" id="bekräfta_button">Verifiera användning</button><button type="button" style="float:right;font-family:frutiger; background-color:#006298;"  class="btn btn-info" data-toggle="modal" data-target="#Comment">Hjälp</button></td>
                     
                 </tr>
             </tbody>
-        </table> 
+        </table>
 
         <div class="modal fade" id="Comment" role="dialog">
             <div class="modal-dialog">		  
@@ -104,11 +106,132 @@
               </div>			
             </div>
           </div>
-      
+
+        <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Kod</th>
+                    <th>Kodtext</th>
+                    <th>Annan kodtext</th>
+                    <th>Definition</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th>Kod</th>
+                    <th>Kodtext</th>
+                    <th>Annan kodtext</th>
+                    <th>Definition</th>
+                </tr>
+            </tfoot>
+        </table>
     
 {% else %}
         <p>Ingen definition hittades...</p>
 {% endif %}
 
 {% endblock mitten-span %}
+
+{% block extra_javascript %}
+{{ super }}
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" media="screen">
+
+<script>
+
+/* Formatting function for row details - modify as you need */
+
+function format (d) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        '<tr>'+
+            '<td>Kod:</td>'+
+            '<td>'+d.kod+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Kodtext:</td>'+
+            '<td>'+d.kodtext+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Annan kodtext:</td>'+
+            '<td>'+d.annan_kodtext+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Definition:</td>'+
+            '<td>'+d.definition+'</td>'+
+        '</tr>'+
+    '</table>';
+};
+
+function get_json_data(term_id) {
+    
+    var json_data = $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: '/kodtext_json/?q='+term_id,
+                success: function(data,textStatus,jqXHR) {
+                    console.log('JSON loaded successfully, statusCode =', textStatus);
+                },
+                complete : function(data,textStatus,jqXHR) {
+                    console.log('JSON request complete, statusCode =', textStatus);
+                    
+                },
+                fail : function(data,textStatus,jqXHR) {        
+                    $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen kodtext från servern");
+                }
+    });    
+    return json_data;
+};
+
+ function instantiate_table() {
+
+    var data = get_json_data('{{kodverk_id}}')
+    var table = $('#kodtext_tabell').DataTable( {
+        "retrieve": true,
+        "ajax": data.responseJSON,
+        "columns": [
+            {
+                "className": 'details-control',
+                "orderable": false,
+                "data": '',
+                "defaultContent": 'Inga data'
+            },
+            { 'data' : "fields.kod" },
+            { 'data' : "fields.kodtext" },
+            { 'data' : "fields.annan_kodtext"},
+            { 'data' : "fields.definition" }
+        ],
+        "order": [[1, 'asc']]
+    } )
+    return data.responseJSON;
+};
+
+ // Add event listener for opening and closing details
+ $('#kodtext_tabell tbody').on('click', 'td.details-control', function () {
+     var tr = $(this).closest('tr');
+     var row = table.row( tr );
+
+     if ( row.child.isShown() ) {
+         // This row is already open - close it
+         row.child.hide();
+         tr.removeClass('shown');
+     }
+     else {
+         // Open this row
+         row.child( format(row.data()) ).show();
+         tr.addClass('shown');
+     }
+ } );
+
+
+
+</script>
+
+{% endblock extra_javascript %}
 

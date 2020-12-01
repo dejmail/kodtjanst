@@ -86,7 +86,7 @@ document.body.addEventListener("click", function(e) {
 function getPage(link_url) {
 
 	console.log('entering ajax getPage function');
-	debugger;
+	
 	$.ajax({
 		type: "GET",
 		dataType: "html",

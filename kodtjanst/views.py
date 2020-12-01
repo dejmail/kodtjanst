@@ -2,15 +2,16 @@ import re
 import logging
 from kodtjanst.logging import setup_logging
 
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
+from django.core import serializers
 from django.urls import path 
 from django.db import connection, transaction
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils.html import format_html
-
+from django.core.serializers.json import DjangoJSONEncoder
 
 from .forms import UserLoginForm
 from .models import Kodverk, Kodtext, MappadTillKodtext
@@ -250,13 +251,18 @@ def kodverk_komplett_metadata(request):
 
         #status_färg_dict = {'begrepp' :färg_status_dict.get(return_list_dict[0].get('status'))}
             
-            template_context = {'kodverk_full': return_list_dict[0]}
-                                
+            template_context = {'kodverk_full': return_list_dict[0],
+                                'kodverk_id' : url_parameter}
                                 #'domän_full' : return_domän_list_dict,
                                 #'färg_status' : status_färg_dict}
             
             html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
-        return render(request, "kodverk_komplett_metadata.html", context=template_context)
+        
+            return render(request, "kodverk_komplett_metadata.html", context=template_context)
+        else:
+            kodverk = Kodverk.objects.none()
+            return render(request, "kodverk.html", {'kodverk': kodverk})
+
 
 def extract_columns_from_query_and_return_set(search_result, start, stop):
 
@@ -271,3 +277,15 @@ def extract_columns_from_query_and_return_set(search_result, start, stop):
     
     reduced_set = set([tuple(i) for i in reduced_list])
     return reduced_set
+
+def return_kodtext_as_json(request):
+
+    url_parameter = request.GET.get("q")
+    
+    if (request.is_ajax()) or (request.method == 'GET'):
+    
+        kodtext = Kodtext.objects.filter(kodverk_id=int(url_parameter))
+                
+        post_kodtext = serializers.serialize('json', kodtext)
+        
+        return HttpResponse(post_kodtext, content_type="application/json")

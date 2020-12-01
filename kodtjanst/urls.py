@@ -10,4 +10,5 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path("kodverk_komplett_metadata/", views.kodverk_komplett_metadata, name="kodverk_komplett_metadata"),
+    path("kodtext_json/", views.return_kodtext_as_json, name="kodtext_json"),
     ]
