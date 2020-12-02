@@ -5,6 +5,11 @@
 
 {% if kodverk_full %}
 
+ <!-- ___    __    __  __  ___    __    ___  ____  ___    ____  _____  ____    ____  _  _  ____  ____  _  _  _____  _  _  ____ 
+     / __)  /__\  (  )(  )/ __)  /__\  / __)( ___)/ __)  ( ___)(  _  )(  _ \  ( ___)( \/ )( ___)(  _ \( \/ )(  _  )( \( )( ___)
+     \__ \ /(__)\  )(__)( \__ \ /(__)\( (_-. )__) \__ \   )__)  )(_)(  )   /   )__)  \  /  )__)  )   / \  /  )(_)(  )  (  )__) 
+     (___/(__)(__)(______)(___/(__)(__)\___/(____)(___/  (__)  (_____)(_)\_)  (____)  \/  (____)(_)\_) (__) (_____)(_)\_)(____) -->
+
             <div>
             <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md">
             <tbody>
@@ -72,9 +77,37 @@
 
             </div>
 
-            <div class="row mt-10" id="mitten-span-row">
+            <!-- <div class="row mt-10" id="mitten-span-row"> -->
+            <div class="col-12">
+                <button class="col-12 btn-light-blue" onclick="showOptions()">tryck på korven</button></div>
+            
+            <row>
+                 <div  id="showopt" class="col-12 align-middle" style="display: none; text-align: center;">
+                    <br><br>
+                    
+                    <button class="btn btn-outline-warning btn-sm" id="opponera_button">
+                        <span style="font-size:smaller;">Kommentera</span>
+                    </button>
+                    
+                    
+                        <button class="btn btn-outline-success btn-sm" id="bekräfta_button">
+                            <span style="font-size:smaller;">Verifiera användning</span>
+                        </button>
+                    
+                    
+                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#Comment">
+                            <span style="font-size:smaller;">Ladda ner</span>
+                        </button>
+                    
+                    
+                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#Comment">
+                            <span style="font-size:smaller;">Hjälp</span>
+                        </button></row>
+                    <br>
+                   </div>         <br>             
+                                </div>
                 
-                    <button class="ham"></button>
+                    <!-- <button class="ham" style="width: 110%; position: float;" style="border: 2px; border: 2px solid black">-----S-----A-----S-----U-----A-----G-----</button>
                     <nav class="navbar">
                         <button class="btn btn-outline-warning btn-sm" id="opponera_button">
                             <span style="font-size:smaller;">Kommentera</span>
@@ -97,7 +130,7 @@
                     </div>
                     </nav>
                 
-            </div>
+            </div> -->
 
      
                   
@@ -276,8 +309,19 @@ menuLinks.forEach(
     menuLink.addEventListener("click", toggleHamburger) 
   }
 )
-
+function showOptions() {
+  var x = document.getElementById("showopt");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 </script>
 
 {% endblock extra_javascript %}
+
+
+
+
 
