@@ -5,60 +5,60 @@
 
 {% if kodverk_full %}
 
-            
-            <table id="komplett_metadata_tabell" class="table table-bordered">
+            <div>
+            <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md">
             <tbody>
                     <tr>
-                        <td>Kodverk</td>
-                        <td>{{kodverk_full.titel_på_kodverk}}</td>
+                        <td colspan="2">Kodverk</td>
+                        <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
                     </tr>
                     <tr>
-                        <td>Syfte</td>
-                        <td>{{kodverk_full.syfte}}</td>
+                        <td colspan="2">Syfte</td>
+                        <td colspan="6">{{kodverk_full.syfte}}</td>
                     </tr>
                     <tr>
-                        <td>Beskrivning av informationsbehov</td>
-                        <td>{{kodverk_full.beskrivning_av_informationsbehov}}</td>
+                        <td colspan="2">Beskrivning av informationsbehov</td>
+                        <td colspan="6">{{kodverk_full.beskrivning_av_informationsbehov}}</td>
                     </tr>
                     <tr>
-                        <td>Kategori</td>
-                        <td>{{kodverk_full.kategori}}</td>
+                        <td colspan="2">Kategori</td>
+                        <td colspan="6">{{kodverk_full.kategori}}</td>
                     </tr>
                     <tr>
-                        <td>Kodverk variant</td>
-                        <td>{{kodverk_full.koverk_variant}}</td>
+                        <td colspan="2">Kodverk variant</td>
+                        <td colspan="6">{{kodverk_full.koverk_variant}}</td>
                     </tr>
                     <tr>
-                        <td>Datum skapat</td>
-                        <td>{{kodverk_full.datum_skapat}}</td>
+                        <td colspan="2">Datum skapat</td>
+                        <td colspan="6">{{kodverk_full.datum_skapat}}</td>
                     </tr>
                     <tr>
-                        <td>Mappning för rapportering</td>
-                        <td>{{kodverk_full.mappning_för_rapportering}}</td>
+                        <td colspan="2">Mappning för rapportering</td>
+                        <td colspan="6">{{kodverk_full.mappning_för_rapportering}}</td>
                     </tr>
                     <tr>
-                        <td>Ägare till kodverk</td>
-                        <td>{{kodverk_full.ägare_till_kodverk}}</td>
+                        <td colspan="2">Ägare till kodverk</td>
+                        <td colspan="6">{{kodverk_full.ägare_till_kodverk}}</td>
                     </tr>
                     <tr>
-                        <td>Giltig från</td>
-                        <td>{{kodverk_full.giltig_från}}</td>
+                        <td colspan="2">Giltig från</td>
+                        <td colspan="6">{{kodverk_full.giltig_från}}</td>
                     </tr>
                     <tr>
-                        <td>Giltig tom</td>
-                        <td>{{kodverk_full.giltig_tom}}</td>
+                        <td colspan="2">Giltig tom</td>
+                        <td colspan="6">{{kodverk_full.giltig_tom}}</td>
                     </tr>
                     <tr>
-                        <td>Senaste ändring</td>
-                        <td>{{kodverk_full.senaste_ändring}}</td>
+                        <td colspan="2">Senaste ändring</td>
+                        <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
                     </tr>
                     <tr>
-                        <td>Ansvarig förvaltare</td>
-                        <td>{{kodverk_full.ansvarig_förvaltare}}</td>
+                        <td colspan="2">Ansvarig förvaltare</td>
+                        <td colspan="6">{{kodverk_full.ansvarig_förvaltare}}</td>
                     </tr>
                     <tr>
-                        <td>Status</td>
-                        <td>{{kodverk_full.status}}</td>
+                        <td colspan="2">Status</td>
+                        <td colspan="6">{{kodverk_full.status}}</td>
                     </tr>
                     <!-- <tr>
                         <td>Verifierad användning</td>
@@ -67,14 +67,40 @@
                         {% endfor %}
                     </td>
                     </tr> -->
+                </tbody>
+                </table>
 
-                <tr>
-                    <td><button class="btn btn-warning" style="font-family: frutiger; background-color: #f2a900;" id="opponera_button">Kommentera</button></td>
-                    <td><button class="btn btn-success" style="font-family: frutiger; background-color: #4a773c;" id="bekräfta_button">Verifiera användning</button><button type="button" style="float:right;font-family:frutiger; background-color:#006298;"  class="btn btn-info" data-toggle="modal" data-target="#Comment">Hjälp</button></td>
-                    
-                </tr>
-            </tbody>
-        </table>
+            </div>
+
+            <div class="row mt-10" id="mitten-span-row">
+                
+                    <button class="ham"></button>
+                    <nav class="navbar">
+                        <button class="btn btn-outline-warning btn-sm" id="opponera_button">
+                            <span style="font-size:smaller;">Kommentera</span>
+                        </button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-outline-success btn-sm" id="bekräfta_button">
+                            <span style="font-size:smaller;">Verifiera användning</span>
+                        </button>
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#Comment">
+                            <span style="font-size:smaller;">Ladda ner</span>
+                        </button>
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#Comment">
+                            <span style="font-size:smaller;">Hjälp</span>
+                        </button>
+                    </div>
+                    </nav>
+                
+            </div>
+
+     
+                  
 
         <div class="modal fade" id="Comment" role="dialog">
             <div class="modal-dialog">		  
@@ -110,6 +136,9 @@
             </div>
           </div>
 
+          
+
+        <div>
         <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
             <thead>
                 <tr>
@@ -137,7 +166,7 @@
             
             </tfoot>
         </table>
-    
+    </div>
 {% else %}
         <p>Ingen definition hittades...</p>
 {% endif %}
@@ -146,8 +175,6 @@
 
 {% block extra_javascript %}
 {{ super }}
-
-<!-- <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script> -->
 
 <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
 
@@ -198,17 +225,17 @@ function format (d) {
  } );
 
  $( document ).ready(function() {
-    // setTimeout(function() {
-         
+             
     var table = $('#kodtext_tabell').DataTable({
         "stateSave" : true,
         "retrieve" : true,
         "initComplete": function(){ 
         $("#kodtext_tabell").show(); 
-    }
-    } );
-
-// }, 10);
+    },
+        "language": {
+            "url": "/table_language_translations/"
+    } 
+    });
 });
     
 //     $.ajax({
@@ -228,6 +255,27 @@ function format (d) {
 //         }
 //     });
 // 
+
+var navbar = document.querySelector(".navbar")
+var ham = document.querySelector(".ham")
+
+// toggles hamburger menu in and out when clicking on the hamburger
+function toggleHamburger(){
+  navbar.classList.toggle("showNav")
+  ham.classList.toggle("showClose")
+}
+
+ham.addEventListener("click", toggleHamburger)
+
+// toggle when clicking on links
+
+// METHOD 1
+var menuLinks = document.querySelectorAll(".menuLink")
+menuLinks.forEach( 
+  function(menuLink) { 
+    menuLink.addEventListener("click", toggleHamburger) 
+  }
+)
 
 </script>
 
