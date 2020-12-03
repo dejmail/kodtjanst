@@ -1,14 +1,15 @@
 {% extends "kodverk_partial_result.html" %}
 {% load static %}
-
+{% load crispy_forms_filters %}
 {% block mitten-span %}
-
 {% if kodverk_full %}
+
 
  <!-- ___    __    __  __  ___    __    ___  ____  ___    ____  _____  ____    ____  _  _  ____  ____  _  _  _____  _  _  ____ 
      / __)  /__\  (  )(  )/ __)  /__\  / __)( ___)/ __)  ( ___)(  _  )(  _ \  ( ___)( \/ )( ___)(  _ \( \/ )(  _  )( \( )( ___)
      \__ \ /(__)\  )(__)( \__ \ /(__)\( (_-. )__) \__ \   )__)  )(_)(  )   /   )__)  \  /  )__)  )   / \  /  )(_)(  )  (  )__) 
      (___/(__)(__)(______)(___/(__)(__)\___/(____)(___/  (__)  (_____)(_)\_)  (____)  \/  (____)(_)\_) (__) (_____)(_)\_)(____) -->
+
 
             <div>
             <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md">
@@ -79,29 +80,33 @@
 
             <!-- <div class="row mt-10" id="mitten-span-row"> -->
             <div class="col-12">
-                <button class="col-12 btn-light-blue" onclick="showOptions()">tryck på korven</button></div>
+                <button class="col-12 btn-light-blue" onclick="showOptions()">Tryck här för ytterligare funktioner.</button></div>
             
             <row>
                  <div  id="showopt" class="col-12 align-middle" style="display: none; text-align: center;">
                     <br><br>
                     
-                    <button class="btn btn-outline-warning btn-sm" id="opponera_button">
+                    <button class="btn btn-outline-warning btn-sm" id="opponera_button" data-toggle="modal" data-target="#Comment">
                         <span style="font-size:smaller;">Kommentera</span>
                     </button>
                     
                     
-                        <button class="btn btn-outline-success btn-sm" id="bekräfta_button">
+                        <button class="btn btn-outline-success btn-sm" id="bekräfta_button" data-toggle="modal" data-target="#verify">
                             <span style="font-size:smaller;">Verifiera användning</span>
                         </button>
                     
                     
-                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#Comment">
+                        <button type="button" class="btn btn-outline-info btn-sm">
                             <span style="font-size:smaller;">Ladda ner</span>
                         </button>
                     
                     
-                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#Comment">
+                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
                             <span style="font-size:smaller;">Hjälp</span>
+                            <form id="opponera_term_form" action="{% url 'verify_comment' %}", method='POST'>{% csrf_token %}
+                                {{ opponera|crispy }}
+                            
+                            <input type="submit" value="Skicka" id="opponera_button" class="btn btn-light-blue" style="color: white;font-family:frutiger; background-color:#006298;">
                         </button></row>
                     <br>
                    </div>         <br>             
@@ -115,7 +120,7 @@
                     </div>
                     <div class="col-2">
                         <button class="btn btn-outline-success btn-sm" id="bekräfta_button">
-                            <span style="font-size:smaller;">Verifiera användning</span>
+                            <span style="font-size:smaller;">Verifiera användning</span>    
                         </button>
                     </div>
                     <div class="col-2">
@@ -135,7 +140,7 @@
      
                   
 
-        <div class="modal fade" id="Comment" role="dialog">
+        <div class="modal fade" id="help" role="dialog">
             <div class="modal-dialog">		  
               <!-- Modal content-->
               <div class="modal-content">
@@ -169,6 +174,53 @@
             </div>
           </div>
 
+        
+        <!--           
+            Kommentera Kodverk modal
+        -->
+
+          <div class="modal fade" id="Comment" role="dialog">
+            <div class="modal-dialog">		  
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">				
+                <h4 class="modal-title" style="font-family: frutiger;">Kommentera kodverket</h4>
+                </div>
+                <div class="modal-body" style="background-color: whitesmoke;">
+                    <div id="populate_form_comment"></div>
+                  <p style="font-family: Calibri;">
+                        
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                </div>
+              </div>			
+            </div>
+
+        <!--           
+            Verify Kodverk modal
+        -->
+
+          <div class="modal fade" id="verify" role="dialog">
+            <div class="modal-dialog">		  
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">				
+                  <h4 class="modal-title" style="font-family: frutiger;">Verifiera andvändning av kodverket</h4>
+                </div>
+                {% load crispy_forms_filters %}
+                <div class="modal-body">
+                <div id="populate_form_verify"></div>
+                  <p style="font-family: Calibri;">
+                        form for verify kodverk
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                </div>
+              </div>			
+            </div>
+          </div>
           
 
         <div>
@@ -289,26 +341,6 @@ function format (d) {
 //     });
 // 
 
-var navbar = document.querySelector(".navbar")
-var ham = document.querySelector(".ham")
-
-// toggles hamburger menu in and out when clicking on the hamburger
-function toggleHamburger(){
-  navbar.classList.toggle("showNav")
-  ham.classList.toggle("showClose")
-}
-
-ham.addEventListener("click", toggleHamburger)
-
-// toggle when clicking on links
-
-// METHOD 1
-var menuLinks = document.querySelectorAll(".menuLink")
-menuLinks.forEach( 
-  function(menuLink) { 
-    menuLink.addEventListener("click", toggleHamburger) 
-  }
-)
 function showOptions() {
   var x = document.getElementById("showopt");
   if (x.style.display === "none") {
@@ -317,6 +349,92 @@ function showOptions() {
     x.style.display = "none";
   }
 }
+	
+	$("#opponera_term_form").submit(function(event){
+		event.preventDefault(); //prevent default action 
+		var post_url = $(this).attr("action"); //get form action url
+		var request_method = $(this).attr("method"); //get form GET/POST method
+		var form_data = $(this).serialize(); //Encode form elements for submission
+		
+		$.ajax({
+			url : post_url,
+			type: request_method,
+			data : form_data
+		}).done(function(response){ 
+			$("#mitten-span-middle-column").html(response);
+			setTimeout(function(){
+				$("#mitten-span-middle-column").html('<div id="mitten-span-middle-column"></div>')}, 2500);
+		});
+    });
+    
+ 
+    $("#beställ_form").submit(function(event){
+    event.preventDefault();
+    var post_url = $(this).attr("action");
+    var request_method = $(this).attr("method");
+    var formdata = new FormData($(this)[0]);
+    
+    $.ajax({
+        beforeSend: function (request)
+            {
+                request.setRequestHeader("X-CSRFTOKEN", "{{ csrf_token }}");
+            },
+        url : post_url,
+        type: request_method,
+        dataType: 'html',
+        contentType: false,
+        cache: false,
+        processData:false,
+        data : formdata,
+        success : function(response){
+            $("#mitten-span-middle-column").html(response);
+            history.pushState(post_url, '', post_url)
+            setTimeout(function(){
+            $("#mitten-span-middle-column").html('<div id="mitten-span-middle-column"></div>')}, 2500);
+            document.getElementById('user-input').value = '';
+            history.replaceState('', 'VGR Informatik - OLLI Begreppstjänst', '/');
+	    }
+    });
+});
+
+    
+
+function get_form_function(url, div_to_replace, type_method){
+        
+    $.ajax({
+        url : url,
+        type : type_method,
+        success: function(response){
+            $(div_to_replace).html(response);
+        },
+        error: function() {
+    $(div_to_replace).html("There has been an error loading this form");
+    },
+
+    });
+
+};
+
+// Urls.py
+// path("kodverk_verify_comment/", views.kodverk_verify_comment, name="verify_comment"),
+
+$(document).ready(function(){
+
+$("#opponera_button").click(function(){
+    
+    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_full.id}}&value=comment", 
+                      div_to_replace="#populate_form_comment",
+                      type_method="GET");
+                    });
+                      
+$("#bekräfta_button").click(function(){    
+
+    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_full.id}}&value=verify",
+                      div_to_replace="#populate_form_verify",
+                      type_method="GET"); 
+                    });
+});
+
 </script>
 
 {% endblock extra_javascript %}

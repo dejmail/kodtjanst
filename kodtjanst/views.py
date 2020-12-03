@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .forms import UserLoginForm
+from .forms import VerifyKodverk,KommenteraKodverk
 from .models import Kodverk, Kodtext, MappadTillKodtext
 
 from pdb import set_trace
@@ -302,3 +302,63 @@ def return_kodtext_as_json(request):
         post_kodtext = serializers.serialize('json', kodtext)
    
         return HttpResponse(post_kodtext)
+
+
+def kodverk_verify_comment(request):
+# kommentera begrepp
+
+
+    form_id= request.GET.get("value")
+    url_parameter = request.GET.get("q")
+    
+    if request.method == 'GET':
+        requested_kodverk = Kodverk(id=url_parameter)
+        if form_id == "comment":
+            
+            form = KommenteraKodverk()
+            return render(request,'commentForm.html', {'kommentera': form})
+        elif form_id =="verifiera":
+            form = VerifyKodverk(initial={'kodverk' : requested_kodverk})
+            return render(request,'kodverk', {'verify': form})
+
+    elif request.method == 'POST':
+        form = OpponeraTermForm(request.POST)
+        if form.is_valid():
+            
+            opponera_term = OpponeraBegreppDefinition()
+            opponera_term.begrepp_kontext = form.cleaned_data.get('resonemang')
+            #opponera_term.datum = datetime.now().strftime("%Y-%m-%d %H:%M")
+            opponera_term.epost = form.cleaned_data.get('epost')
+            opponera_term.namn = form.cleaned_data.get('namn')
+            opponera_term.status = models.DEFAULT_STATUS
+            opponera_term.telefon = form.cleaned_data.get('telefon')
+            # entries with doublets cause a problem, so we take the first one
+            opponera_term.begrepp = Begrepp.objects.filter(term=form.cleaned_data.get('term')).first()
+            opponera_term.save()
+
+            return HttpResponse('''<div class="alert alert-success">
+                                   Tack för dina synpunkter.
+                                   </div>''')
+    
+
+    if request.method == 'POST':
+        form = BekräftaTermForm(request.POST)
+        if form.is_valid():
+            kopplad_domän = Doman()
+            kopplad_domän.begrepp = Begrepp.objects.filter(term=form.cleaned_data.get('term')).first()
+            kopplad_domän.domän_namn = form.cleaned_data.get('workstream')
+            if kopplad_domän.domän_namn == 'Inte relevant':
+                kopplad_domän.domän_namn = form.cleaned_data.get('kontext')
+                kopplad_domän.domän_kontext = '-'
+            else:
+                kopplad_domän.domän_namn = form.cleaned_data.get('kontext')
+
+            # We need to clean out the "Inte definierad" once the domän has been given a real one
+            #SomeModel.objects.filter(id=id).delete()
+ 
+            kopplad_domän.save()
+            return HttpResponse('''<div class="alert alert-success">
+                                   Tack för verifiering av domänen.
+                                   </div>''')
+    else:
+        return render(request, 'bekrafta_term.html', {'bekräfta': form})
