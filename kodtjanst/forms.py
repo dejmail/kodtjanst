@@ -43,3 +43,19 @@ class ExternaKodtextForm(forms.ModelForm):
     #         return KodtextIdandTextField(queryset=Kodtext.objects.all())
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
         
+
+
+class KommenteraKodverk(forms.Form):
+
+    namn = forms.CharField()
+    epost = forms.EmailField()
+    telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
+    kommentar = forms.CharField(widget=forms.Textarea, max_length=2000, label='Kommentar')
+    kodverk = forms.CharField(widget=forms.HiddenInput())  
+
+class VerifyKodverk(forms.Form):
+
+    kodverk = forms.CharField(widget=forms.HiddenInput())  
+    epost = forms.EmailField()
+    telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
+    kontext = forms.CharField(label='Specificera var begreppet används')

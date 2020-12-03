@@ -13,4 +13,5 @@ urlpatterns = [
     path("kodtext_json/", views.return_kodtext_as_json, name="kodtext_json"),
     path("table_language_translations/", views.return_translation_text, name="translation_text"),
     path("kodverk_export_file/", views.return_file_of_kodverk_and_kodtext, name="export_kodverk"),
+    path("kodverk_verify_comment/", views.kodverk_verify_comment, name="verify_comment"),
     ]
