@@ -14,8 +14,12 @@ from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
 
 from .forms import UserLoginForm
-from .models import Kodverk, Kodtext, MappadTillKodtext
+from .models import Kodverk, Kodtext, ExternaKodtext
 
+from io import StringIO
+import xlsxwriter
+
+import json
 from pdb import set_trace
 
 from django.contrib.auth import (
@@ -290,7 +294,6 @@ def extract_columns_from_query_and_return_set(search_result, start, stop):
     reduced_set = set([tuple(i) for i in reduced_list])
     return reduced_set
 
-import json
 def return_kodtext_as_json(request):
 
     url_parameter = request.GET.get("q")
@@ -302,3 +305,99 @@ def return_kodtext_as_json(request):
         post_kodtext = serializers.serialize('json', kodtext)
    
         return HttpResponse(post_kodtext)
+
+def return_translation_text(request):
+
+    translation_string =  {"sEmptyTable": "Inga data",
+                          "sInfoThousands": ".",
+                          "sInfo": "Visar _START_ till _END_ av _TOTAL_ resultat",
+                          "sLengthMenu": "_MENU_ Antal rader",
+                            "sInfoEmpty": "0 Visar 0 av 0 resultat",
+                          "sLoadingRecords": "Kodtext laddar...",
+                          "sProcessing": "Arbetar...",
+                          "sSearch": "Sök",
+                          "sZeroRecords": "Inga resultat",
+                          "oPaginate": {
+                            "sFirst": "Första",
+                            "sPrevious": "Förre",
+                            "sNext": "Nästa",
+                            "sLast": "Sista"}
+                        }
+
+    return JsonResponse(translation_string)
+
+def return_file_of_kodverk_and_kodtext(request):
+
+    url_parameter = request.GET.get('q')
+
+    if (request.is_ajax()) or (request.method == 'GET'):
+
+        output_memory_file = StringIO.StringIO()
+        workbook = xlsxwriter.workbook(output_memory_file)
+        bold = workbook.add_format({'bold': True})
+
+        kodverk_worksheet = workbook.add_worksheet()
+        kodverk_worksheet.set_vba_name('Kodverk')
+
+        kodtext_worksheet = workbook.add_worksheet()
+        kodverk_worksheet.set_vba_name('Kodtext')
+
+        kodverk_columns = ['titel_på_kodverk',
+                           'syfte',
+                           'beskrivning_av_informationsbehov',
+                           'status',
+                           'identifier',
+                           'ägare_till_kodverk',
+                           'version',
+                           'hämtnings_källa',
+                           'version_av_källa',
+                           'kategori',
+                           'instruktion_för_kodverket',
+                           'kodverk_variant',
+                           'uppdateringsintervall',
+                           'mappning_för_rapportering',
+                           'ansvarig',
+                           'ansvarig_förvaltare',
+                           'extra_data',            
+                           'användning_av_kodverk',
+                           'giltig_från',
+                           'giltig_tom',
+                           'datum_skapat',
+                           'senaste_ändring'
+                           ]
+
+        kodtext_columns = ['kod',
+                           'kodtext',
+                           'annan_kodtext',
+                           'definition']
+        
+        row_num = 0
+        for col_num in range(len(kodverk_columns)):
+            kodverk_worksheet.write(row_num, col_num, kodverk_columns[col_num], bold)
+
+
+
+        kodverk = Kodverk.objects.filter(id=url_parameter).values_list(kodverk_columns)
+        
+        for attributes in kodverk:
+            row_num += 1
+            for col_num in range(len(attributes)):
+                kodverk_worksheet.write(row_num, col_num, attributes[col_num])
+
+        
+        
+
+        Kodtext.objects.filter(kodverk_id=url_parameter)
+
+
+        # create a response
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+
+        # tell the browser what the file is named
+        response['Content-Disposition'] = 'attachment;filename="some_file_name.xlsx"'
+
+        # put the spreadsheet data into the response
+        response.write(output_memory_file.getvalue())
+
+        # return the response
+        return response
