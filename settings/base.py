@@ -78,6 +78,8 @@ TEMPLATES = [
     },
 ]
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 # DATA_WIZARD = {
 #     'BACKEND': 'data_wizard.backends.threading',
 #     'LOADER': ['data_wizard.loaders.FileLoader','kodtjanst.loaders.CustomJsonUrlLoader'],

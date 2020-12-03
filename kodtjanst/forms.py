@@ -58,4 +58,4 @@ class VerifyKodverk(forms.Form):
     kodverk = forms.CharField(widget=forms.HiddenInput())  
     epost = forms.EmailField()
     telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
-    kontext = forms.CharField(label='Specificera var begreppet används')
+    kontext = forms.CharField(label='Specificera var kodverket används')

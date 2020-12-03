@@ -1,0 +1,37 @@
+{% load crispy_forms_tags %}
+
+
+<div id="opponera_bekräfta" class="md-5">
+	<p class="text-justify font-weight-normal" style="line-height: 160%; font-size: 14px;">
+        Bekräfta att kodverk/kodtext används inom en kontext som du arbetar med. 
+        Fyll i e-postadress och ange den kontexten. Informationen kommer 
+		bearbetas av Kodverks Gänget.
+	</p>
+
+    <form id="bekräfta_term_form" action="{% url 'verify_comment' %}", method='POST' class="bootstrap4">{% csrf_token %}
+        {{ verify|crispy }}
+    
+    	<input type="submit" value="Skicka" id="bekräfta_button" class="btn btn-light-blue" style="color: white;font-family:frutiger; background-color:#006298;">
+    </form>
+</div>
+
+{% block extra_javascript %}
+<script>	
+	$("#bekräfta_term_form").submit(function(event){
+		event.preventDefault(); //prevent default action 
+		var post_url = $(this).attr("action"); //get form action url
+		var request_method = $(this).attr("method"); //get form GET/POST method
+		var form_data = $(this).serialize(); //Encode form elements for submission
+		
+		$.ajax({
+			url : post_url,
+			type: request_method,
+			data : form_data
+		}).done(function(response){ 
+			$("#populate_form_comment").html(response);
+			setTimeout(function(){
+				$("#populate_form_comment").html('<div id="populate_form_comment"></div>')}, 2500);
+		});
+	});
+</script>
+{% endblock extra_javascript %}

@@ -413,12 +413,11 @@ def kodverk_verify_comment(request):
     if request.method == 'GET':
         requested_kodverk = Kodverk(id=url_parameter)
         if form_id == "comment":
-            
             form = KommenteraKodverk()
             return render(request,'commentForm.html', {'kommentera': form})
-        elif form_id =="verifiera":
-            form = VerifyKodverk(initial={'kodverk' : requested_kodverk})
-            return render(request,'kodverk', {'verify': form})
+        elif form_id =="verify":
+            form = VerifyKodverk()
+            return render(request,'verifyForm.html', {'verify': form})
 
     elif request.method == 'POST':
         form = OpponeraTermForm(request.POST)
@@ -460,4 +459,4 @@ def kodverk_verify_comment(request):
                                    Tack för verifiering av domänen.
                                    </div>''')
     else:
-        return render(request, 'bekrafta_term.html', {'bekräfta': form})
+        return render(request, 'kodverk_komplett_metadata.html', {})
