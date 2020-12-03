@@ -10,7 +10,7 @@ from django import forms
 from django.forms import ModelChoiceField
 
 from .models import *
-from .forms import MappadTillKodtextForm
+from .forms import ExternaKodtextForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
 
 from pdb import set_trace
@@ -163,9 +163,9 @@ class KodtextIdandTextField(forms.ModelChoiceField):
      def label_from_instance(self, obj):
          return f"{obj.id} - {obj.kodtext}"
 
-class MappadtillKodtextManager(admin.ModelAdmin):
+class ExternaKodtextManager(admin.ModelAdmin):
 
-    form = MappadTillKodtextForm
+    form = ExternaKodtextForm
 
     list_display = ('get_kodtext',
                     'mappad_id',
@@ -188,17 +188,25 @@ class MappadtillKodtextManager(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super(MappadtillKodtextManager, self).get_form(request, obj, **kwargs)
+        form = super(ExternaKodtextManager, self).get_form(request, obj, **kwargs)
         if obj is None:
-            pass
+            set_trace()
+            form.base_fields['kodverk'].initial = Kodverk.objects.all()
+            form.base_fields['kodtext'].initial = Kodtext.objects.none()
         else:
-            form.base_fields['kodverk'].initial =  Kodverk.objects.filter(titel_på_kodverk=obj.kodtext.titel_på_kodverk).values()[0].get('titel_på_kodverk')
+            form.base_fields['kodverk'].initial =  Kodverk.objects.filter(titel_på_kodverk=obj.kodtext.kodverk.titel_på_kodverk).values()[0].get('titel_på_kodverk')
         return form
     
     def save(self, commit=True):
         extra_field = self.cleaned_data.get('kodverk', None)
-        # ...do something with extra_field here...
+        set_trace()
         return super(form, self).save(commit=commit)
+
+    def save_model(self, request, obj, form, change):
+        
+        #remove the extra field from the form
+        del form.fields['kodverk']
+        super(ExternaKodtextManager, self).save_model(request, obj, form, change)
     
     def kodverk_grupp(self, obj):
         
@@ -207,7 +215,7 @@ class MappadtillKodtextManager(admin.ModelAdmin):
             "<a href={}>{}</a>".format(
                 reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
                 args=(obj.kodtext.id,)),
-                obj.kodtext.titel_på_kodverk)
+                obj.kodtext.kodverk.titel_på_kodverk)
            
         ]).replace(' ' ,'_')
             
@@ -215,6 +223,7 @@ class MappadtillKodtextManager(admin.ModelAdmin):
 
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
-admin.site.register(MappadTillKodtext, MappadtillKodtextManager)
+admin.site.register(ExternaKodtext, ExternaKodtextManager)
+#admin.site.register(ExternaKodverk)
 admin.site.register(Nyckelord)
 admin.site.register(Ämne)

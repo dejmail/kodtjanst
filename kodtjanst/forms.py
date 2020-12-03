@@ -1,11 +1,12 @@
 from django import forms
+from .models import Kodtext
 from django.contrib.auth import (
     authenticate,
     get_user_model
 
 )
 
-from .models import MappadTillKodtext
+from .models import ExternaKodtext
 
 User = get_user_model()
 
@@ -28,10 +29,17 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
-class MappadTillKodtextForm(forms.ModelForm):
+
+class ExternaKodtextForm(forms.ModelForm):
 
     kodverk = forms.CharField(disabled=True)
 
     class Meta:
-        model = MappadTillKodtext
+        model = ExternaKodtext
         fields = '__all__'
+
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == 'id':
+    #         return KodtextIdandTextField(queryset=Kodtext.objects.all())
+    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
+        

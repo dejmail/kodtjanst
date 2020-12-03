@@ -33,12 +33,12 @@ class Kodtext(models.Model):
     def __str__(self):
         return str(self.id)
 
-class MappadTillKodtext(models.Model):
+class ExternaKodtext(models.Model):
 
     class Meta:
-        verbose_name_plural = "Mappad Kodtexter"
+        verbose_name_plural = "Externa Kodtext"
 
-    kodtext = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
+    kodtext = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
     mappad_id = models.CharField(max_length=255)
     mappad_text = models.CharField(max_length=255)
     resolving_url = models.URLField()
