@@ -17,7 +17,7 @@ from .models import Kodverk, Kodtext, ExternaKodtext
 from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
 
-from io import StringIO
+from io import BytesIO
 import xlsxwriter
 
 import json
@@ -276,9 +276,9 @@ def kodverk_komplett_metadata(request):
             html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
         
             return render(request, "kodverk_komplett_metadata.html", context=template_context)
-        else:
-            kodverk = Kodverk.objects.none()
-            return render(request, "kodverk.html", {'kodverk': kodverk})
+    else:
+        kodverk = Kodverk.objects.none()
+    return render(request, "kodverk.html", {'kodverk': kodverk})
 
 
 def extract_columns_from_query_and_return_set(search_result, start, stop):
@@ -327,14 +327,18 @@ def return_translation_text(request):
 
     return JsonResponse(translation_string)
 
-def return_file_of_kodverk_and_kodtext(request):
+def return_file_of_kodverk_and_kodtext(request, kodverk_id):
 
-    url_parameter = request.GET.get('q')
-
+    if kodverk_id is None:
+        return HttpResponse('''<div class="alert alert-success">
+                                   Sök parameter saknas, problem med inskickning.
+                                   </div>''')
+    
     if (request.is_ajax()) or (request.method == 'GET'):
 
-        output_memory_file = StringIO.StringIO()
-        workbook = xlsxwriter.workbook(output_memory_file)
+        
+        output_memory_file = BytesIO()
+        workbook = xlsxwriter.Workbook(output_memory_file, {'in_memory' : True})
         bold = workbook.add_format({'bold': True})
 
         kodverk_worksheet = workbook.add_worksheet()
@@ -364,8 +368,7 @@ def return_file_of_kodverk_and_kodtext(request):
                            'giltig_från',
                            'giltig_tom',
                            'datum_skapat',
-                           'senaste_ändring'
-                           ]
+                           'senaste_ändring']
 
         kodtext_columns = ['kod',
                            'kodtext',
@@ -376,31 +379,67 @@ def return_file_of_kodverk_and_kodtext(request):
         for col_num in range(len(kodverk_columns)):
             kodverk_worksheet.write(row_num, col_num, kodverk_columns[col_num], bold)
 
+        for col_num in range(len(kodtext_columns)):
+            kodtext_worksheet.write(row_num, col_num, kodtext_columns[col_num], bold)
 
-
-        kodverk = Kodverk.objects.filter(id=url_parameter).values_list(kodverk_columns)
+        kodverk = Kodverk.objects.filter(id=kodverk_id).values('titel_på_kodverk',
+                                                                'syfte',
+                                                                'beskrivning_av_informationsbehov',
+                                                                'status',
+                                                                'identifier',
+                                                                'ägare_till_kodverk',
+                                                                'version',
+                                                                'hämtnings_källa',
+                                                                'version_av_källa',
+                                                                'kategori',
+                                                                'instruktion_för_kodverket',
+                                                                'kodverk_variant',
+                                                                'uppdateringsintervall',
+                                                                'mappning_för_rapportering',
+                                                                'ansvarig',
+                                                                'ansvarig_förvaltare',
+                                                                'extra_data',            
+                                                                'användning_av_kodverk',
+                                                                'giltig_från',
+                                                                'giltig_tom',
+                                                                'datum_skapat',
+                                                                'senaste_ändring')
+        date_columns = ['giltig_från',
+                       'giltig_tom',
+                       'datum_skapat',
+                       'senaste_ändring']
         
-        for attributes in kodverk:
-            row_num += 1
-            for col_num in range(len(attributes)):
-                kodverk_worksheet.write(row_num, col_num, attributes[col_num])
+        date_format = workbook.add_format({'num_format': 'YYYY-MM-DD'})
 
+        row_num += 1
+        for col_num, (kodverk_metadata, metadata_value) in enumerate(kodverk[0].items()):
+            if type(metadata_value) == dict :
+                metadata_value = str(metadata_value)
+            if kodverk_metadata in date_columns:
+                kodverk_worksheet.write(row_num, col_num, metadata_value, date_format)    
+            else:
+                kodverk_worksheet.write(row_num, col_num, metadata_value)
+
+        kodtexter = Kodtext.objects.filter(kodverk_id=kodverk_id).values('kod','kodtext','annan_kodtext','definition')
         
+        row_num = 1
+        for kodtext in kodtexter:
+            for col_num, (kodtext_attr, kodtext_value) in enumerate(kodtext.items()):
+                if type(kodtext_value) == dict:
+                    kodtext_value = str(kodtext_value)
+                kodtext_worksheet.write(row_num, col_num, kodtext_value)
+            row_num += 1      
         
+        filename = kodverk.values()[0].get('titel_på_kodverk') + '.xlsx'
+        filename = filename.replace(' ','_')
+        
+        workbook.close()
+        output_memory_file.seek(0)
 
-        Kodtext.objects.filter(kodverk_id=url_parameter)
+        response = HttpResponse(output_memory_file.getvalue())
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
-
-        # create a response
-        response = HttpResponse(content_type='application/vnd.ms-excel')
-
-        # tell the browser what the file is named
-        response['Content-Disposition'] = 'attachment;filename="some_file_name.xlsx"'
-
-        # put the spreadsheet data into the response
-        response.write(output_memory_file.getvalue())
-
-        # return the response
         return response
 
 def kodverk_verify_comment(request):

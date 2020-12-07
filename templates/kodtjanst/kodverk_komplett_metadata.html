@@ -4,7 +4,6 @@
 {% block mitten-span %}
 {% if kodverk_full %}
 
-
  <!-- ___    __    __  __  ___    __    ___  ____  ___    ____  _____  ____    ____  _  _  ____  ____  _  _  _____  _  _  ____ 
      / __)  /__\  (  )(  )/ __)  /__\  / __)( ___)/ __)  ( ___)(  _  )(  _ \  ( ___)( \/ )( ___)(  _ \( \/ )(  _  )( \( )( ___)
      \__ \ /(__)\  )(__)( \__ \ /(__)\( (_-. )__) \__ \   )__)  )(_)(  )   /   )__)  \  /  )__)  )   / \  /  )(_)(  )  (  )__) 
@@ -96,7 +95,7 @@
                         </button>
                     
                     
-                        <button type="button" class="btn btn-outline-info btn-sm">
+                    <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
                             <span style="font-size:smaller;">Ladda ner</span>
                         </button>
                     
@@ -411,24 +410,25 @@ $(document).ready(function(){
 
 $("#opponera_button").click(function(){
     
-    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_full.id}}&value=comment", 
+    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_id}}&value=comment", 
                       div_to_replace="#populate_form_comment",
                       type_method="GET");
                     });
                       
 $("#bekräfta_button").click(function(){    
 
-    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_full.id}}&value=verify",
+    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_id}}&value=verify",
                       div_to_replace="#populate_form_verify",
                       type_method="GET"); 
                     });
 });
 
+
+
+
 </script>
 
 {% endblock extra_javascript %}
-
-
 
 
 
