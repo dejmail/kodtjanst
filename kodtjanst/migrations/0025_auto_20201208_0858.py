@@ -11,18 +11,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='ValidatedBy',
-            fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('domäns_kommentar', models.TextField(blank=True, null=True)),
-                ('domän_namn', models.CharField(max_length=255)),
-                ('kodverk', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='kodtjanst.kodverk')),
-            ],
-            options={
-                'verbose_name_plural': 'Verifierad av',
-            },
-        ),
+
         migrations.RenameModel(
             old_name='MappadTillKodtext',
             new_name='ExternaKodtext',

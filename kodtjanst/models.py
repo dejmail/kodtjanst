@@ -154,8 +154,14 @@ class ValidatedBy(models.Model):
 
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
-    domäns_kommentar = models.TextField(null=True, blank=True)
-    domän_namn = models.CharField(max_length=255)       
+    domän_kontext = models.TextField(null=True, blank=True)
+    domän_stream = models.CharField(max_length=255, null=True)
+    domän_epost = models.EmailField(null=True)
+    domän_telefon = models.CharField(max_length=255, null=True)       
 
     def __str__(self):
-        return self.domän_namn
+        if self.domän_namn is None:
+            return '' 
+        else:
+            return self.domän_namn
+        

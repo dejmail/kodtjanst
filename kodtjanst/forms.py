@@ -56,6 +56,7 @@ class KommenteraKodverk(forms.Form):
 class VerifyKodverk(forms.Form):
 
     kodverk = forms.CharField(widget=forms.HiddenInput())  
+    namn = forms.CharField(label='Vem är du? ex. soki/ws/organisation', required=True)
     epost = forms.EmailField()
     telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
-    kontext = forms.CharField(label='Specificera var kodverket används')
+    kontext = forms.CharField(label='Specificera hur ni använder det')
