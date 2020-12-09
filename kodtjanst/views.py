@@ -152,21 +152,15 @@ def highlight_search_term_i_definition(search_term, result_dict_list):
             else:
                 match = re.match(search_term, value, flags=re.IGNORECASE)
                 if match:
-                    #logger.debug(f'found string with search value - {value}')
-                    #set_trace()
+                    
                     return_string = ''.join([value[0:match.start()],'<mark>', value[match.start():match.end()], '</mark>', value[match.end():]])
-                    #print(return_string)
-                    #result_dict_list[idx][key] = return_string
                     result_dict_list[idx].update({key : return_string})
-    #print(result_dict_list)
     return result_dict_list
 
 
 def kodverk_sok(request):
     url_parameter = request.GET.get("q")
-    
-    #print('entering the kodverk_sök function')
-    
+        
     if request.is_ajax():
         
         #data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
