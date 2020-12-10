@@ -85,12 +85,12 @@
                  <div  id="showopt" class="col-12 align-middle" style="display: none; text-align: center;">
                     <br><br>
                     
-                    <button class="btn btn-outline-warning btn-sm" id="opponera_button" data-toggle="modal" data-target="#Comment">
+                    <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
                         <span style="font-size:smaller;">Kommentera</span>
                     </button>
                     
                     
-                        <button class="btn btn-outline-success btn-sm" id="bekräfta_button" data-toggle="modal" data-target="#verify">
+                        <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
                             <span style="font-size:smaller;">Verifiera användning</span>
                         </button>
                     
@@ -175,9 +175,8 @@
                 <h4 class="modal-title" style="font-family: frutiger;">Kommentera kodverket</h4>
                 </div>
                 <div class="modal-body">
+
                     <div id="populate_form_comment" class="form-group"></div>
-                  <p style="font-family: Calibri;">
-                        
 
                 </div>
                 <div class="modal-footer">
@@ -200,8 +199,9 @@
                 </div>
                 {% load crispy_forms_filters %}
                 <div class="modal-body">
-                <div id="populate_form_verify"></div>
-                  <p style="font-family: Calibri;">
+
+                    <div id="populate_form_verify"></div>
+                  
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
@@ -408,15 +408,15 @@ function get_form_function(url, div_to_replace, type_method){
 
 $(document).ready(function(){
 
-$("#opponera_button").click(function(){
+$("#open_kommentera_button").click(function(){
     
     get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=comment", 
                       div_to_replace="#populate_form_comment",
                       type_method="GET");
                     });
                       
-$("#bekräfta_button").click(function(){    
-
+$("#open_verifiera_button").click(function(){    
+    
     get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=verify",
                       div_to_replace="#populate_form_verify",
                       type_method="GET"); 

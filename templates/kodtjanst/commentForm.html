@@ -1,24 +1,24 @@
 {% load crispy_forms_tags %}
 
 
-<div id="opponera_bekräfta" class="md-5">
+<div id="kommentera_verifiera" class="md-5">
 	<p class="text-justify font-weight-normal" style="line-height: 160%; font-size: 14px;">
-		Fyll i kontaktuppgifter och avge sedan dina kommentarer om begreppet. 
+		Fyll i kontaktuppgifter och avge sedan dina kommentarer om kodverket. 
 		Kommentaren bör på ett tydligt sett ange vad som avses och ska motiveras. 
 		Ange även den kontext som din kommentar härrör från. Kommentarerna kommer 
-		bearbetas av Kodverks Gänget.
+		bearbetas av Kodverks gruppen.
 	</p>
 
-    <form id="kommenteraKodverk_form" action="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=comment", method='POST' class="bootstrap4">{% csrf_token %}
+    <form id="kommentera_kodverk_form" action="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=comment", method='POST' class="bootstrap4">{% csrf_token %}
         {{ kommentera|crispy }}
     
-    	<input type="submit" value="Skicka" id="opponera_button" class="btn btn-light-blue" style="color: white;font-family:frutiger; background-color:#006298;">
+    	<input type="submit" value="Skicka" id="kommentera_button" class="btn btn-light-blue" style="color: white;font-family:frutiger; background-color:#006298;">
     </form>
 </div>
 
 {% block extra_javascript %}
 <script>	
-	$("#opponera_term_form").submit(function(event){
+	$("#kommentera_kodverk_form").submit(function(event){
 		event.preventDefault(); //prevent default action 
 		var post_url = $(this).attr("action"); //get form action url
 		var request_method = $(this).attr("method"); //get form GET/POST method
@@ -33,7 +33,7 @@
 			$('.modal-backdrop').hide();
 			$("#mitten-span-middle-column").html(response);
 			setTimeout(function(){
-				$("#populate_form_comment").html('<div id="populate_form_comment"></div>')}, 2500);
+				$("#mitten-span-middle-column").html('<div id="mitten-span-middle-column"></div>')}, 2000);
 		});
 	});
 </script>
