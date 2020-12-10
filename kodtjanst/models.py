@@ -154,7 +154,7 @@ class ValidatedBy(models.Model):
 
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
-    domän_kontext = models.TextField(null=True, blank=True)
+    domän_kontext = models.TextField(max_length=2000, null=True, blank=True)
     domän_stream = models.CharField(max_length=255, null=True)
     domän_epost = models.EmailField(null=True)
     domän_telefon = models.CharField(max_length=255, null=True)       
@@ -174,7 +174,7 @@ class CommentedKodverk(models.Model):
     comment_name = models.CharField(max_length=255, null=True)
     comment_epost = models.EmailField(null=True)
     comment_telefon = models.CharField(max_length=255, null=True)
-    comment_kontext = models.CharField(max_length=255, null=True)
+    comment_kontext = models.TextField(max_length=2000, null=True)
 
     def __str__(self):
         return self.comment_name
