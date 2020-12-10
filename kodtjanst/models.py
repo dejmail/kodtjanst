@@ -146,14 +146,26 @@ class Nyckelord(models.Model):
     def __str__(self):
         return self.nyckelord
 
-class Ämne(models.Model):
+class ValidatedBy(models.Model):
     class Meta:     
-        verbose_name_plural = "Ämnesområde"
+        verbose_name_plural = "*Validerad av"
 
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
     domän_kontext = models.TextField(null=True, blank=True)
-    domän_namn = models.CharField(max_length=255)       
+    domän_stream = models.CharField(max_length=255)       
 
     def __str__(self):
-        return self.domän_namn
+        return self.domän_stream
+
+
+class MultiMapThrough(models.Model):
+
+    class Meta:     
+        verbose_name_plural = "MultiMap"
+    
+    mapped_from = models.ManyToManyField('Kodtext', related_name='mapped_from')
+    mapped_to = models.ManyToManyField('Kodtext', related_name='mapped_to')
+
+    def __str__(self):
+        return self.id

@@ -97,8 +97,8 @@ class NyckelOrdInline(admin.TabularInline):
     }
     ]]
 
-class ÄmneInline(admin.TabularInline):
-    model = Ämne
+class ValidatedInline(admin.TabularInline):
+    model = ValidatedBy
     extra = 1
 
     fieldsets = [
@@ -114,7 +114,7 @@ make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
 class KodverkManager(admin.ModelAdmin):  
 
-    inlines = [KodtextInline, NyckelOrdInline, ÄmneInline]
+    inlines = [KodtextInline, NyckelOrdInline, ValidatedInline]
     
     save_on_top = True
 
@@ -217,4 +217,4 @@ admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
 admin.site.register(MappadTillKodtext, MappadtillKodtextManager)
 admin.site.register(Nyckelord)
-admin.site.register(Ämne)
+admin.site.register(ValidatedBy)
