@@ -50,13 +50,13 @@ class KommenteraKodverk(forms.Form):
     namn = forms.CharField()
     epost = forms.EmailField()
     telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
-    kommentar = forms.CharField(widget=forms.Textarea, max_length=2000, label='Kommentar')
+    kommentar_kontext = forms.CharField(widget=forms.Textarea, max_length=2000, label='Kommentar')
     kodverk = forms.CharField(widget=forms.HiddenInput())  
 
 class VerifyKodverk(forms.Form):
 
     kodverk = forms.CharField(widget=forms.HiddenInput())  
-    namn = forms.CharField(label='Vem är du? ex. soki/ws/organisation', required=True)
+    stream = forms.CharField(label='Vem är du? ex. soki/ws/organisation', required=True)
     epost = forms.EmailField()
     telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
     kontext = forms.CharField(label='Specificera hur ni använder det')

@@ -103,7 +103,17 @@ class ValidateByInline(admin.TabularInline):
 
     fieldsets = [
     [None, {
-    'fields': [('domän_namn','domän_epost','domän_telefon','domän_kontext')],
+    'fields':[('domän_namn','domän_epost','domän_telefon','domän_kontext')],
+    }
+    ]]
+
+class CommentedKodverkInline(admin.TabularInline):
+    model = CommentedKodverk
+    extra = 1
+
+    fieldsets = [
+    [None, {
+    'fields':[('comment_name','comment_epost','comment_telefon', 'comment_kontext')],
     }
     ]]
 
@@ -227,3 +237,4 @@ admin.site.register(ExternaKodtext, ExternaKodtextManager)
 #admin.site.register(ExternaKodverk)
 admin.site.register(Nyckelord)
 admin.site.register(ValidatedBy)
+admin.site.register(CommentedKodverk)

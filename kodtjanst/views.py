@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Kodverk, Kodtext, ExternaKodtext, ValidatedBy
+from .models import Kodverk, Kodtext, ExternaKodtext, ValidatedBy, CommentedKodverk
 from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
 
@@ -427,19 +427,21 @@ def kodverk_verify_comment(request):
         if form_id == "comment":
             print('processing comment form', form_id)
             form = KommenteraKodverk(request.POST)
-            
+            #set_trace()
             if form.is_valid():
-                pass
-                kommentera_kodverk = OpponeraBegreppDefinition()
-                kommentera_kodverk.kodverk_kontext = form.cleaned_data.get('resonemang')
+                
+                kommentera_kodverk = CommentedKodverk()
+                kommentera_kodverk.kodverk = Kodverk(id=form.cleaned_data.get("kodverk"))
+                kommentera_kodverk.comment_kontext = form.cleaned_data.get('kommentar_kontext')
+                #kommentera_kodverk.kodverk_kontext = form.cleaned_data.get('resonemang')
                 #opponera_term.datum = datetime.now().strftime("%Y-%m-%d %H:%M")
-                kommentera_kodverk.epost = form.cleaned_data.get('epost')
-                kommentera_kodverk.namn = form.cleaned_data.get('namn')
-                kommentera_kodverk.status = models.DEFAULT_STATUS
-                kommentera_kodverk.telefon = form.cleaned_data.get('telefon')
+                kommentera_kodverk.comment_epost = form.cleaned_data.get('epost')
+                kommentera_kodverk.comment_name = form.cleaned_data.get('namn')
+                #kommentera_kodverk.status = models.DEFAULT_STATUS
+                kommentera_kodverk.comment_telefon = form.cleaned_data.get('telefon')
                 # entries with doublets cause a problem, so we take the first one
-                kommentera_kodverk.kodverk = Begrepp.objects.filter(term=form.cleaned_data.get('kodverk')).first()
-                kommentar_kodverk.save()
+                #kommentera_kodverk.kodverk = Begrepp.objects.filter(term=form.cleaned_data.get('kodverk')).first()
+                kommentera_kodverk.save()
 
                 return HttpResponse('''<div class="alert alert-success">
                                     Tack för dina synpunkter.

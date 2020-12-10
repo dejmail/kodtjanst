@@ -164,4 +164,17 @@ class ValidatedBy(models.Model):
             return '' 
         else:
             return self.domän_namn
-        
+
+class CommentedKodverk(models.Model):
+    class Meta:
+        verbose_name_plural = "kommenterade begrepp"
+    
+    id = models.AutoField(primary_key=True)
+    kodverk = models.ForeignKey("kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
+    comment_name = models.CharField(max_length=255, null=True)
+    comment_epost = models.EmailField(null=True)
+    comment_telefon = models.CharField(max_length=255, null=True)
+    comment_kontext = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return ''

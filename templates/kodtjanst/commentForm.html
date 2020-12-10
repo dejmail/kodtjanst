@@ -29,7 +29,9 @@
 			type: request_method,
 			data : form_data
 		}).done(function(response){ 
-			$("#populate_form_comment").html(response);
+			$('#verify').hide();
+			$('.modal-backdrop').hide();
+			$("#mitten-span-middle-column").html(response);
 			setTimeout(function(){
 				$("#populate_form_comment").html('<div id="populate_form_comment"></div>')}, 2500);
 		});
