@@ -160,10 +160,10 @@ class ValidatedBy(models.Model):
     domän_telefon = models.CharField(max_length=255, null=True)       
 
     def __str__(self):
-        if self.domän_namn is None:
+        if self.domän_stream is None:
             return '' 
         else:
-            return self.domän_namn
+            return self.domän_stream
 
 class CommentedKodverk(models.Model):
     class Meta:

@@ -103,7 +103,7 @@ class ValidateByInline(admin.TabularInline):
 
     fieldsets = [
     [None, {
-    'fields':[('domän_namn','domän_epost','domän_telefon','domän_kontext')],
+    'fields':[('domän_stream','domän_epost','domän_telefon','domän_kontext')],
     }
     ]]
 
