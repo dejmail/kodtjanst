@@ -14,7 +14,7 @@ from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
 
 from .forms import UserLoginForm
-from .models import Kodverk, Kodtext, MappadTillKodtext
+from .models import Kodverk, Kodtext, ExternaKodtext
 
 from pdb import set_trace
 

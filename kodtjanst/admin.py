@@ -10,7 +10,7 @@ from django import forms
 from django.forms import ModelChoiceField
 
 from .models import *
-from .forms import MappadTillKodtextForm
+from .forms import ExternaKodtextForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
 
 from pdb import set_trace
@@ -103,7 +103,7 @@ class ValidatedInline(admin.TabularInline):
 
     fieldsets = [
     [None, {
-    'fields': [('domän_namn', 'domän_kontext')],
+    'fields': [('domän_stream', 'domän_kontext')],
     }
     ]]
 
@@ -163,9 +163,9 @@ class KodtextIdandTextField(forms.ModelChoiceField):
      def label_from_instance(self, obj):
          return f"{obj.id} - {obj.kodtext}"
 
-class MappadtillKodtextManager(admin.ModelAdmin):
+class ExternaKodtextManager(admin.ModelAdmin):
 
-    form = MappadTillKodtextForm
+    form = ExternaKodtextForm
 
     list_display = ('get_kodtext',
                     'mappad_id',
@@ -188,7 +188,7 @@ class MappadtillKodtextManager(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super(MappadtillKodtextManager, self).get_form(request, obj, **kwargs)
+        form = super(ExternaKodtextManager, self).get_form(request, obj, **kwargs)
         if obj is None:
             pass
         else:
@@ -215,6 +215,6 @@ class MappadtillKodtextManager(admin.ModelAdmin):
 
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
-admin.site.register(MappadTillKodtext, MappadtillKodtextManager)
+admin.site.register(ExternaKodtext, ExternaKodtextManager)
 admin.site.register(Nyckelord)
 admin.site.register(ValidatedBy)
