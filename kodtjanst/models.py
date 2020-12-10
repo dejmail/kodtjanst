@@ -33,12 +33,12 @@ class Kodtext(models.Model):
     def __str__(self):
         return str(self.id)
 
-class MappadTillKodtext(models.Model):
+class ExternaKodtext(models.Model):
 
     class Meta:
-        verbose_name_plural = "Mappad Kodtexter"
+        verbose_name_plural = "Externa Kodtext"
 
-    kodtext = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
+    kodtext = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
     mappad_id = models.CharField(max_length=255)
     mappad_text = models.CharField(max_length=255)
     resolving_url = models.URLField()
@@ -119,6 +119,8 @@ class Kodverk(models.Model):
     ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True)
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
     användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)
+
+    
     
     #kommentar = models.TextField(null=True, blank=True)    
     #kodschema = models.CharField(max_length=255,null=True, blank=True)    
@@ -148,24 +150,31 @@ class Nyckelord(models.Model):
 
 class ValidatedBy(models.Model):
     class Meta:     
-        verbose_name_plural = "*Validerad av"
+        verbose_name_plural = "Verifierad av"
 
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
     domän_kontext = models.TextField(null=True, blank=True)
-    domän_stream = models.CharField(max_length=255)       
+    domän_stream = models.CharField(max_length=255, null=True)
+    domän_epost = models.EmailField(null=True)
+    domän_telefon = models.CharField(max_length=255, null=True)       
 
     def __str__(self):
-        return self.domän_stream
+        if self.domän_namn is None:
+            return '' 
+        else:
+            return self.domän_namn
 
-
-class MultiMapThrough(models.Model):
-
-    class Meta:     
-        verbose_name_plural = "MultiMap"
+class CommentedKodverk(models.Model):
+    class Meta:
+        verbose_name_plural = "kommenterade begrepp"
     
-    mapped_from = models.ManyToManyField('Kodtext', related_name='mapped_from')
-    mapped_to = models.ManyToManyField('Kodtext', related_name='mapped_to')
+    id = models.AutoField(primary_key=True)
+    kodverk = models.ForeignKey("kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
+    comment_name = models.CharField(max_length=255, null=True)
+    comment_epost = models.EmailField(null=True)
+    comment_telefon = models.CharField(max_length=255, null=True)
+    comment_kontext = models.CharField(max_length=255, null=True)
 
     def __str__(self):
-        return self.id
+        return ''
