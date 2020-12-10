@@ -107,15 +107,8 @@ class ValidateByInline(admin.TabularInline):
     }
     ]]
 
-class CommentedKodverkInline(admin.TabularInline):
-    model = CommentedKodverk
-    extra = 1
 
-    fieldsets = [
-    [None, {
-    'fields':[('comment_name','comment_epost','comment_telefon', 'comment_kontext')],
-    }
-    ]]
+
 
 def make_unpublished(modeladmin, request, queryset):
     
@@ -231,10 +224,17 @@ class ExternaKodtextManager(admin.ModelAdmin):
             
     kodverk_grupp.short_description = 'Kodverk'
 
+class CommentedKodverkManager(admin.ModelAdmin):
+    
+    model = CommentedKodverk
+    extra = 1
+
+    list_display = ('kodverk_id','comment_name','comment_epost','comment_telefon', 'comment_kontext') 
+
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
 #admin.site.register(ExternaKodverk)
 admin.site.register(Nyckelord)
 admin.site.register(ValidatedBy)
-admin.site.register(CommentedKodverk)
+admin.site.register(CommentedKodverk, CommentedKodverkManager)

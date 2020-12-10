@@ -167,7 +167,7 @@ class ValidatedBy(models.Model):
 
 class CommentedKodverk(models.Model):
     class Meta:
-        verbose_name_plural = "kommenterade begrepp"
+        verbose_name_plural = "Kommenterade kodverk"
     
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
@@ -177,4 +177,4 @@ class CommentedKodverk(models.Model):
     comment_kontext = models.CharField(max_length=255, null=True)
 
     def __str__(self):
-        return ''
+        return self.comment_name
