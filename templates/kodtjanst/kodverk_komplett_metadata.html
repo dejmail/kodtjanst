@@ -410,22 +410,14 @@ $(document).ready(function(){
 
 $("#opponera_button").click(function(){
     
-<<<<<<< HEAD
-    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_id}}&value=comment", 
-=======
     get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=comment", 
->>>>>>> form-post
                       div_to_replace="#populate_form_comment",
                       type_method="GET");
                     });
                       
 $("#bekräfta_button").click(function(){    
 
-<<<<<<< HEAD
-    get_form_function(url="{% url 'verify_comment' %}?q={{kodverk_id}}&value=verify",
-=======
     get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=verify",
->>>>>>> form-post
                       div_to_replace="#populate_form_verify",
                       type_method="GET"); 
                     });
