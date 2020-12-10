@@ -20,6 +20,8 @@ const delay_by_in_ms = 750
 let scheduled_function = true
 
 user_input.keyup(function () {
+	
+	changeBrowserURL('', '/');
 	$("#mitten-span-middle-column").empty();
 
 	const request_parameters = {
@@ -72,7 +74,7 @@ document.body.addEventListener("click", function(e) {
 	if(e.target && e.target.nodeName == "A") {
     // Stop the browser redirecting to  the HREF value.
     event.preventDefault();    
-    console.log("sending", e.target.id, "ID to URL", e.target.href);
+	console.log("sending", e.target.id, "ID to URL", e.target.href);
     // Attach event listeners for browser history and hash changes.
     
     //changeBrowserURL(null, e.target.href);            
