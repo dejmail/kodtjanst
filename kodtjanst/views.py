@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Kodverk, Kodtext, ExternaKodtext
+from .models import Kodverk, Kodtext, ExternaKodtext, ValidatedBy, CommentedKodverk
 from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
 
@@ -74,8 +74,8 @@ def retur_general_sök(url_parameter):
                             FROM kodtjanst_kodverk\
                             LEFT JOIN kodtjanst_kodtext\
                                 ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
-                            LEFT JOIN kodtjanst_ämne\
-                                ON kodtjanst_kodverk.id = kodtjanst_ämne.kodverk_id\
+                            LEFT JOIN kodtjanst_validatedby\
+                                ON kodtjanst_kodverk.id = kodtjanst_validatedby.kodverk_id\
                         WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%"\
@@ -438,58 +438,72 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
 
 def kodverk_verify_comment(request):
 # kommentera begrepp
-
-
-    form_id= request.GET.get("value")
+    #set_trace()
     url_parameter = request.GET.get("q")
     
     if request.method == 'GET':
-        requested_kodverk = Kodverk(id=url_parameter)
+        form_id= request.GET.get("value")
+        
+        
         if form_id == "comment":
-            form = KommenteraKodverk()
+            form = KommenteraKodverk(initial={'kodverk': url_parameter})
             return render(request,'commentForm.html', {'kommentera': form})
         elif form_id =="verify":
-            form = VerifyKodverk()
+            #set_trace()
+            form = VerifyKodverk(initial={'kodverk': url_parameter})
             return render(request,'verifyForm.html', {'verify': form})
-
-    elif request.method == 'POST':
-        form = OpponeraTermForm(request.POST)
-        if form.is_valid():
-            
-            opponera_term = OpponeraBegreppDefinition()
-            opponera_term.begrepp_kontext = form.cleaned_data.get('resonemang')
-            #opponera_term.datum = datetime.now().strftime("%Y-%m-%d %H:%M")
-            opponera_term.epost = form.cleaned_data.get('epost')
-            opponera_term.namn = form.cleaned_data.get('namn')
-            opponera_term.status = models.DEFAULT_STATUS
-            opponera_term.telefon = form.cleaned_data.get('telefon')
-            # entries with doublets cause a problem, so we take the first one
-            opponera_term.begrepp = Begrepp.objects.filter(term=form.cleaned_data.get('term')).first()
-            opponera_term.save()
-
-            return HttpResponse('''<div class="alert alert-success">
-                                   Tack för dina synpunkter.
-                                   </div>''')
     
+    elif request.method == 'POST':
+        
+        form_id = request.get_raw_uri().split('=')[-1]
+        
+        if form_id == "comment":
+            print('processing comment form', form_id)
+            form = KommenteraKodverk(request.POST)
+            #set_trace()
+            if form.is_valid():
+                
+                kommentera_kodverk = CommentedKodverk()
+                kommentera_kodverk.kodverk = Kodverk(id=form.cleaned_data.get("kodverk"))
+                kommentera_kodverk.comment_kontext = form.cleaned_data.get('kommentar_kontext')
+                #kommentera_kodverk.kodverk_kontext = form.cleaned_data.get('resonemang')
+                #opponera_term.datum = datetime.now().strftime("%Y-%m-%d %H:%M")
+                kommentera_kodverk.comment_epost = form.cleaned_data.get('epost')
+                kommentera_kodverk.comment_name = form.cleaned_data.get('namn')
+                #kommentera_kodverk.status = models.DEFAULT_STATUS
+                kommentera_kodverk.comment_telefon = form.cleaned_data.get('telefon')
+                # entries with doublets cause a problem, so we take the first one
+                #kommentera_kodverk.kodverk = Begrepp.objects.filter(term=form.cleaned_data.get('kodverk')).first()
+                kommentera_kodverk.save()
 
-    if request.method == 'POST':
-        form = BekräftaTermForm(request.POST)
-        if form.is_valid():
-            kopplad_domän = Doman()
-            kopplad_domän.begrepp = Begrepp.objects.filter(term=form.cleaned_data.get('term')).first()
-            kopplad_domän.domän_namn = form.cleaned_data.get('workstream')
-            if kopplad_domän.domän_namn == 'Inte relevant':
-                kopplad_domän.domän_namn = form.cleaned_data.get('kontext')
-                kopplad_domän.domän_kontext = '-'
+                return HttpResponse('''<div class="alert alert-success">
+                                    Tack för dina synpunkter.
+                                    </div>''')
             else:
-                kopplad_domän.domän_namn = form.cleaned_data.get('kontext')
-
+                print('formisnotvalid') 
+                set_trace()
+        
+        else:
+            form=VerifyKodverk(request.POST)
+            
+            if form.is_valid():
+                
+                new_verify = ValidatedBy()
+                new_verify.kodverk = Kodverk(id=form.cleaned_data.get("kodverk"))
+               # new_verify.kodverk=form.cleaned_data.get("kodverk")
+                new_verify.domän_kontext=form.cleaned_data.get("kontext")
+                new_verify.domän_stream=form.cleaned_data.get("stream")
+                new_verify.domän_telefon=form.cleaned_data.get("telefon")
+                new_verify.domän_epost=form.cleaned_data.get("epost")
+                new_verify.save() 
+                
+                return HttpResponse('''<div class="alert alert-success">
+                                        Tack för dina synpunkter.
+                                        </div>''')
             # We need to clean out the "Inte definierad" once the domän has been given a real one
             #SomeModel.objects.filter(id=id).delete()
+            
  
-            kopplad_domän.save()
-            return HttpResponse('''<div class="alert alert-success">
-                                   Tack för verifiering av domänen.
-                                   </div>''')
+          
     else:
         return render(request, 'kodverk_komplett_metadata.html', {})

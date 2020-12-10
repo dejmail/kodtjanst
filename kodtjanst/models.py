@@ -119,6 +119,8 @@ class Kodverk(models.Model):
     ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True)
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
     användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)
+
+    
     
     #kommentar = models.TextField(null=True, blank=True)    
     #kodschema = models.CharField(max_length=255,null=True, blank=True)    
@@ -146,14 +148,33 @@ class Nyckelord(models.Model):
     def __str__(self):
         return self.nyckelord
 
-class Ämne(models.Model):
+class ValidatedBy(models.Model):
     class Meta:     
-        verbose_name_plural = "Ämnesområde"
+        verbose_name_plural = "Verifierad av"
 
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
     domän_kontext = models.TextField(null=True, blank=True)
-    domän_namn = models.CharField(max_length=255)       
+    domän_stream = models.CharField(max_length=255, null=True)
+    domän_epost = models.EmailField(null=True)
+    domän_telefon = models.CharField(max_length=255, null=True)       
 
     def __str__(self):
-        return self.domän_namn
+        if self.domän_stream is None:
+            return '' 
+        else:
+            return self.domän_stream
+
+class CommentedKodverk(models.Model):
+    class Meta:
+        verbose_name_plural = "kommenterade begrepp"
+    
+    id = models.AutoField(primary_key=True)
+    kodverk = models.ForeignKey("kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
+    comment_name = models.CharField(max_length=255, null=True)
+    comment_epost = models.EmailField(null=True)
+    comment_telefon = models.CharField(max_length=255, null=True)
+    comment_kontext = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return ''

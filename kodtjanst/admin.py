@@ -97,13 +97,23 @@ class NyckelOrdInline(admin.TabularInline):
     }
     ]]
 
-class ÄmneInline(admin.TabularInline):
-    model = Ämne
+class ValidateByInline(admin.TabularInline):
+    model = ValidatedBy
     extra = 1
 
     fieldsets = [
     [None, {
-    'fields': [('domän_namn', 'domän_kontext')],
+    'fields':[('domän_stream','domän_epost','domän_telefon','domän_kontext')],
+    }
+    ]]
+
+class CommentedKodverkInline(admin.TabularInline):
+    model = CommentedKodverk
+    extra = 1
+
+    fieldsets = [
+    [None, {
+    'fields':[('comment_name','comment_epost','comment_telefon', 'comment_kontext')],
     }
     ]]
 
@@ -114,7 +124,7 @@ make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
 class KodverkManager(admin.ModelAdmin):  
 
-    inlines = [KodtextInline, NyckelOrdInline, ÄmneInline]
+    inlines = [KodtextInline, NyckelOrdInline, ValidateByInline]
     
     save_on_top = True
 
@@ -226,4 +236,5 @@ admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
 #admin.site.register(ExternaKodverk)
 admin.site.register(Nyckelord)
-admin.site.register(Ämne)
+admin.site.register(ValidatedBy)
+admin.site.register(CommentedKodverk)
