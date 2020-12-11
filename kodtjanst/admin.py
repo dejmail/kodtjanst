@@ -97,7 +97,7 @@ class NyckelOrdInline(admin.TabularInline):
     }
     ]]
 
-class ValidateByInline(admin.TabularInline):
+class ValidatedByInline(admin.TabularInline):
     model = ValidatedBy
     extra = 1
 
@@ -117,7 +117,7 @@ make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
 class KodverkManager(admin.ModelAdmin):  
 
-    inlines = [KodtextInline, NyckelOrdInline, ValidateByInline]
+    inlines = [KodtextInline, NyckelOrdInline, ValidatedByInline]
     
     save_on_top = True
 

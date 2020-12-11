@@ -29,7 +29,6 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
-
 class ExternaKodtextForm(forms.ModelForm):
 
     kodverk = forms.CharField(disabled=True)
