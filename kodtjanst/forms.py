@@ -1,10 +1,12 @@
 from django import forms
-from .models import Kodtext, MultiKodtextMapping
+from .models import Kodtext, Kodverk, MultiKodtextMapping
 from django.contrib.auth import (
     authenticate,
     get_user_model
 
 )
+
+from pdb import set_trace
 
 from .models import ExternaKodtext
 
@@ -45,19 +47,19 @@ class ExternaKodtextForm(forms.ModelForm):
 
 class MultiMappingForm(forms.ModelForm):
 
-    kodverk_to = forms.CharField()
-    kodverk_from = forms.CharField()
+    kodverk_from = forms.ModelMultipleChoiceField(queryset=Kodverk.objects.filter(status='Beslutad'))
+    kodverk_to = forms.ModelMultipleChoiceField(queryset=Kodverk.objects.filter(status="Beslutad"))
 
     class Meta:
         model = MultiKodtextMapping
-        fields = ('kodverk_from', 'kodtext_from', 'kodtext_to','kodtext_to', 'order_dictionary')
+        fields = ('kodverk_from','kodtext_from', 'kodverk_to','kodtext_to','order_dictionary')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        set_trace()
+        
         self.fields['kodtext_from'].queryset = Kodtext.objects.none()
         self.fields['kodtext_to'].queryset = Kodtext.objects.none()
-
+	
 
 class KommenteraKodverk(forms.Form):
 

@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.response import TemplateResponse
 from django import forms
 from django.forms import ModelChoiceField
-
+from django.conf import settings
 from .models import *
 from .forms import ExternaKodtextForm, MultiMappingForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
@@ -232,33 +232,30 @@ class CommentedKodverkManager(admin.ModelAdmin):
     list_display = ('kodverk_id','comment_name','comment_epost','comment_telefon', 'comment_kontext') 
 
 
+		
 class MultiKodtextMappingManager(admin.ModelAdmin):
 
-    model = MultiKodtextMapping
-    #form = MultiMappingForm
+    class Media:
+        css = {
+            'all': (f'{settings.STATIC_URL}js/admin_multimap_loadkodtext.js',)
+            }
 
-    list_display = ('kodtext_from', 'kodtext_to')
+    #model = MultiKodtextMapping
+    form = MultiMappingForm
 
-    def save_related(self, request, form, formsets, change):
-        set_trace()
-        super(MultiKodtextMappingManager, self).save_related(request, form, formsets, change)
-        set_trace()
+    # def save_related(self, request, form, formsets, change):
+        
+    #     super(MultiKodtextMappingManager, self).save_related(request, form, formsets, change)
+    #     set_trace()
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        set_trace()
-        return None
+    # def formfield_for_dbfield(self, db_field, request, **kwargs):
+    #     set_trace()
+    #     return None
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        set_trace()
+        #set_trace()
         return form
-
-
-    # def load_kodtext(request):
-    #     kodverk_id = request.GET.get('kodverk')
-    #     kodtext = Kodtext.objects.filter(kodverk_id=kodverk_id).order_by('name')
-    #     return render(request, 'hr/city_dropdown_list_options.html', {'cities': cities})
-
 
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
@@ -267,4 +264,4 @@ admin.site.register(ExternaKodtext, ExternaKodtextManager)
 admin.site.register(Nyckelord)
 admin.site.register(ValidatedBy)
 admin.site.register(CommentedKodverk, CommentedKodverkManager)
-admin.site.register((MultiKodtextMapping))
+admin.site.register(MultiKodtextMapping, MultiKodtextMappingManager)
