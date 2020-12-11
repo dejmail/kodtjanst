@@ -1,5 +1,5 @@
 from django import forms
-from .models import Kodtext
+from .models import Kodtext, MultiKodtextMapping
 from django.contrib.auth import (
     authenticate,
     get_user_model
@@ -44,6 +44,21 @@ class ExternaKodtextForm(forms.ModelForm):
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
         
 
+class MultiMappingForm(forms.ModelForm):
+
+    kodverk_to = forms.CharField()
+    kodverk_from = forms.CharField()
+
+    class Meta:
+        model = MultiKodtextMapping
+        fields = ('kodverk_from', 'kodtext_from', 'kodtext_to','kodtext_to', 'order_dictionary')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        set_trace()
+        self.fields['kodtext_from'].queryset = Kodtext.objects.none()
+        self.fields['kodtext_to'].queryset = Kodtext.objects.none()
+
 
 class KommenteraKodverk(forms.Form):
 
@@ -59,4 +74,4 @@ class VerifyKodverk(forms.Form):
     stream = forms.CharField(label='Vem är du? ex. soki/ws/organisation', required=True)
     epost = forms.EmailField()
     telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
-    kontext = forms.CharField(label='Specificera hur ni använder det')
+    kontext = forms.CharField(widget=forms.Textarea, max_length=2000, label='Specificera hur ni använder det')

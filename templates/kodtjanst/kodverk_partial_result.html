@@ -29,10 +29,12 @@
     </div>
 
 {% else %}
-
-<div id="nyTermForm">
-    <input type="image" src="{% static '/images/FFFFFF-0.8.png' %}">
-<script> populate_request_form()</script>
+<div class="row mx-auto col-4">        
+    
+    <div id="no_results" class="alert alert-warning mx-auto">
+        <div class="h-25">Inga resultat hittades i databasen</div>
+    </div>
+    
 </div>
 {% endif %}
 {% endspaceless %}

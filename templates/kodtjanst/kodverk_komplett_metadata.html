@@ -86,22 +86,22 @@
                     <br><br>
                     
                     <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
-                        <span style="font-size:smaller;">Kommentera</span>
+                        <span class="fas fa-comment" style="font-size:smaller;"></span>  Kommentera
                     </button>
                     
                     
                         <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
-                            <span style="font-size:smaller;">Verifiera användning</span>
+                            <span class="fas fa-user-check" style="font-size:smaller;"> </span> Verifiera användning
                         </button>
                     
                     
                     <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
-                            <span style="font-size:smaller;">Ladda ner</span>
+                            <span class="fas fa-download" style="font-size:smaller;"></span> Ladda ner
                         </button>
                     
                     
                         <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
-                            <span style="font-size:smaller;">Hjälp</span>
+                            <span class="fas fa-question-circle" style="font-size:smaller;"></span> Hjälp
                             <form id="opponera_term_form" action="{% url 'verify_comment_form' %}", method='POST'>{% csrf_token %}
                                 {{ opponera|crispy }}
                             
@@ -299,7 +299,12 @@ function format (d) {
 
  $( document ).ready(function() {
              
-    var table = $('#kodtext_tabell').DataTable({
+    var table = $('#kodtext_tabell').removeAttr('width').DataTable({
+        fixedColumns: true,
+        columnDefs: [
+            { width: 50, targets: 0},
+            { width: 50, targets: 1}
+        ],
         "stateSave" : true,
         "retrieve" : true,
         "initComplete": function(){ 

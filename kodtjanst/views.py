@@ -335,12 +335,10 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         workbook = xlsxwriter.Workbook(output_memory_file, {'in_memory' : True})
         bold = workbook.add_format({'bold': True})
 
-        kodverk_worksheet = workbook.add_worksheet()
-        kodverk_worksheet.set_vba_name('Kodverk')
-
-        kodtext_worksheet = workbook.add_worksheet()
-        kodverk_worksheet.set_vba_name('Kodtext')
-
+        kodverk_worksheet = workbook.add_worksheet('Kodverk')
+        
+        kodtext_worksheet = workbook.add_worksheet('Kodtext')
+        
         kodverk_columns = ['titel_på_kodverk',
                            'syfte',
                            'beskrivning_av_informationsbehov',
