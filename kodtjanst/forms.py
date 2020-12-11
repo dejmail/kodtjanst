@@ -1,5 +1,5 @@
 from django import forms
-from .models import Kodtext, MultiKodtextMapping
+from .models import Kodtext
 from django.contrib.auth import (
     authenticate,
     get_user_model
@@ -43,22 +43,6 @@ class ExternaKodtextForm(forms.ModelForm):
     #         return KodtextIdandTextField(queryset=Kodtext.objects.all())
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
         
-
-class MultiMappingForm(forms.ModelForm):
-
-    kodverk_to = forms.CharField()
-    kodverk_from = forms.CharField()
-
-    class Meta:
-        model = MultiKodtextMapping
-        fields = ('kodverk_from', 'kodtext_from', 'kodtext_to','kodtext_to', 'order_dictionary')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        set_trace()
-        self.fields['kodtext_from'].queryset = Kodtext.objects.none()
-        self.fields['kodtext_to'].queryset = Kodtext.objects.none()
-
 
 class KommenteraKodverk(forms.Form):
 
