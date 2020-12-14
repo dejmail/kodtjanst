@@ -236,12 +236,12 @@ class CommentedKodverkManager(admin.ModelAdmin):
 class MultiKodtextMappingManager(admin.ModelAdmin):
 
     class Media:
-        css = {
-            'all': (f'{settings.STATIC_URL}js/admin_multimap_loadkodtext.js',)
-            }
+        js = (f'{settings.STATIC_URL}js/admin_multimap_loadkodtext.js',)
+            
 
     #model = MultiKodtextMapping
     form = MultiMappingForm
+
 
     # def save_related(self, request, form, formsets, change):
         
@@ -252,10 +252,20 @@ class MultiKodtextMappingManager(admin.ModelAdmin):
     #     set_trace()
     #     return None
 
-    def get_form(self, request, obj=None, change=False, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        #set_trace()
-        return form
+    # def get_form(self, request, obj=None, change=False, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     #set_trace()
+    #     return form
+
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     if obj is None:
+    #         pass
+    #     else:
+    #         form.base_fields['kodtext_from'].initial = 'Välja kodverk först'
+            #set_trace()
+            #form.get_initial_for_field(self, 'kodverk_from') = 'Välja kodverk'
+            #form.base_fields['kodverk_to'].initial = 'Välja kodverk'
 
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)

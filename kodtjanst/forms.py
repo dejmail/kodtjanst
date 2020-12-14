@@ -47,8 +47,8 @@ class ExternaKodtextForm(forms.ModelForm):
 
 class MultiMappingForm(forms.ModelForm):
 
-    kodverk_from = forms.ModelMultipleChoiceField(queryset=Kodverk.objects.filter(status='Beslutad'))
-    kodverk_to = forms.ModelMultipleChoiceField(queryset=Kodverk.objects.filter(status="Beslutad"))
+    kodverk_from = forms.ModelChoiceField(queryset=Kodverk.objects.filter(status='Beslutad'))
+    kodverk_to = forms.ModelChoiceField(queryset=Kodverk.objects.filter(status="Beslutad"))
 
     class Meta:
         model = MultiKodtextMapping
@@ -57,8 +57,13 @@ class MultiMappingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
+        self.fields['kodverk_from'].help_text = 'Välja kodverk, så fyllas kodtext'
+        self.fields['kodverk_to'].help_text = 'Välja kodverk, så fyllas kodtext'
+
         self.fields['kodtext_from'].queryset = Kodtext.objects.none()
+        self.fields['kodtext_from'].help_text = 'Välja kodverk först'
         self.fields['kodtext_to'].queryset = Kodtext.objects.none()
+        self.fields['kodtext_to'].help_text = 'Välja kodverk först'
 	
 
 class KommenteraKodverk(forms.Form):
