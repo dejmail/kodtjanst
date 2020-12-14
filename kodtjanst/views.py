@@ -505,3 +505,20 @@ def kodverk_verify_comment(request):
           
     else:
         return render(request, 'kodverk_komplett_metadata.html', {})
+
+
+    
+def load_kodtext(request, kodverk_id):
+    
+    kodtext = Kodtext.objects.filter(kodverk_id=kodverk_id).order_by('kodtext').values("kod", "kodtext")
+    if kodtext is not None:
+        set_trace()
+        return render(request, 
+                      'admin/kodtext_dropdown_list_options.html', 
+                      {'kodtexter': kodtext}, status=200)
+    else:
+
+        kodtext = {'kod' : 'Inga kod' , 'kodtext' :'Inga kodtexter'}
+        return render(request, 
+                      'admin/kodtext_dropdown_list_options.html', 
+                      {'kodtexter': kodtext}, status=200)

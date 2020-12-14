@@ -8,9 +8,9 @@ from django.utils.translation import gettext_lazy as _
 from django.template.response import TemplateResponse
 from django import forms
 from django.forms import ModelChoiceField
-
+from django.conf import settings
 from .models import *
-from .forms import ExternaKodtextForm
+from .forms import ExternaKodtextForm, MultiMappingForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
 
 from pdb import set_trace
@@ -97,7 +97,7 @@ class NyckelOrdInline(admin.TabularInline):
     }
     ]]
 
-class ValidateByInline(admin.TabularInline):
+class ValidatedByInline(admin.TabularInline):
     model = ValidatedBy
     extra = 1
 
@@ -117,7 +117,7 @@ make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
 class KodverkManager(admin.ModelAdmin):  
 
-    inlines = [KodtextInline, NyckelOrdInline, ValidateByInline]
+    inlines = [KodtextInline, NyckelOrdInline, ValidatedByInline]
     
     save_on_top = True
 
@@ -231,6 +231,42 @@ class CommentedKodverkManager(admin.ModelAdmin):
 
     list_display = ('kodverk_id','comment_name','comment_epost','comment_telefon', 'comment_kontext') 
 
+
+		
+class MultiKodtextMappingManager(admin.ModelAdmin):
+
+    class Media:
+        js = (f'{settings.STATIC_URL}js/admin_multimap_loadkodtext.js',)
+            
+
+    #model = MultiKodtextMapping
+    form = MultiMappingForm
+
+
+    # def save_related(self, request, form, formsets, change):
+        
+    #     super(MultiKodtextMappingManager, self).save_related(request, form, formsets, change)
+    #     set_trace()
+
+    # def formfield_for_dbfield(self, db_field, request, **kwargs):
+    #     set_trace()
+    #     return None
+
+    # def get_form(self, request, obj=None, change=False, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     #set_trace()
+    #     return form
+
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     if obj is None:
+    #         pass
+    #     else:
+    #         form.base_fields['kodtext_from'].initial = 'Välja kodverk först'
+            #set_trace()
+            #form.get_initial_for_field(self, 'kodverk_from') = 'Välja kodverk'
+            #form.base_fields['kodverk_to'].initial = 'Välja kodverk'
+
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
@@ -238,3 +274,4 @@ admin.site.register(ExternaKodtext, ExternaKodtextManager)
 admin.site.register(Nyckelord)
 admin.site.register(ValidatedBy)
 admin.site.register(CommentedKodverk, CommentedKodverkManager)
+admin.site.register(MultiKodtextMapping, MultiKodtextMappingManager)

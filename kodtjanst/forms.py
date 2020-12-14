@@ -1,10 +1,13 @@
 from django import forms
 from .models import Kodtext
+from .models import Kodtext, Kodverk, MultiKodtextMapping
 from django.contrib.auth import (
     authenticate,
     get_user_model
 
 )
+
+from pdb import set_trace
 
 from .models import ExternaKodtext
 
@@ -29,7 +32,6 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
-
 class ExternaKodtextForm(forms.ModelForm):
 
     kodverk = forms.CharField(disabled=True)
@@ -43,6 +45,27 @@ class ExternaKodtextForm(forms.ModelForm):
     #         return KodtextIdandTextField(queryset=Kodtext.objects.all())
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
         
+
+class MultiMappingForm(forms.ModelForm):
+
+    kodverk_from = forms.ModelChoiceField(queryset=Kodverk.objects.filter(status='Beslutad'))
+    kodverk_to = forms.ModelChoiceField(queryset=Kodverk.objects.filter(status="Beslutad"))
+
+    class Meta:
+        model = MultiKodtextMapping
+        fields = ('kodverk_from','kodtext_from', 'kodverk_to','kodtext_to','order_dictionary')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['kodverk_from'].help_text = 'Välja kodverk, så fyllas kodtext'
+        self.fields['kodverk_to'].help_text = 'Välja kodverk, så fyllas kodtext'
+
+        self.fields['kodtext_from'].queryset = Kodtext.objects.none()
+        self.fields['kodtext_from'].help_text = 'Välja kodverk först'
+        self.fields['kodtext_to'].queryset = Kodtext.objects.none()
+        self.fields['kodtext_to'].help_text = 'Välja kodverk först'
+	
 
 class KommenteraKodverk(forms.Form):
 
