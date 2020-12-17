@@ -71,7 +71,7 @@ function loadUrl(kodverk_id, kodtext_tag_id) {
     }
     };
     
-    xhttp.open("GET", "/"+domain_url+"admin/ajax/kodtext_elements/"+kodverk_id+"/", true);
+    xhttp.open("GET", domain_url+"/admin/ajax/kodtext_elements/"+kodverk_id+"/", true);
     xhttp.send();
 };
 
