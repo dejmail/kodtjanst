@@ -3,7 +3,7 @@ if (window.document.location.hostname == "127.0.0.1") {
     var domain_url = '';
     var domain_host = window.document.location.host
 } else {
-    var domain_url = window.location.pathname.split("/")[1];
+    var domain_url = window.location.pathname.split("/")[1]+"/";
     var domain_host = window.document.location.host
 };    
 
