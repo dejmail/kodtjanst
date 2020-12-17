@@ -12,6 +12,8 @@ from django.conf import settings
 from .models import *
 from .forms import ExternaKodtextForm, MultiMappingForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
+from django.utils.html import format_html
+
 
 from pdb import set_trace
 
@@ -170,19 +172,26 @@ class ExternaKodtextManager(admin.ModelAdmin):
 
     form = ExternaKodtextForm
 
+    
     list_display = ('get_kodtext',
                     'mappad_id',
                     'mappad_text',
-                    'resolving_url',                    
+                    'clickable_url',                    
                     'kommentar',
                     'kodverk_grupp')
     
     def get_kodtext(self, obj):
         
         return obj.kodtext
-    
+
     get_kodtext.short_description = 'Kodtext'
 
+
+    def clickable_url(self, obj):
+        return format_html("<a href='{url}' target='_blank' rel='noopener noreferrer'>{url}</a>", url=obj.resolving_url)
+
+    clickable_url.short_description = "URL"
+    
     def formfield_for_foreignkey(self, db_field, request, **kwargs):    
         #set_trace()
         if db_field.name == "kodtext":
@@ -193,10 +202,10 @@ class ExternaKodtextManager(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(ExternaKodtextManager, self).get_form(request, obj, **kwargs)
         if obj is None:
-            set_trace()
             form.base_fields['kodverk'].initial = Kodverk.objects.all()
             form.base_fields['kodtext'].initial = Kodtext.objects.none()
         else:
+            
             form.base_fields['kodverk'].initial =  Kodverk.objects.filter(titel_på_kodverk=obj.kodtext.kodverk.titel_på_kodverk).values()[0].get('titel_på_kodverk')
         return form
     
@@ -232,40 +241,55 @@ class CommentedKodverkManager(admin.ModelAdmin):
     list_display = ('kodverk_id','comment_name','comment_epost','comment_telefon', 'comment_kontext') 
 
 
-		
+from django.forms import SelectMultiple
+
 class MultiKodtextMappingManager(admin.ModelAdmin):
+
+    formfield_overrides = { models.ManyToManyField: {'widget': SelectMultiple(attrs={'size':'30'})}, }
 
     class Media:
         js = (f'{settings.STATIC_URL}js/admin_multimap_loadkodtext.js',)
-            
+        css = {
+            'all': (f'{settings.STATIC_URL}css/hide_plus_sign.css',)
+            }            
 
-    #model = MultiKodtextMapping
     form = MultiMappingForm
 
+    list_display = ('id', 'text_description',
+                    'kodverk_map_from',
+                    'kodtext_map_from',
+                    'kodverk_map_to',
+                    'kodtext_map_to')
 
-    # def save_related(self, request, form, formsets, change):
+    def kodverk_map_from(self, obj):
+        return Kodverk.objects.filter(id=obj.kodtext_from.prefetch_related()[0].kodverk_id).values()[0].get('titel_på_kodverk')
+
+    def kodtext_map_from(self, obj):
         
-    #     super(MultiKodtextMappingManager, self).save_related(request, form, formsets, change)
-    #     set_trace()
+        return_list = '<div style="color:dodgerblue";>-|-</div>'.join([k.kodtext for k in obj.kodtext_from.all() if k.kodtext is not None])
+        
+        if return_list is not None:
+            return format_html(return_list)
+        else:
+            return ""
 
-    # def formfield_for_dbfield(self, db_field, request, **kwargs):
-    #     set_trace()
-    #     return None
+    kodtext_map_from.short_description = 'Kodtext från'
 
-    # def get_form(self, request, obj=None, change=False, **kwargs):
-    #     form = super().get_form(request, obj, **kwargs)
-    #     #set_trace()
-    #     return form
+    def kodverk_map_to(self, obj):
+        return Kodverk.objects.filter(id=obj.kodtext_to.prefetch_related()[0].kodverk_id).values()[0].get('titel_på_kodverk')
+        
+    def kodtext_map_to(self, obj):
+        
+        return_list = '<div style="color:lightcoral";>-|-</div>'.join([k.kodtext for k in obj.kodtext_to.all() if k.kodtext is not None])
+        
+        if return_list is not None:
+            return format_html(return_list)
+        else:
+            return ""
+    
+    kodtext_map_to.short_description = 'Kodtext till'
 
-    # def get_form(self, request, obj=None, **kwargs):
-    #     form = super().get_form(request, obj, **kwargs)
-    #     if obj is None:
-    #         pass
-    #     else:
-    #         form.base_fields['kodtext_from'].initial = 'Välja kodverk först'
-            #set_trace()
-            #form.get_initial_for_field(self, 'kodverk_from') = 'Välja kodverk'
-            #form.base_fields['kodverk_to'].initial = 'Välja kodverk'
+
 
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)

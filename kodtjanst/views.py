@@ -510,9 +510,9 @@ def kodverk_verify_comment(request):
     
 def load_kodtext(request, kodverk_id):
     
-    kodtext = Kodtext.objects.filter(kodverk_id=kodverk_id).order_by('kodtext').values("kod", "kodtext")
+    kodtext = Kodtext.objects.filter(kodverk_id=kodverk_id).order_by('kodtext', 'kod').values("id","kod", "kodtext")
     if kodtext is not None:
-        set_trace()
+        
         return render(request, 
                       'admin/kodtext_dropdown_list_options.html', 
                       {'kodtexter': kodtext}, status=200)

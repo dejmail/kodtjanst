@@ -45,27 +45,55 @@ class ExternaKodtextForm(forms.ModelForm):
     #         return KodtextIdandTextField(queryset=Kodtext.objects.all())
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
         
+def beslutad_kodtext_choices():
+    beslutad_kodtext = Kodtext.objects.filter(kodverk__status='Beslutad').all().values('id','kod','kodtext')
+    return_list = []
+    for index, choice in enumerate(beslutad_kodtext):
+        try:
+            built_choice = []
+            if choice.get('kod') is not None:
+                return_list.append((choice.get('id',''), choice.get('kod','')+' | ' + choice.get('kodtext','')))
+            else:
+                return_list.append((choice.get('id',''), 'Ingen kod' + ' | ' + choice.get('kodtext','')))
+        except TypeError as e:
+            print(e)            
+    return tuple(return_list)
+
+def beslutad_kodverk_choices():
+
+    beslutad_kodverk_choices = [(i.get('id'), i.get('titel_på_kodverk')) for i in Kodverk.objects.filter(status='Beslutad').values('id','titel_på_kodverk')]
+    beslutad_kodverk_choices.insert(0,('', 'Välja kodverk'))
+    return tuple(beslutad_kodverk_choices)
 
 class MultiMappingForm(forms.ModelForm):
+    
+    kodverk_from = forms.ChoiceField(choices=beslutad_kodverk_choices)
+    kodtext_from = forms.MultipleChoiceField(choices=beslutad_kodtext_choices)
 
-    kodverk_from = forms.ModelChoiceField(queryset=Kodverk.objects.filter(status='Beslutad'))
-    kodverk_to = forms.ModelChoiceField(queryset=Kodverk.objects.filter(status="Beslutad"))
-
+    kodverk_to = forms.ChoiceField(choices=beslutad_kodverk_choices)
+    kodtext_to = forms.MultipleChoiceField(choices=beslutad_kodtext_choices)
+    
     class Meta:
         model = MultiKodtextMapping
-        fields = ('kodverk_from','kodtext_from', 'kodverk_to','kodtext_to','order_dictionary')
+        fields = ('kodverk_from', 'kodtext_from', 'kodverk_to', 'kodtext_to','order_dictionary')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.fields['kodverk_from'].help_text = 'Välja kodverk, så fyllas kodtext'
-        self.fields['kodverk_to'].help_text = 'Välja kodverk, så fyllas kodtext'
+        self.fields['kodtext_from'].help_text = 'Välja ett kodverk först'
+        self.fields['kodtext_to'].help_text = 'Välja ett kodverk först'
 
-        self.fields['kodtext_from'].queryset = Kodtext.objects.none()
-        self.fields['kodtext_from'].help_text = 'Välja kodverk först'
-        self.fields['kodtext_to'].queryset = Kodtext.objects.none()
-        self.fields['kodtext_to'].help_text = 'Välja kodverk först'
-	
+    def clean_kodtext_from(self):
+        data = self.cleaned_data['kodtext_from']
+        return data
+
+    def clean_order_dictionary(self):
+        
+        if self.cleaned_data['order_dictionary'] is None:
+            return {"kodtext_från" : self.cleaned_data['kodtext_from'], 
+            "kodtext_till" : self.cleaned_data['kodtext_to']}
+        else:
+            return self.cleaned_data['order_dictionary']
 
 class KommenteraKodverk(forms.Form):
 

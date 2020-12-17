@@ -150,13 +150,15 @@ class Nyckelord(models.Model):
 
 class MultiKodtextMapping(models.Model):
 
+    text_description = models.CharField(max_length=255, blank=True, null=True)
     kodtext_from = models.ManyToManyField('Kodtext', related_name="field_from")#, on_delete=models.PROTECT)
     kodtext_to = models.ManyToManyField('Kodtext', related_name="field_to")#, on_delete=models.PROTECT)
-    order_dictionary = JSONField(help_text='Ordning av attributer som mappas')
+    order_dictionary = JSONField(null=True, blank=True, help_text='Ordning av attributer som mappas')
 
     def __str__(self):
         return str(self.id)
 
+    
 class ValidatedBy(models.Model):
     class Meta:     
         verbose_name_plural = "Verifierad av"
