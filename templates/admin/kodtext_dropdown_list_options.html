@@ -1,0 +1,4 @@
+
+{% for kodtext in kodtexter %}
+<option value="{{ kodtext.id }}">{{ kodtext.kod |default_if_none:"Ingen kod" }} | {{ kodtext.kodtext }}</option>
+{% endfor %}
