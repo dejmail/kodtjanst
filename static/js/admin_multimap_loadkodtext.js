@@ -1,3 +1,10 @@
+
+if (window.document.location.hostname == "127.0.0.1") {
+    var domain_url = '';
+} else {
+    var domain_url = window.location.pathname.split("/")[1];
+};    
+
 window.onload = function() {
 
     // var x = document.getElementById('id_kodtext_from');
@@ -40,7 +47,6 @@ window.addEventListener('load', function () {
 
     // Monitor which kodtexts are selected, place it in the JSON field
         django.jQuery('#id_kodtext_from', "#id_kodtext_to").change(function(e) {
-            debugger;
             var selected = django.jQuery(e.target).val();
         }); 
     });
@@ -62,7 +68,7 @@ function loadUrl(kodverk_id, kodtext_tag_id) {
         console.log('kodtext response loaded into form', kodtext_tag_id, 'field unhidden');
     }
     };
-    xhttp.open("GET", "/ajax/kodtext_elements/"+kodverk_id+"/", true);
+    xhttp.open("GET", domain_url+"/ajax/kodtext_elements/"+kodverk_id+"/", true);
     xhttp.send();
 };
 
