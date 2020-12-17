@@ -1,8 +1,10 @@
 
 if (window.document.location.hostname == "127.0.0.1") {
     var domain_url = '';
+    var domain_host = window.document.location.host
 } else {
     var domain_url = window.location.pathname.split("/")[1];
+    var domain_host = window.document.location.host
 };    
 
 window.onload = function() {
@@ -17,7 +19,7 @@ window.onload = function() {
         console.log('django available');
     } else {
         // jQuery is not loaded
-        console.log("jQuery Doesn't Work");
+        console.log("jQuery not available");
     }
 };
 
@@ -68,7 +70,7 @@ function loadUrl(kodverk_id, kodtext_tag_id) {
         console.log('kodtext response loaded into form', kodtext_tag_id, 'field unhidden');
     }
     };
-    xhttp.open("GET", domain_url+"/ajax/kodtext_elements/"+kodverk_id+"/", true);
+    xhttp.open("GET", "/"+domain_url+"ajax/kodtext_elements/"+kodverk_id+"/", true);
     xhttp.send();
 };
 
