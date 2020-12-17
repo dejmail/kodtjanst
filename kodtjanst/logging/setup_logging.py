@@ -3,7 +3,7 @@ import os
 import logging
 
 if socket.gethostname() == 'suijin.oderland.com':
-    FILENAME = '/home/vgrinfor/begrepptjanst/logging/debug.log'
+    FILENAME = '/home/vgrinfor/kodtjanst/logging/debug.log'
 elif socket.gethostname() == 'W363207':
     if os.path.isdir('/mnt/c'):
         FILENAME = '/mnt/c/Users/liath1/coding/kodtjanst/settings/logging/logs.log'

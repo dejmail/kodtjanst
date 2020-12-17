@@ -1,5 +1,5 @@
 """
-WSGI config for begrepptjanst project.
+WSGI config for kodtjanst project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

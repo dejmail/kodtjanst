@@ -85,7 +85,6 @@ def retur_general_sök(url_parameter):
                         AND kodtjanst_kodverk.status = 'Beslutad';'''
 
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
-    #logger.debug(clean_statement)
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
@@ -163,7 +162,6 @@ def kodverk_sok(request):
         
     if request.is_ajax():
         
-        #data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
         kodverk_column_names = ['id',
                                 'titel_på_kodverk',
@@ -176,12 +174,6 @@ def kodverk_sok(request):
                                                             'searched_for_term' : url_parameter})
 
         return JsonResponse(data=html, safe=False)
-        #html = render_to_string(
-        #   template_name="kodverk_partial_result.html", context={'kodverk': data_dict,
-                                                               #'synonym' : return_synonym_list_dict,
-        #                                                       'searched_for_term' : url_parameter}
-    #)
-    #    return html#, render(request, "term-results-partial.html", context=data_dict)
 
     # elif request.method == 'GET':
     #     data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
@@ -235,16 +227,6 @@ def kodverk_komplett_metadata(request):
             for return_result in exact_kodverk_request:
                 return_list_dict.append(dict(zip(result_column_names, return_result)))
             
-
-        # domän_column_names = result_column_names[-2:]
-        # return_domän_list_dict = []
-        # for return_result in domän_full:
-        #     return_domän_list_dict.append(dict(zip(domän_column_names, return_result)))
-
-        # mäta_förklaring_träff(sök_term=url_parameter, request=request)
-
-        #status_färg_dict = {'begrepp' :färg_status_dict.get(return_list_dict[0].get('status'))}
-            
             kodtext_search_result = return_kodtext_related_to_kodverk(url_parameter)
             kodtext_column_names = ['annan_kodtext',
                                     'datum_skapat',
@@ -264,8 +246,7 @@ def kodverk_komplett_metadata(request):
             template_context = {'kodverk_full': return_list_dict[0],
                                 'kodverk_id' : url_parameter,
                                 'kodtext_full' : kodtext_dict}
-                                #'domän_full' : return_domän_list_dict,
-                                #'färg_status' : status_färg_dict}
+                                
             
             html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
         
@@ -435,8 +416,7 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         return response
 
 def kodverk_verify_comment(request):
-# kommentera begrepp
-    #set_trace()
+
     url_parameter = request.GET.get("q")
     
     if request.method == 'GET':
@@ -447,7 +427,7 @@ def kodverk_verify_comment(request):
             form = KommenteraKodverk(initial={'kodverk': url_parameter})
             return render(request,'commentForm.html', {'kommentera': form})
         elif form_id =="verify":
-            #set_trace()
+            
             form = VerifyKodverk(initial={'kodverk': url_parameter})
             return render(request,'verifyForm.html', {'verify': form})
     
@@ -458,20 +438,16 @@ def kodverk_verify_comment(request):
         if form_id == "comment":
             print('processing comment form', form_id)
             form = KommenteraKodverk(request.POST)
-            #set_trace()
+            
             if form.is_valid():
                 
                 kommentera_kodverk = CommentedKodverk()
                 kommentera_kodverk.kodverk = Kodverk(id=form.cleaned_data.get("kodverk"))
                 kommentera_kodverk.comment_kontext = form.cleaned_data.get('kommentar_kontext')
-                #kommentera_kodverk.kodverk_kontext = form.cleaned_data.get('resonemang')
-                #opponera_term.datum = datetime.now().strftime("%Y-%m-%d %H:%M")
                 kommentera_kodverk.comment_epost = form.cleaned_data.get('epost')
-                kommentera_kodverk.comment_name = form.cleaned_data.get('namn')
-                #kommentera_kodverk.status = models.DEFAULT_STATUS
-                kommentera_kodverk.comment_telefon = form.cleaned_data.get('telefon')
-                # entries with doublets cause a problem, so we take the first one
-                #kommentera_kodverk.kodverk = Begrepp.objects.filter(term=form.cleaned_data.get('kodverk')).first()
+                kommentera_kodverk.comment_name = form.cleaned_data.get('namn')                
+                kommentera_kodverk.comment_telefon = form.cleaned_data.get('telefon')              
+                
                 kommentera_kodverk.save()
 
                 return HttpResponse('''<div class="alert alert-success">
@@ -488,7 +464,6 @@ def kodverk_verify_comment(request):
                 
                 new_verify = ValidatedBy()
                 new_verify.kodverk = Kodverk(id=form.cleaned_data.get("kodverk"))
-               # new_verify.kodverk=form.cleaned_data.get("kodverk")
                 new_verify.domän_kontext=form.cleaned_data.get("kontext")
                 new_verify.domän_stream=form.cleaned_data.get("stream")
                 new_verify.domän_telefon=form.cleaned_data.get("telefon")
@@ -497,11 +472,7 @@ def kodverk_verify_comment(request):
                 
                 return HttpResponse('''<div class="alert alert-success">
                                         Tack för dina synpunkter.
-                                        </div>''')
-            # We need to clean out the "Inte definierad" once the domän has been given a real one
-            #SomeModel.objects.filter(id=id).delete()
-            
- 
+                                        </div>''') 
           
     else:
         return render(request, 'kodverk_komplett_metadata.html', {})
