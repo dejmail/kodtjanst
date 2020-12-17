@@ -70,7 +70,8 @@ function loadUrl(kodverk_id, kodtext_tag_id) {
         console.log('kodtext response loaded into form', kodtext_tag_id, 'field unhidden');
     }
     };
-    xhttp.open("GET", "/"+domain_url+"ajax/kodtext_elements/"+kodverk_id+"/", true);
+    
+    xhttp.open("GET", "/"+domain_url+"admin/ajax/kodtext_elements/"+kodverk_id+"/", true);
     xhttp.send();
 };
 
