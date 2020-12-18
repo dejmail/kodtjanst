@@ -140,7 +140,7 @@ class Kodverk(models.Model):
 class Nyckelord(models.Model):
     
     class Meta:
-        verbose_name_plural = "Nyckelord"
+        verbose_name_plural = "Sökord"
 
     kodverk_id = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
     nyckelord = models.CharField(max_length=255, blank=True, null=True)
@@ -168,7 +168,7 @@ class ValidatedBy(models.Model):
     domän_kontext = models.TextField(max_length=2000, null=True, blank=True)
     domän_stream = models.CharField(max_length=255, null=True)
     domän_epost = models.EmailField(null=True)
-    domän_telefon = models.CharField(max_length=255, null=True)       
+    domän_telefon = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         if self.domän_stream is None:

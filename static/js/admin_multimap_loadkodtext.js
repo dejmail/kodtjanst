@@ -1,9 +1,10 @@
 
 if (window.document.location.hostname == "127.0.0.1") {
-    var domain_url = '';
+    var domain_url = '/';
     var domain_host = window.document.location.host
 } else {
-    var domain_url = window.location.pathname.split("/")[1]+"/";
+    var domain_url = "/"+window.location.pathname.split("/")[1]+"/";
+    console.log("domain url" + domain_url);
     var domain_host = window.document.location.host
 };    
 
@@ -71,7 +72,8 @@ function loadUrl(kodverk_id, kodtext_tag_id) {
     }
     };
     
-    xhttp.open("GET", domain_url+"/admin/ajax/kodtext_elements/"+kodverk_id+"/", true);
+    var kodtext_url = domain_url+"admin/ajax/kodtext_elements/"+kodverk_id+"/"
+    xhttp.open("GET", kodtext_url, true);
     xhttp.send();
 };
 

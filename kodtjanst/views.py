@@ -316,9 +316,9 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         workbook = xlsxwriter.Workbook(output_memory_file, {'in_memory' : True})
         bold = workbook.add_format({'bold': True})
 
-        kodverk_worksheet = workbook.add_worksheet('Kodverk')
+        kodverk_worksheet = workbook.add_worksheet('Metadata')
         
-        kodtext_worksheet = workbook.add_worksheet('Kodtext')
+        kodtext_worksheet = workbook.add_worksheet('Kod+Kodtext')
         
         kodverk_columns = ['titel_på_kodverk',
                            'syfte',
@@ -489,7 +489,8 @@ def load_kodtext(request, kodverk_id):
                       {'kodtexter': kodtext}, status=200)
     else:
 
-        kodtext = {'kod' : 'Inga kod' , 'kodtext' :'Inga kodtexter'}
+        kodtext = [{"kod" : "Inga kod" , "kodtext" : "Inga kodtexter"},]
+    
         return render(request, 
                       'admin/kodtext_dropdown_list_options.html', 
                       {'kodtexter': kodtext}, status=200)
