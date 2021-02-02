@@ -76,6 +76,8 @@ def retur_general_sök(url_parameter):
                                 ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
                             LEFT JOIN kodtjanst_validatedby\
                                 ON kodtjanst_kodverk.id = kodtjanst_validatedby.kodverk_id\
+                            LEFT JOIN kodtjanst_nyckelord\
+                                on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
                         WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%"\
@@ -115,7 +117,10 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             ändrad_av_id,\
                             ansvarig_id,\
                             urval_referens_id\
+                            nyckelord\
                         FROM kodtjanst_kodverk\
+                        LEFT JOIN kodtjanst_nyckelord\
+                            on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
                         WHERE kodtjanst_kodverk.id = {url_parameter};'''
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
     cursor.execute(clean_statement)
