@@ -142,7 +142,7 @@ class Nyckelord(models.Model):
     class Meta:
         verbose_name_plural = "Sökord"
 
-    kodverk_id = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
+    kodverk_from = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
     nyckelord = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
