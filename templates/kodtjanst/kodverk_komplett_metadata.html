@@ -39,7 +39,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">Mappning för rapportering</td>
-                        <td colspan="6">{{kodverk_full.mappning_för_rapportering}}</td>
+                        <td colspan="6">{{kodverk_full.mappning_för_rapportering|yesno:"Ja,Nej"}}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Ägare till kodverk</td>
@@ -121,7 +121,7 @@
                   <h4 class="modal-title" style="font-family: frutiger;">Instruktioner för verifiera/kommentera</h4>
                 </div>
                 <div class="modal-body">
-                    <h4 style="font-family: frutiger;">Kommentera begrepp</h4>
+                    <h4 style="font-family: frutiger;">Kommentera kodverk</h4>
                         <p>
                             Funktionen Kommentera är tänkt att vara en möjlighet att framföra synpunkter om ett kodverk, 
                             hur och var det används eller om det finns felaktigheter. Det är viktigt att kommentaren tydligt 
@@ -142,9 +142,9 @@
                             används. Det är således viktigt att de som söker och använder ett kodverk verifierar detta med denna funktion.
                             <br>Gör så här:<br>
                         <ol>
-                            <li>När du sökt och funnit ett begrepp som motsvarar ert behov tryck på knappen Verifiera användning</li>
+                            <li>När du sökt och funnit ett kodverk som motsvarar ert behov tryck på knappen Verifiera användning</li>
                             <li>Fyll i E-postadress</li>
-                            <li>Välj ett användningsområde i listan Verifierar att begreppet används i.</li>
+                            <li>Välj ett användningsområde i listan Verifierar att kodverket används i.</li>
                                 <ol>
                                     <li>Finns inte det avsedda användningsområdet i listan, välj Annan.</li>
                                     <li>Skriv sedan i ett nytt användningsområde i fältet Om annat.</li>
@@ -218,6 +218,7 @@
                     <th></th>
                     <th>Kod</th>
                     <th>Kodtext</th>
+                    <th>Definition</th>
                 </tr>
             </thead>
             <tbody>
@@ -226,6 +227,7 @@
                 <td></td>
                 <td>{{i.kod}}</td>
                 <td>{{i.kodtext}}</td>
+                <td>{{i.definition}}</td>
             </tr>
             {% endfor %}
             </tbody>
@@ -234,6 +236,7 @@
                     <th></th>
                     <th>Kod</th>
                     <th>Kodtext</th>
+                    <th>Definition</th>
                 </tr>
         
             
