@@ -31,7 +31,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">Kodverk variant</td>
-                        <td colspan="6">{{kodverk_full.koverk_variant}}</td>
+                        <td colspan="6">{{kodverk_full.kodverk_variant}}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Datum skapat</td>
@@ -64,6 +64,10 @@
                     <tr>
                         <td colspan="2">Status</td>
                         <td colspan="6">{{kodverk_full.status}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Nyckelord</td>
+                        <td colspan="6">{%for nyckelord in kodverk_full.nyckelord%}{{nyckelord}},{% endfor %}</td>
                     </tr>
                     <!-- <tr>
                         <td>Verifierad användning</td>
