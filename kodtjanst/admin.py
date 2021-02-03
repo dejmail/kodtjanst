@@ -99,6 +99,8 @@ class NyckelOrdInline(admin.TabularInline):
     }
     ]]
 
+
+
 class ValidatedByInline(admin.TabularInline):
     model = ValidatedBy
     extra = 1
@@ -109,7 +111,24 @@ class ValidatedByInline(admin.TabularInline):
     }
     ]]
 
+class NyckelordManager(admin.ModelAdmin):
 
+    list_display = ('nyckelord', 'kodverk_grupp')
+    search_fields = ('nyckelord',)
+
+    def kodverk_grupp(self, obj):
+        
+        display_text = ", ".join([
+            "<a href={}>{}</a>".format(
+                reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
+                args=(obj.kodverk_from_id,)),
+                obj.kodverk_from.titel_på_kodverk)
+            #for kodv in obj.kodverk
+        ])
+        
+        if display_text:
+            return mark_safe(display_text)
+        return "-"
 
 
 def make_unpublished(modeladmin, request, queryset):
@@ -193,6 +212,7 @@ class ExternaKodtextManager(admin.ModelAdmin):
     clickable_url.short_description = "URL"
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):    
+
         #set_trace()
         if db_field.name == "kodtext":
             kwargs["queryset"] = Kodtext.objects.all()
@@ -295,7 +315,7 @@ admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
 #admin.site.register(ExternaKodverk)
-admin.site.register(Nyckelord)
+admin.site.register(Nyckelord, NyckelordManager)
 admin.site.register(ValidatedBy)
 admin.site.register(CommentedKodverk, CommentedKodverkManager)
 admin.site.register(MultiKodtextMapping, MultiKodtextMappingManager)
