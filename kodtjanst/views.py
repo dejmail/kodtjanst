@@ -264,6 +264,8 @@ def kodverk_komplett_metadata(request):
 
             kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
             
+            return_list_dict[0].update({'syfte' : format_html(return_list_dict[0].get('syfte'))})
+
             template_context = {'kodverk_full': return_list_dict[0],
                                 'kodverk_id' : url_parameter,
                                 'kodtext_full' : kodtext_dict,
