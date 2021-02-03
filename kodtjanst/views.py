@@ -199,7 +199,9 @@ def convert_list_of_tuples_to_string(tuple_list, start=None, stop=None, single_p
     slicing range from of a tuple of tuples or lists of lists or just one 
     position within each list or tuple.
     '''
-
+    
+    if tuple(tuple_list)[0][0] is None:
+        return ''
     if single_position is not None:
         return ', '.join([i[single_position] for i in tuple_list])
     elif (start is not None) and (stop is not None):
@@ -476,8 +478,7 @@ def kodverk_verify_comment(request):
                                     Tack för dina synpunkter.
                                     </div>''')
             else:
-                print('formisnotvalid') 
-                set_trace()
+                print('formisnotvalid')
         
         else:
             form=VerifyKodverk(request.POST)
