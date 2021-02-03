@@ -9,74 +9,118 @@
      / __)  /__\  (  )(  )/ __)  /__\  / __)( ___)/ __)  ( ___)(  _  )(  _ \  ( ___)( \/ )( ___)(  _ \( \/ )(  _  )( \( )( ___)
      \__ \ /(__)\  )(__)( \__ \ /(__)\( (_-. )__) \__ \   )__)  )(_)(  )   /   )__)  \  /  )__)  )   / \  /  )(_)(  )  (  )__) 
      (___/(__)(__)(______)(___/(__)(__)\___/(____)(___/  (__)  (_____)(_)\_)  (____)  \/  (____)(_)\_) (__) (_____)(_)\_)(____) -->
+     <div class="row mt-10" id="mitten-span-row">
 
+        <!-- Alla metadata attribut -->
 
+        <div class="col-6" id="mitten-span-left-column">
             <div>
-            <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md">
-            <tbody>
-                    <tr>
-                        <td colspan="2">Kodverk</td>
-                        <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Syfte</td>
-                        <td colspan="6">{{kodverk_full.syfte}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Beskrivning av informationsbehov</td>
-                        <td colspan="6">{{kodverk_full.beskrivning_av_informationsbehov}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Kategori</td>
-                        <td colspan="6">{{kodverk_full.kategori}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Avändning</td>
-                        <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Mappning för rapportering</td>
-                        <td colspan="6">{{kodverk_full.mappning_för_rapportering|yesno:"Ja,Nej"}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Ägare till kodverk</td>
-                        <td colspan="6">{{kodverk_full.ägare_till_kodverk}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Giltig från</td>
-                        <td colspan="6">{{kodverk_full.giltig_från}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Giltig tom</td>
-                        <td colspan="6">{{kodverk_full.giltig_tom}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Senaste ändring</td>
-                        <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Ansvarig förvaltare</td>
-                        <td colspan="6">{{kodverk_full.ansvarig_förvaltare}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Status</td>
-                        <td colspan="6">{{kodverk_full.status}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Nyckelord</td>
-                        <td colspan="6">{{nyckelord}}</td>
-                    </tr>
-                    <!-- <tr>
-                        <td>Verifierad användning</td>
-                        <td>{% for domän in domän_full %}
-                        - {{domän.domän_namn}}<br>
-                        {% endfor %}
-                    </td>
-                    </tr> -->
-                </tbody>
-                </table>
+                <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md">
+                <tbody>
+                        <tr>
+                            <td colspan="2">Kodverk</td>
+                            <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Syfte</td>
+                            <td colspan="6">{{kodverk_full.syfte}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Beskrivning av informationsbehov</td>
+                            <td colspan="6">{{kodverk_full.beskrivning_av_informationsbehov}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Kategori</td>
+                            <td colspan="6">{{kodverk_full.kategori}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Avändning</td>
+                            <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Mappning för rapportering</td>
+                            <td colspan="6">{{kodverk_full.mappning_för_rapportering|yesno:"Ja,Nej"}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Ägare till kodverk</td>
+                            <td colspan="6">{{kodverk_full.ägare_till_kodverk}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Giltig från</td>
+                            <td colspan="6">{{kodverk_full.giltig_från}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Giltig tom</td>
+                            <td colspan="6">{{kodverk_full.giltig_tom}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Senaste ändring</td>
+                            <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Ansvarig förvaltare</td>
+                            <td colspan="6">{{kodverk_full.ansvarig_förvaltare}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Status</td>
+                            <td colspan="6">{{kodverk_full.status}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Nyckelord</td>
+                            <td colspan="6">{{nyckelord}}</td>
+                        </tr>
+                        <!-- <tr>
+                            <td>Verifierad användning</td>
+                            <td>{% for domän in domän_full %}
+                            - {{domän.domän_namn}}<br>
+                            {% endfor %}
+                        </td>
+                        </tr> -->
+                    </tbody>
+                    </table>
+    
+                </div>
+        </div>
 
+        <!-- Själva kodtext -->
+
+        <div class="col-6" id="mitten-span-right-column">
+            <div>
+                <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Kod</th>
+                            <th>Kodtext</th>
+                            <th>Definition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in kodtext_full %}
+                    <tr>
+                        <td></td>
+                        <td>{{i.kod}}</td>
+                        <td>{{i.kodtext}}</td>
+                        <td>{{i.definition}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th>Kod</th>
+                            <th>Kodtext</th>
+                            <th>Definition</th>
+                        </tr>
+                
+                    
+                    </tfoot>
+                </table>
             </div>
+        </div>
+      </div>
+
+            
 
             <!-- <div class="row mt-10" id="mitten-span-row"> -->
             <div class="col-12">
@@ -212,38 +256,7 @@
           </div>
           
 
-        <div>
-        <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Kod</th>
-                    <th>Kodtext</th>
-                    <th>Definition</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for i in kodtext_full %}
-            <tr>
-                <td></td>
-                <td>{{i.kod}}</td>
-                <td>{{i.kodtext}}</td>
-                <td>{{i.definition}}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th></th>
-                    <th>Kod</th>
-                    <th>Kodtext</th>
-                    <th>Definition</th>
-                </tr>
         
-            
-            </tfoot>
-        </table>
-    </div>
 {% else %}
         <p>Ingen definition hittades...</p>
 {% endif %}
