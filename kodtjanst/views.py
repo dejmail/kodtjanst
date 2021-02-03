@@ -317,7 +317,7 @@ def return_translation_text(request):
                           "sZeroRecords": "Inga resultat",
                           "oPaginate": {
                             "sFirst": "Första",
-                            "sPrevious": "Förre",
+                            "sPrevious": "Föregående",
                             "sNext": "Nästa",
                             "sLast": "Sista"}
                         }
