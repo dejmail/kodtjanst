@@ -106,12 +106,11 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             version_av_källa,\
                             kategori,\
                             instruktion_för_kodverket,\
-                            kodverk_variant,\
+                            användning_av_kodverk,\
                             status,\
                             uppdateringsintervall,\
                             mappning_för_rapportering,\
                             ansvarig_förvaltare,\
-                            datum_skapat,\
                             senaste_ändring,\
                             giltig_från,\
                             giltig_tom,\
@@ -231,12 +230,11 @@ def kodverk_komplett_metadata(request):
                               'version_av_källa',
                               'kategori',
                               'instruktion_för_kodverket',
-                              'kodverk_variant',
+                              'användning_av_kodverk',
                               'status',
                               'uppdateringsintervall',
                               'mappning_för_rapportering',
                               'ansvarig_förvaltare',
-                              'datum_skapat',
                               'senaste_ändring',
                               'giltig_från',
                               'giltig_tom',
