@@ -80,13 +80,14 @@ def retur_general_sök(url_parameter):
                                 on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
                         WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodverk.nyckelord LIKE "%{url_parameter}%"\
+                        OR kodtjanst_nyckelord.nyckelord LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.definition LIKE "%{url_parameter}%")
                         AND kodtjanst_kodverk.status = 'Beslutad';'''
 
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
+
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
@@ -116,8 +117,8 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             giltig_tom,\
                             ändrad_av_id,\
                             ansvarig_id,\
-                            urval_referens_id\
-                            nyckelord\
+                            urval_referens_id,\
+                            kodtjanst_nyckelord.nyckelord\
                         FROM kodtjanst_kodverk\
                         LEFT JOIN kodtjanst_nyckelord\
                             on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
@@ -191,6 +192,19 @@ def kodverk_sok(request):
         kodverk = Kodverk.objects.none()
     return render(request, "kodverk.html", {})
 
+def convert_list_of_tuples_to_string(tuple_list, start=None, stop=None, single_position=None):
+
+    '''
+    Returns concatenated, command separated string of contents of an arbitrary 
+    slicing range from of a tuple of tuples or lists of lists or just one 
+    position within each list or tuple.
+    '''
+
+    if single_position is not None:
+        return ', '.join([i[single_position] for i in tuple_list])
+    elif (start is not None) and (stop is not None):
+        return ', '.join([i[start:stop] for i in tuple_list])
+
 def kodverk_komplett_metadata(request):
 
     url_parameter = request.GET.get("q")
@@ -198,9 +212,12 @@ def kodverk_komplett_metadata(request):
     if request.is_ajax():
         if url_parameter:
             exact_kodverk_request = retur_komplett_förklaring_custom_sql(url_parameter)
-            #kodverk_full = extract_columns_from_query_and_return_set(exact_kodverk_request, 0, 0)
             
-            #domän_full = extract_columns_from_query_and_return_set(exact_term_request, -2, 0)
+            nyckelord = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
+                                                                  start=-1, 
+                                                                  stop=0)
+
+            nyckelord_string = convert_list_of_tuples_to_string(nyckelord, single_position=0)
             
             result_column_names = ['syfte',
                               'beskrivning_av_informationsbehov',
@@ -223,9 +240,8 @@ def kodverk_komplett_metadata(request):
                               'giltig_tom',
                               'ändrad_av_id',
                               'ansvarig_id',
-                             'urval_referens_id']
-
-            #kodverk_column_names = result_column_names[:-5]
+                              'urval_referens_id',
+                              'nyckelord']
             
             return_list_dict = []
             
@@ -250,7 +266,8 @@ def kodverk_komplett_metadata(request):
             
             template_context = {'kodverk_full': return_list_dict[0],
                                 'kodverk_id' : url_parameter,
-                                'kodtext_full' : kodtext_dict}
+                                'kodtext_full' : kodtext_dict,
+                                'nyckelord' : nyckelord_string}
                                 
             
             html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
@@ -258,7 +275,7 @@ def kodverk_komplett_metadata(request):
             return render(request, "kodverk_komplett_metadata.html", context=template_context)
     else:
         kodverk = Kodverk.objects.none()
-    return render(request, "kodverk.html", {'kodverk': kodverk})
+        return render(request, "kodverk.html", {'kodverk': kodverk})
 
 
 def extract_columns_from_query_and_return_set(search_result, start, stop):

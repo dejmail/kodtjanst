@@ -2,6 +2,7 @@
 {% load static %}
 {% load crispy_forms_filters %}
 {% block mitten-span %}
+
 {% if kodverk_full %}
 
  <!-- ___    __    __  __  ___    __    ___  ____  ___    ____  _____  ____    ____  _  _  ____  ____  _  _  _____  _  _  ____ 
@@ -67,7 +68,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">Nyckelord</td>
-                        <td colspan="6">{%for nyckelord in kodverk_full.nyckelord%}{{nyckelord}},{% endfor %}</td>
+                        <td colspan="6">{{nyckelord}}</td>
                     </tr>
                     <!-- <tr>
                         <td>Verifierad användning</td>
