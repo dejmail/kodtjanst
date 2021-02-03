@@ -328,7 +328,7 @@ function format (d) {
         $("#kodtext_tabell").show(); 
     },
         "language": {
-            "url": "/table_language_translations/",
+            "url": "{% url 'translation_text' %}",
             "emptyTable": "Inga kodtexter som kan visas"
     } 
     });
