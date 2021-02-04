@@ -64,10 +64,36 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
+def retur_alla_kodverk(url_parameter):
+
+    cursor = connection.cursor()
+    sql_statement = f'''SELECT DISTINCT kodtjanst_kodverk.id,\
+                               kodtjanst_kodverk.titel_på_kodverk,\
+                               kodtjanst_kodverk.syfte\
+                            FROM kodtjanst_kodverk\
+                            LEFT JOIN kodtjanst_kodtext\
+                                ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
+                            LEFT JOIN kodtjanst_validatedby\
+                                ON kodtjanst_kodverk.id = kodtjanst_validatedby.kodverk_id\
+                            LEFT JOIN kodtjanst_nyckelord\
+                                on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
+                            WHERE kodtjanst_kodverk.status = 'Beslutad';'''
+
+    clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
+
+    cursor.execute(clean_statement)
+    result = cursor.fetchall()
+    
+    return result
+
+
 def retur_general_sök(url_parameter):
     cursor = connection.cursor()
-    ''' need to reduce the number of fields being returned, we are not using all of them,
-    but this also affects the parsing as it is position based, so need to be careful'''
+    ''' 
+    need to reduce the number of fields being returned, we are not using all of them,
+    but this also affects the parsing as it is position based, so need to be careful
+    '''
+
     sql_statement = f'''SELECT DISTINCT kodtjanst_kodverk.id,\
                                kodtjanst_kodverk.titel_på_kodverk,\
                                kodtjanst_kodverk.syfte\
@@ -161,22 +187,37 @@ def highlight_search_term_i_definition(search_term, result_dict_list):
                     result_dict_list[idx].update({key : return_string})
     return result_dict_list
 
+def make_dictionary_field_html_safe(result_list_of_dictionaries=[], fields=[]):
+
+    for index, entry in enumerate(result_list_of_dictionaries):
+        for field in fields:
+            if entry.get(f'{field}') is not None:
+                result_list_of_dictionaries[index].update({f'{field}' : format_html(entry.get(f'{field}'))})
+    return result_list_of_dictionaries
 
 def kodverk_sok(request):
     url_parameter = request.GET.get("q")
         
     if request.is_ajax():
+
+        kodverk_column_names = ['id',
+                        'titel_på_kodverk',
+                        'syfte']
+
+        if url_parameter == '*all':
+            sql_search = retur_alla_kodverk(url_parameter)
+        else:
+            sql_search = retur_general_sök(url_parameter)
         
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
-        kodverk_column_names = ['id',
-                                'titel_på_kodverk',
-                                'syfte']
-        sql_search = retur_general_sök(url_parameter)
+        
         search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
         # search_result = highlight_search_term_i_definition(url_parameter, search_result)
+        search_result = make_dictionary_field_html_safe(search_result, fields=['syfte'])
+
         html = render_to_string(
             template_name="kodverk_partial_result.html", context={'kodverk': search_result,                                                            
-                                                            'searched_for_term' : url_parameter})
+                                                                  'searched_for_term' : url_parameter})
 
         return JsonResponse(data=html, safe=False)
 
@@ -264,7 +305,9 @@ def kodverk_komplett_metadata(request):
 
             kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
             
-            return_list_dict[0].update({'syfte' : format_html(return_list_dict[0].get('syfte'))})
+            kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition'])
+            return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov'])
+                       
 
             template_context = {'kodverk_full': return_list_dict[0],
                                 'kodverk_id' : url_parameter,
