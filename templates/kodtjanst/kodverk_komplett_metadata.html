@@ -38,10 +38,6 @@
                             <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
                         </tr>
                         <tr>
-                            <td colspan="2">Mappning för rapportering</td>
-                            <td colspan="6">{{kodverk_full.mappning_för_rapportering|yesno:"Ja,Nej"}}</td>
-                        </tr>
-                        <tr>
                             <td colspan="2">Ägare till kodverk</td>
                             <td colspan="6">{{kodverk_full.ägare_till_kodverk}}</td>
                         </tr>
@@ -93,9 +89,9 @@
                     {% for i in kodtext_full %}
                     <tr>
                         <td></td>
-                        <td>{{i.kod}}</td>
+                        <td>{{i.kod|default_if_none:"Ingen" }}</td>
                         <td>{{i.kodtext}}</td>
-                        <td>{{i.definition}}</td>
+                        <td>{{i.definition|default_if_none:"Ingen" }}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
