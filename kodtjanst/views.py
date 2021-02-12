@@ -19,7 +19,7 @@ from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
 from io import BytesIO
 import xlsxwriter
-from openpyxl.styles import Alignment
+
 
 import json
 from pdb import set_trace
