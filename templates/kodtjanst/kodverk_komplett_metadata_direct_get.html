@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_filters %}
+
+
+{% block search_bar %}
+{% endblock search_bar %}
+
+
+{% block header_left_column %}
+<img style="margin-left: 1%;  width: 100%;" src="{% static '/images/VGR-logga.SVG'%}">
+
+<a href="https://vgrinformatik.se/kodtjanst"><img style="width: 50%;" src="{% static 'images/tillbaka.svg' %}" alt="Navigera tillbaka till KOLLI"></a>
+{% endblock header_left_column %}
+{% block header_middle_column %}
+{% endblock header_middle_column %}
+{% block second_header_row %}
+{% endblock second_header_row %}
+
+{% block mitten-span %}
+
+{% if kodverk_full %}
+
+ <!-- ___    __    __  __  ___    __    ___  ____  ___    ____  _____  ____    ____  _  _  ____  ____  _  _  _____  _  _  ____ 
+     / __)  /__\  (  )(  )/ __)  /__\  / __)( ___)/ __)  ( ___)(  _  )(  _ \  ( ___)( \/ )( ___)(  _ \( \/ )(  _  )( \( )( ___)
+     \__ \ /(__)\  )(__)( \__ \ /(__)\( (_-. )__) \__ \   )__)  )(_)(  )   /   )__)  \  /  )__)  )   / \  /  )(_)(  )  (  )__) 
+     (___/(__)(__)(______)(___/(__)(__)\___/(____)(___/  (__)  (_____)(_)\_)  (____)  \/  (____)(_)\_) (__) (_____)(_)\_)(____) -->
+
+<div class="row">
+    <div class="col-1"></div>
+
+    <div class="col-10">
+        <button class="col-12 btn btn-primary" onclick="showOptions()" style="background-color:#006298;">Tryck här för funktioner gällande kodverket.
+        </button>
+    </div>
+    
+    <div class="col-1"></div>
+</div>
+
+    <row>
+        <div  id="showopt" class="col-12 align-middle" style="display: none; text-align: center;">
+        <br><br>
+            
+            <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
+                <span class="fas fa-comment" style="font-size:smaller;"></span>  Kommentera
+            </button>        
+            
+            <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
+                <span class="fas fa-user-check" style="font-size:smaller;"> </span> Verifiera användning
+            </button>
+            
+            <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
+                <span class="fas fa-download" style="font-size:smaller;"></span> Ladda ner
+            </button>
+            
+            <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
+                <span class="fas fa-question-circle" style="font-size:smaller;"></span> Hjälp
+                <form id="opponera_term_form" action="{% url 'verify_comment_form' %}", method='POST'>{% csrf_token %}
+                    {{ opponera|crispy }}
+            </button>
+        </div>
+    </row>
+    <br>
+    <br>             
+
+     <div class="row mt-10" id="mitten-span-row">
+
+        <!-- Alla metadata attribut -->
+        <div class="col-1" id="mitten-span-left-spacer-column"></div>
+        
+        <div class="col-5" id="mitten-span-left-column">
+            <div>
+                <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md">
+                <tbody>
+                        <tr>
+                            <td colspan="2">Kodverk</td>
+                            <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Syfte</td>
+                            <td colspan="6">{{kodverk_full.syfte}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Beskrivning</td>
+                            <td colspan="6">{{kodverk_full.beskrivning_av_informationsbehov}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Kategori</td>
+                            <td colspan="6">{{kodverk_full.kategori}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Användning</td>
+                            <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Mappning för rapportering</td>
+                            <td colspan="6">{{kodverk_full.mappning_för_rapportering|yesno:"Ja,Nej"}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Ägare till kodverk</td>
+                            <td colspan="6">{{kodverk_full.ägare_till_kodverk}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Giltig från</td>
+                            <td colspan="6">{{kodverk_full.giltig_från}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Giltig tom</td>
+                            <td colspan="6">{{kodverk_full.giltig_tom}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Senaste ändring</td>
+                            <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Ansvarig förvaltare</td>
+                            <td colspan="6">{{kodverk_full.ansvarig_förvaltare}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Status</td>
+                            <td colspan="6">{{kodverk_full.status}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Nyckelord</td>
+                            <td colspan="6">{{nyckelord}}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+    
+                </div>
+        </div>
+        
+
+        <!-- Själva kodtext -->
+        
+        <div class="col-5" id="mitten-span-right-column">
+            <div>
+                <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Kod</th>
+                            <th>Kodtext</th>
+                            <th>Definition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in kodtext_full %}
+                    <tr>
+                        <td></td>
+                        <td>{{i.kod|default_if_none:"Ingen" }}</td>
+                        <td>{{i.kodtext}}</td>
+                        <td>{{i.definition|default_if_none:"Ingen" }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+                  
+        <div class="col-1" id="mitten-span-right-spacer-column"></div>
+
+            <!-- <div class="row mt-10" id="mitten-span-row"> -->
+           
+                                
+                  
+
+        <div class="modal fade" id="help" role="dialog">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">				
+                  <h4 class="modal-title" style="font-family: frutiger;">Instruktioner för verifiera/kommentera</h4>
+                </div>
+                <div class="modal-body">
+                    <h4 style="font-family: frutiger;">Kommentera kodverk</h4>
+                        <p>
+                            Funktionen Kommentera är tänkt att vara en möjlighet att framföra synpunkter om ett kodverk, 
+                            hur och var det används eller om det finns felaktigheter. Det är viktigt att kommentaren tydligt 
+                            anger vad som avses samt motiveras på ett adekvat sätt. Ange även den kontext som din kommentar 
+                            gäller. Kommentarerna kommer sedan bearbetas av Kodverksgruppen. 
+                            <br>Gör så här:<br>
+                            <ol>
+                                <li>Tryck på knappen Kommentera</li>
+                                <li>Fyll i kontaktuppgifter men namn, E-post och telefon så att vi kan nå dig för att ställa frågor.</li>
+                                <li>Avge dina kommentarer om kodverket. Var så tydlig du kan!</li>
+                                <li>Tryck på Skicka</li>
+                            </ol>
+                            <br>
+                        </p>
+                    <h4 style="font-family: frutiger;">Verifiera användning</h4>
+                    <p>
+                            Funktionen Verifiera användning ska användas för att visa information om var i verksamheten ett kodverk 
+                            används. Det är således viktigt att de som söker och använder ett kodverk verifierar detta med denna funktion.
+                            <br>Gör så här:<br>
+                        <ol>
+                            <li>När du sökt och funnit ett kodverk som motsvarar ert behov tryck på knappen Verifiera användning</li>
+                            <li>Fyll i E-postadress</li>
+                            <li>Välj ett användningsområde i listan Verifierar att kodverket används i.</li>
+                                <ol>
+                                    <li>Finns inte det avsedda användningsområdet i listan, välj Annan.</li>
+                                    <li>Skriv sedan i ett nytt användningsområde i fältet Om annat.</li>
+                                </ol>
+
+                            <li>Tryck på Skicka</li>
+                        </ol>
+                    </p>
+                    
+                
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                </div>
+              </div>			
+            </div>
+          </div>
+
+        
+        <!--           
+            Kommentera Kodverk modal
+        -->
+
+          <div class="modal fade" id="Comment" role="dialog">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">				
+                <h4 class="modal-title" style="font-family: frutiger;">Kommentera kodverket</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div id="populate_form_comment" class="form-group"></div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                </div>
+              </div>			
+            </div>
+          </div>
+
+        <!--           
+            Verify Kodverk modal
+        -->
+
+          <div class="modal fade" id="verify" role="dialog">
+            <div class="modal-dialog">		  
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">				
+                  <h4 class="modal-title" style="font-family: frutiger;">Verifiera andvändning av kodverket</h4>
+                </div>
+                {% load crispy_forms_filters %}
+                <div class="modal-body">
+
+                    <div id="populate_form_verify"></div>
+                  
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                </div>
+              </div>			
+            </div>
+          </div>
+          
+
+        
+{% else %}
+        <p>Ingen definition hittades...</p>
+{% endif %}
+
+{% endblock mitten-span %}
+
+{% block extra_javascript %}
+{{ super }}
+
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+
+
+<link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}" media="screen">
+
+<script>
+
+/* Formatting function for row details - modify as you need */
+
+function format (d) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        '<tr>'+
+            '<td>Kod:</td>'+
+            '<td>'+d.kod+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Kodtext:</td>'+
+            '<td>'+d.kodtext+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Annan kodtext:</td>'+
+            '<td>'+d.annan_kodtext+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Definition:</td>'+
+            '<td>'+d.definition+'</td>'+
+        '</tr>'+
+    '</table>';
+};
+
+ // Add event listener for opening and closing details
+ $('#kodtext_tabell tbody').on('click', 'td.details-control', function () {
+     var tr = $(this).closest('tr');
+     var row = table.row( tr );
+
+     if ( row.child.isShown() ) {
+         // This row is already open - close it
+         row.child.hide();
+         tr.removeClass('shown');
+     }
+     else {
+         // Open this row
+         row.child( format(row.data()) ).show();
+         tr.addClass('shown');
+     }
+ } );
+
+ $( document ).ready(function() {
+             
+    var table = $('#kodtext_tabell').removeAttr('width').DataTable({
+        fixedColumns: true,
+        columnDefs: [
+            { width: 50, targets: 0},
+            { width: 50, targets: 1}
+        ],
+        "stateSave" : true,
+        "retrieve" : true,
+        "initComplete": function(){ 
+        $("#kodtext_tabell").show(); 
+    },
+        "language": {
+            "url": "{% url 'translation_text' %}",
+            "emptyTable": "Inga kodtexter som kan visas"
+    } 
+    });
+});
+    
+//     $.ajax({
+//         type: "GET",
+//         dataType: "json",
+//         url: '/kodtext_json/?q={{kodverk_id}}',
+//         success: function(data,textStatus,jqXHR) {
+//             console.log('JSON loaded successfully, statusCode =', textStatus);
+//             instantiate_table(data);
+//         },
+//         complete : function(data,textStatus,jqXHR) {
+//             console.log('JSON request complete, statusCode =', textStatus);
+            
+//         },
+//         fail : function(data,textStatus,jqXHR) {        
+//             $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen kodtext från servern");
+//         }
+//     });
+// 
+
+function showOptions() {
+  var x = document.getElementById("showopt");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+	
+	$("#opponera_term_form").submit(function(event){
+		event.preventDefault(); //prevent default action 
+		var post_url = $(this).attr("action"); //get form action url
+		var request_method = $(this).attr("method"); //get form GET/POST method
+		var form_data = $(this).serialize(); //Encode form elements for submission
+		
+		$.ajax({
+			url : post_url,
+			type: request_method,
+			data : form_data
+		}).done(function(response){ 
+			$("#mitten-span-middle-column").html(response);
+			setTimeout(function(){
+				$("#mitten-span-middle-column").html('<div id="mitten-span-middle-column"></div>')}, 2500);
+		});
+    });
+    
+ 
+    $("#beställ_form").submit(function(event){
+    event.preventDefault();
+    var post_url = $(this).attr("action");
+    var request_method = $(this).attr("method");
+    var formdata = new FormData($(this)[0]);
+    
+    $.ajax({
+        beforeSend: function (request)
+            {
+                request.setRequestHeader("X-CSRFTOKEN", "{{ csrf_token }}");
+            },
+        url : post_url,
+        type: request_method,
+        dataType: 'html',
+        contentType: false,
+        cache: false,
+        processData:false,
+        data : formdata,
+        success : function(response){
+            $("#mitten-span-middle-column").html(response);
+            history.pushState(post_url, '', post_url)
+            setTimeout(function(){
+            $("#mitten-span-middle-column").html('<div id="mitten-span-middle-column"></div>')}, 2500);
+            document.getElementById('user-input').value = '';
+            history.replaceState('', 'VGR Informatik - KOLLI Kodtjänst', '/');
+	    }
+    });
+});
+
+    
+
+function get_form_function(url, div_to_replace, type_method){
+        
+    $.ajax({
+        url : url,
+        type : type_method,
+        success: function(response){
+            $(div_to_replace).html(response);
+        },
+        error: function() {
+    $(div_to_replace).html("There has been an error loading this form");
+    },
+
+    });
+
+};
+
+// Urls.py
+// path("verify_comment_form/", views.verify_comment_form, name="verify_comment"),
+
+$(document).ready(function(){
+
+$("#open_kommentera_button").click(function(){
+    
+    get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=comment", 
+                      div_to_replace="#populate_form_comment",
+                      type_method="GET");
+                    });
+                      
+$("#open_verifiera_button").click(function(){    
+    
+    get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=verify",
+                      div_to_replace="#populate_form_verify",
+                      type_method="GET"); 
+                    });
+});
+
+
+
+
+</script>
+
+{% endblock extra_javascript %}
+
+
+
