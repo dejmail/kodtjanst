@@ -31,9 +31,39 @@
 <body>
 {% endblock preamble %}
   {% load crispy_forms_tags %}
-  <div class="container-fluid">
+  
   {% block header %}
+    <div class="container-fluid">
+      <link href="https://fonts.googleapis.com/css2?family=Arvo:ital@1&display=swap" rel="stylesheet"> 
+      {% block first_header_row %}
+        <div class="row align-items-center top-buffer-15" style="position: relative; vertical-align: middle; text-align: center;" id="header_row">
+          <div class="col-2 mt-5 col-lg-2 col-md-2 col-sm-2 col-xs-2" id="header_left_column">
+            {% block header_left_column %}  
+                <img style="margin-top: 1%; margin-left: 1%;  width: 100%;" src="{% static '/images/VGR-logga.SVG'%}">
+            {% endblock header_left_column %}
+          </div>
+          <div class="col-8 text-center mt-5" id="header_center_column">
+            {% block header_middle_column %}
+              <h3>KOLLI Kodtjänst (beta)</h3>
+            {% endblock header_middle_column %}
+          </div>
+          <div class="col-2" id="header_right_column">
+            {% block header_right_column %}
+            {% endblock header_right_column %}
+          </div>
+        </div>
+      {% endblock first_header_row %}
+    
+      {% block second_header_row %}
+      <div class="row" id="list_icon_row">
+        <div class="text-center col-12 top-buffer-10">
+            ~<img height="40%" src="{% static '/images/favicon.gif' %}">~
+        </div>
+      </div>
+    {% endblock second_header_row %}
+    </div>
   {% endblock header %}
+  
   {% block search_bar %}
     {% block search_left_column %}
     {% endblock search_left_column %}

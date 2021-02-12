@@ -9,6 +9,42 @@
      / __)  /__\  (  )(  )/ __)  /__\  / __)( ___)/ __)  ( ___)(  _  )(  _ \  ( ___)( \/ )( ___)(  _ \( \/ )(  _  )( \( )( ___)
      \__ \ /(__)\  )(__)( \__ \ /(__)\( (_-. )__) \__ \   )__)  )(_)(  )   /   )__)  \  /  )__)  )   / \  /  )(_)(  )  (  )__) 
      (___/(__)(__)(______)(___/(__)(__)\___/(____)(___/  (__)  (_____)(_)\_)  (____)  \/  (____)(_)\_) (__) (_____)(_)\_)(____) -->
+
+     <div class="row">
+            
+        <div class="col-12">
+            <button class="col-12 btn btn-primary" onclick="showOptions()" style="background-color:#006298;">Tryck här för funktioner gällande kodverket.
+            </button>
+        </div>
+        
+    </div>
+    
+        <row>
+            <div  id="showopt" class="col-12 align-middle" style="display: none; text-align: center;">
+            <br><br>
+                
+                <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
+                    <span class="fas fa-comment" style="font-size:smaller;"></span>  Kommentera
+                </button>        
+                
+                <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
+                    <span class="fas fa-user-check" style="font-size:smaller;"> </span> Verifiera användning
+                </button>
+                
+                <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
+                    <span class="fas fa-download" style="font-size:smaller;"></span> Ladda ner
+                </button>
+                
+                <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
+                    <span class="fas fa-question-circle" style="font-size:smaller;"></span> Hjälp
+                    <form id="opponera_term_form" action="{% url 'verify_comment_form' %}", method='POST'>{% csrf_token %}
+                        {{ opponera|crispy }}
+                </button>
+            </div>
+        </row>
+        <br>
+        <br>     
+
      <div class="row mt-10" id="mitten-span-row">
 
         <!-- Alla metadata attribut -->
@@ -103,43 +139,6 @@
             </div>
         </div>
         </div>
-                  
-
-            <!-- <div class="row mt-10" id="mitten-span-row"> -->
-            <div class="col-12">
-                <button class="col-12 btn btn-primary" onclick="showOptions()" style="background-color:#006298;">Tryck här för funktioner gällande kodverket.</button></div>
-            
-            <row>
-                 <div  id="showopt" class="col-12 align-middle" style="display: none; text-align: center;">
-                    <br><br>
-                    
-                    <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
-                        <span class="fas fa-comment" style="font-size:smaller;"></span>  Kommentera
-                    </button>
-                    
-                    
-                        <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
-                            <span class="fas fa-user-check" style="font-size:smaller;"> </span> Verifiera användning
-                        </button>
-                    
-                    
-                    <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
-                            <span class="fas fa-download" style="font-size:smaller;"></span> Ladda ner
-                        </button>
-                    
-                    
-                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
-                            <span class="fas fa-question-circle" style="font-size:smaller;"></span> Hjälp
-                            <form id="opponera_term_form" action="{% url 'verify_comment_form' %}", method='POST'>{% csrf_token %}
-                                {{ opponera|crispy }}
-                            
-                            <!-- <input type="submit" value="Skicka" id="opponera_button" class="btn btn-light-blue" style="color: white;font-family:frutiger; background-color:#006298;"> -->
-                        </button>
-                 </div>
-            </row>
-                    <br>
-                    <br>             
-                                
                   
 
         <div class="modal fade" id="help" role="dialog">
