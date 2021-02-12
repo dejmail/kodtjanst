@@ -19,6 +19,7 @@ from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
 from io import BytesIO
 import xlsxwriter
+from openpyxl.styles import Alignment
 
 import json
 from pdb import set_trace
@@ -247,77 +248,87 @@ def convert_list_of_tuples_to_string(tuple_list, start=None, stop=None, single_p
     elif (start is not None) and (stop is not None):
         return ', '.join([i[start:stop] for i in tuple_list])
 
+def return_komplett_metadata(request, url_parameter):
+
+    if url_parameter:
+        exact_kodverk_request = retur_komplett_förklaring_custom_sql(url_parameter)
+        
+        nyckelord = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
+                                                                start=-1, 
+                                                                stop=0)
+
+        nyckelord_string = convert_list_of_tuples_to_string(nyckelord, single_position=0)
+        
+        result_column_names = ['syfte',
+                            'beskrivning_av_informationsbehov',
+                            'identifier',
+                            'titel_på_kodverk',
+                            'ägare_till_kodverk',
+                            'version',
+                            'hämtnings_källa',
+                            'version_av_källa',
+                            'kategori',
+                            'instruktion_för_kodverket',
+                            'användning_av_kodverk',
+                            'status',
+                            'uppdateringsintervall',
+                            'mappning_för_rapportering',
+                            'ansvarig_förvaltare',
+                            'senaste_ändring',
+                            'giltig_från',
+                            'giltig_tom',
+                            'ändrad_av_id',
+                            'ansvarig_id',
+                            'urval_referens_id',
+                            'nyckelord']
+        
+        return_list_dict = []
+        
+        for return_result in exact_kodverk_request:
+            return_list_dict.append(dict(zip(result_column_names, return_result)))
+        
+        kodtext_search_result = return_kodtext_related_to_kodverk(url_parameter)
+        kodtext_column_names = ['annan_kodtext',
+                                'datum_skapat',
+                                'definition',
+                                'extra_data',
+                                'kod',
+                                'kodtext',
+                                'kodverk',
+                                'kommentar',
+                                'position',
+                                'senaste_ändring',
+                                'status',
+                                'ändrad_av']
+
+        kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
+        
+        kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition'])
+        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov'])
+                    
+
+        template_context = {'kodverk_full': return_list_dict[0],
+                            'kodverk_id' : url_parameter,
+                            'kodtext_full' : kodtext_dict,
+                            'nyckelord' : nyckelord_string}
+                            
+        
+        html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
+
+        return template_context
+    else:
+        return None
+
 def kodverk_komplett_metadata(request):
 
     url_parameter = request.GET.get("q")
     
     if request.is_ajax():
-        if url_parameter:
-            exact_kodverk_request = retur_komplett_förklaring_custom_sql(url_parameter)
-            
-            nyckelord = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
-                                                                  start=-1, 
-                                                                  stop=0)
-
-            nyckelord_string = convert_list_of_tuples_to_string(nyckelord, single_position=0)
-            
-            result_column_names = ['syfte',
-                              'beskrivning_av_informationsbehov',
-                              'identifier',
-                              'titel_på_kodverk',
-                              'ägare_till_kodverk',
-                              'version',
-                              'hämtnings_källa',
-                              'version_av_källa',
-                              'kategori',
-                              'instruktion_för_kodverket',
-                              'användning_av_kodverk',
-                              'status',
-                              'uppdateringsintervall',
-                              'mappning_för_rapportering',
-                              'ansvarig_förvaltare',
-                              'senaste_ändring',
-                              'giltig_från',
-                              'giltig_tom',
-                              'ändrad_av_id',
-                              'ansvarig_id',
-                              'urval_referens_id',
-                              'nyckelord']
-            
-            return_list_dict = []
-            
-            for return_result in exact_kodverk_request:
-                return_list_dict.append(dict(zip(result_column_names, return_result)))
-            
-            kodtext_search_result = return_kodtext_related_to_kodverk(url_parameter)
-            kodtext_column_names = ['annan_kodtext',
-                                    'datum_skapat',
-                                    'definition',
-                                    'extra_data',
-                                    'kod',
-                                    'kodtext',
-                                    'kodverk',
-                                    'kommentar',
-                                    'position',
-                                    'senaste_ändring',
-                                    'status',
-                                    'ändrad_av']
-
-            kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
-            
-            kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition'])
-            return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov'])
-                       
-
-            template_context = {'kodverk_full': return_list_dict[0],
-                                'kodverk_id' : url_parameter,
-                                'kodtext_full' : kodtext_dict,
-                                'nyckelord' : nyckelord_string}
-                                
-            
-            html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
-        
-            return render(request, "kodverk_komplett_metadata.html", context=template_context)
+        template_context = return_komplett_metadata(request, url_parameter) 
+        return render(request, "kodverk_komplett_metadata.html", context=template_context)
+    elif request.method == 'GET':
+        template_context = return_komplett_metadata(request, url_parameter) 
+        return render(request, "kodverk_komplett_metadata_direct_get.html", context=template_context)
     else:
         kodverk = Kodverk.objects.none()
         return render(request, "kodverk.html", {'kodverk': kodverk})
@@ -382,6 +393,8 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         output_memory_file = BytesIO()
         workbook = xlsxwriter.Workbook(output_memory_file, {'in_memory' : True})
         bold = workbook.add_format({'bold': True})
+        text_wrap = workbook.add_format()
+        text_wrap.set_text_wrap()
 
         kodverk_worksheet = workbook.add_worksheet('Metadata')
         
@@ -415,10 +428,11 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
                            'annan_kodtext',
                            'definition']
         
-        row_num = 0
-        for col_num in range(len(kodverk_columns)):
-            kodverk_worksheet.write(row_num, col_num, kodverk_columns[col_num], bold)
+        col_num = 0
+        for row_num in range(len(kodverk_columns)):
+            kodverk_worksheet.write(row_num, col_num, kodverk_columns[row_num], bold)
 
+        row_num=0
         for col_num in range(len(kodtext_columns)):
             kodtext_worksheet.write(row_num, col_num, kodtext_columns[col_num], bold)
 
@@ -451,14 +465,22 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         
         date_format = workbook.add_format({'num_format': 'YYYY-MM-DD'})
 
-        row_num += 1
-        for col_num, (kodverk_metadata, metadata_value) in enumerate(kodverk[0].items()):
+        length = len(kodverk[0].get('titel_på_kodverk'))
+        kodverk_worksheet.set_column(1, 1, length)
+        kodverk_worksheet.set_column(0, 0, length)
+
+        col_num = 1
+        for row_num, (kodverk_metadata, metadata_value) in enumerate(kodverk[0].items()):
             if type(metadata_value) == dict :
                 metadata_value = str(metadata_value)
             if kodverk_metadata in date_columns:
                 kodverk_worksheet.write(row_num, col_num, metadata_value, date_format)    
             else:
-                kodverk_worksheet.write(row_num, col_num, metadata_value)
+                if kodverk_metadata == 'syfte':
+                    kodverk_worksheet.write(row_num, col_num, metadata_value, text_wrap)
+                else:
+                    kodverk_worksheet.write(row_num, col_num, metadata_value)
+                
 
         kodtexter = Kodtext.objects.filter(kodverk_id=kodverk_id).values('kod','kodtext','annan_kodtext','definition')
         
