@@ -104,7 +104,7 @@ class Kodverk(models.Model):
     kodverk_variant = models.CharField(max_length=14, null=True, blank=True, choices=kodverk_typ)
     status = models.CharField(max_length=25, blank=True, null=True, choices=statuser)
     uppdateringsintervall =  models.CharField(max_length=20, null=True, choices=intervall, blank=True)
-    mappning_för_rapportering = models.BooleanField(null=True)
+    mappning_för_rapportering = models.CharField(max_length=255, null=True, blank=True)
 
     
     ansvarig_förvaltare =  models.CharField(max_length=255, null=True)
