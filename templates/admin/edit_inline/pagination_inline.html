@@ -1,0 +1,62 @@
+{% include 'admin/edit_inline/tabular.html' %}
+{% load construct_range %}
+
+{% block after_inline %}
+
+{% with inline_admin_formset.formset.cl as cl %}
+        
+    {% if cl.paginator %}
+    
+    <table>
+    <tbody>
+        <thead>
+    <span class="errornote">
+        Det finns för många kodtexter för att visa alla, gärna bläddra igenom sidorna
+    </span>
+        </thead>
+    
+
+    <tr class="field-kodtext">
+        <td>
+        {% if cl.has_previous %}
+        <li><a href="?page={{ cl.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <span class="disabled">&laquo;</span></li>
+        {% endif %}
+        
+        
+            {% if cl.paginator.page_range|length > 7 %}
+
+                {% for i in 5|construct_range:5 %}
+                    <a href="?page={{ i }}">{{ i }} | </a>
+                {% endfor %}
+                    ...
+                    {% for i in cl.paginator.page_range|construct_range:-5 %}
+                    <a href="?page={{ i }}">{{ i }} | </a>
+                {% endfor %}
+                
+            {% else %}
+                {% if page_obj.number == i %}
+                {{i}}
+                    <li class="active"><span>{{ i }} <span class="sr-only">{{i}}</span></span></li>
+                {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endif %}
+
+            
+        {% if cl.has_next %}
+        Has next page
+        <a href="?page={{ cl.next_page }}">&raquo;</a>
+        {% else %}
+        <span class="disabled">&raquo;</span></li>
+        {% endif %}
+    </td>
+    </tr>
+</div>
+</tbody>
+    </table>
+    {% endif %}
+{% endwith %}
+
+{% endblock %}
