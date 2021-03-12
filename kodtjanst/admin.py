@@ -80,7 +80,7 @@ class KodtextInline(admin.TabularInline):
 
     fieldsets = [
     [None, {
-    'fields': [('kod', 'kodtext', 'annan_kodtext', 'status')],
+    'fields': [('kod', 'kodtext', 'annan_kodtext', 'position')],
     }
     ]]
 
