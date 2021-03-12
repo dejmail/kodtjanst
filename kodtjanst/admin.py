@@ -106,7 +106,7 @@ class PaginationInline(admin.TabularInline):
                 qs = self.queryset
                 paginator = Paginator(qs, self.per_page)
                 try:
-                    page_num = int(request.GET.get('p', '0'))
+                    page_num = int(request.GET.get('page', '0'))
                 except ValueError:
                     page_num = 0
 
@@ -114,7 +114,7 @@ class PaginationInline(admin.TabularInline):
                     page = paginator.page(page_num + 1)
                 except (EmptyPage, InvalidPage):
                     page = paginator.page(paginator.num_pages)
-
+                set_trace()
                 self.cl = InlineChangeList(request, page_num, paginator)
                 
                 self.paginator = paginator
