@@ -5,7 +5,7 @@
 
 {% with inline_admin_formset.formset.cl as cl %}
         
-    {% if cl.paginator %}
+    {% if cl.paginator.page_range|length > 1 %}
     
     <table>
     <tbody>

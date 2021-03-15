@@ -96,17 +96,16 @@ class Kodverk(models.Model):
     titel_på_kodverk = models.CharField(max_length=255, null=True)
     ägare_till_kodverk = models.CharField(max_length=255,null=True, choices=kodverk_ägare)
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
-    hämtnings_källa = models.CharField(max_length=255,null=True, blank=True)
+    källa = models.CharField(max_length=255,null=True, blank=True)
 
     version_av_källa = models.CharField(max_length=50, null=True, blank=True)
     kategori = models.CharField(max_length=255,null=True)
-    instruktion_för_kodverket = models.CharField(max_length=255,null=True,blank=True)
+    underlag = models.FileField(null=True,blank=True, upload_to='')
+    länk_till_underlag = models.URLField(null=True,blank=True)
     kodverk_variant = models.CharField(max_length=14, null=True, blank=True, choices=kodverk_typ)
     status = models.CharField(max_length=25, blank=True, null=True, choices=statuser)
     uppdateringsintervall =  models.CharField(max_length=20, null=True, choices=intervall, blank=True)
-    mappning_för_rapportering = models.CharField(max_length=255, null=True, blank=True)
-
-    
+        
     ansvarig_förvaltare =  models.CharField(max_length=255, null=True)
     datum_skapat = models.DateField(auto_now_add=True)
     senaste_ändring = models.DateField(auto_now=True, blank=True, null=True)
@@ -118,21 +117,7 @@ class Kodverk(models.Model):
     
     ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True)
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
-    användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)
-
-    
-    
-    #kommentar = models.TextField(null=True, blank=True)    
-    #kodschema = models.CharField(max_length=255,null=True, blank=True)    
-    #kort_beskrivning = models.TextField(max_length=1000, null=True, blank=True)    
-    #ägare_till_kodverk = models.CharField(max_length=255, null=True, blank=True)    
-    #språk = models.CharField(max_length=25, choices=SPRÅK_CHOICES, default='svenska',null=True)    
-    
-    
-    
-    
-#    ämnesområde = models.CharField(max_length=255,null=True, blank=True)
-    
+    användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)    
 
     def __str__(self):
         return self.titel_på_kodverk

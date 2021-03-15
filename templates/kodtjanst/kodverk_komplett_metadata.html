@@ -48,6 +48,8 @@
      <div class="row mt-10" id="mitten-span-row">
 
         <!-- Alla metadata attribut -->
+
+        
         
         <div class="col-6" id="mitten-span-left-column">
             <div>
@@ -72,10 +74,6 @@
                         <tr>
                             <td colspan="2">Användning</td>
                             <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Mappning för rapportering</td>
-                            <td colspan="6">{{kodverk_full.mappning_för_rapportering|yesno:"Ja,Nej"}}</td>
                         </tr>
                         <tr>
                             <td colspan="2">Ägare till kodverk</td>
@@ -105,6 +103,17 @@
                             <td colspan="2">Nyckelord</td>
                             <td colspan="6">{{nyckelord}}</td>
                         </tr>
+                        <tr>
+                            <td colspan="2">Underlag dokument</td>
+                            <td colspan="6">
+                                <a href="/kodtjanst/media/{{kodverk_full.underlag}}">
+                                    <span class="fas fa-file-download fa-2x">
+                                    </span>                            
+                                </a>                                
+                            </td>
+                        </tr>
+
+
                     </tbody>
                     </table>
     

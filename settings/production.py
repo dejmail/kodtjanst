@@ -30,6 +30,10 @@ STATIC_ROOT = '/home/vgrinfor/public_html/kodtjanst/static'
 STATICFILES_DIRS = ['/home/vgrinfor/kodtjanst/static',]
 STATIC_URL = '/kodtjanst/static/'
 
+# media files  - for where files are uploaded to
+MEDIA_URL = '/kodtjanst/media/'
+MEDIA_ROOT = '/home/vgrinfor/public_html/kodtjanst/media'
+
 # Template directories
 TEMPLATES[0]['DIRS'].append('templates/kodtjanst')
 

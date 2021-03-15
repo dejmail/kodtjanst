@@ -219,15 +219,15 @@ class KodverkManager(admin.ModelAdmin):
 
     fieldsets = [
         ['Main', {
-        'fields': [('titel_på_kodverk', 'status', 'kodverk_variant', 'urval_referens'),
-        ('identifier', 'instruktion_för_kodverket')]}],
-        [None, {
+        'fields': [('titel_på_kodverk', 'status', 'kodverk_variant', 'urval_referens','identifier'),
+        ('underlag', 'länk_till_underlag')]}],
+        ['Extra', {
         'fields': [('syfte'),
         ('beskrivning_av_informationsbehov'),
         ('giltig_från', 'giltig_tom'),
         ('kategori', 'ägare_till_kodverk', 'ansvarig_förvaltare'),
-        ('hämtnings_källa', 'version_av_källa'),
-        ('version', 'uppdateringsintervall', 'mappning_för_rapportering'),
+        ('källa', 'version_av_källa'),
+        ('version', 'uppdateringsintervall'),
         'användning_av_kodverk',
         'extra_data'],
         }],

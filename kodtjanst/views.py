@@ -129,14 +129,12 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             titel_på_kodverk,\
                             ägare_till_kodverk,\
                             version,\
-                            hämtnings_källa,\
+                            källa,\
                             version_av_källa,\
                             kategori,\
-                            instruktion_för_kodverket,\
                             användning_av_kodverk,\
                             status,\
                             uppdateringsintervall,\
-                            mappning_för_rapportering,\
                             ansvarig_förvaltare,\
                             senaste_ändring,\
                             giltig_från,\
@@ -144,6 +142,7 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             ändrad_av_id,\
                             ansvarig_id,\
                             urval_referens_id,\
+                            underlag,\
                             kodtjanst_nyckelord.nyckelord\
                         FROM kodtjanst_kodverk\
                         LEFT JOIN kodtjanst_nyckelord\
@@ -153,6 +152,10 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
     cursor.execute(clean_statement)
     result = cursor.fetchall()
     
+#underlaginstruktion_för_kodverket,\
+#mappning_för_rapportering,\
+
+
     return result
 
 
@@ -265,14 +268,12 @@ def return_komplett_metadata(request, url_parameter):
                             'titel_på_kodverk',
                             'ägare_till_kodverk',
                             'version',
-                            'hämtnings_källa',
+                            'källa',
                             'version_av_källa',
                             'kategori',
-                            'instruktion_för_kodverket',
                             'användning_av_kodverk',
                             'status',
                             'uppdateringsintervall',
-                            'mappning_för_rapportering',
                             'ansvarig_förvaltare',
                             'senaste_ändring',
                             'giltig_från',
@@ -280,7 +281,9 @@ def return_komplett_metadata(request, url_parameter):
                             'ändrad_av_id',
                             'ansvarig_id',
                             'urval_referens_id',
-                            'nyckelord']
+                            'underlag',
+                            'nyckelord'
+                            ]
         
         return_list_dict = []
         
