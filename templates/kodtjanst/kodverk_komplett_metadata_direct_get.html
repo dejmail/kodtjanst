@@ -119,7 +119,7 @@
                             <td colspan="2">Underlag dokument</td>
                             <td colspan="6">
                                 {% if  kodverk_full.underlag|length > 0 %}
-                                <a href="" id="underlagfil">
+                                <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
                                     <span class="fas fa-file-download fa-2x">
                                     </span>                         
                                     </a>
@@ -438,11 +438,9 @@ $("#open_verifiera_button").click(function(){
 
 
 document.getElementById("underlagfil").addEventListener("click", function() {
-    $.get( "/kodtjanst/media/{{kodverk_full.underlag}}", function( data ) {
-        $( ".result" ).html( data );
-        
-        console.log( "File served" );
-});
+    e.preventDefault();  //stop the browser from following
+    window.location.href = "/kodtjanst/media/{{kodverk_full.underlag}}";
+    console.log( "File served" );
 });
 
 
