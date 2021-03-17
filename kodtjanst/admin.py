@@ -88,7 +88,6 @@ class InlineChangeList(object):
         self.paginator = paginator
         self.result_count = paginator.count
         self.params = dict(request.GET.items())
-        #set_trace()
 
 class PaginationInline(admin.TabularInline):
     
@@ -269,7 +268,6 @@ class ExternaKodtextManager(admin.ModelAdmin):
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):    
 
-        #set_trace()
         if db_field.name == "kodtext":
             kwargs["queryset"] = Kodtext.objects.all()
             return KodtextIdandTextField(queryset=Kodtext.objects.all())
@@ -287,11 +285,10 @@ class ExternaKodtextManager(admin.ModelAdmin):
     
     def save(self, commit=True):
         extra_field = self.cleaned_data.get('kodverk', None)
-        set_trace()
         return super(form, self).save(commit=commit)
 
     def save_model(self, request, obj, form, change):
-        
+
         #remove the extra field from the form
         del form.fields['kodverk']
         super(ExternaKodtextManager, self).save_model(request, obj, form, change)

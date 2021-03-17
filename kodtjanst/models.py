@@ -5,6 +5,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import JSONField
 from pdb import set_trace
 import datetime
+import os
+
+from django.db.models import signals
+from django.db.models.signals import pre_save
+from kodtjanst.custom_signals import has_uploaded_file_been_deleted
 
 statuser = [('Publicera ej','Publicera ej'),
             ("Beslutad", "Beslutad"),
@@ -121,6 +126,8 @@ class Kodverk(models.Model):
 
     def __str__(self):
         return self.titel_på_kodverk
+
+pre_save.connect(has_uploaded_file_been_deleted, sender=Kodverk)
 
 class Nyckelord(models.Model):
     
