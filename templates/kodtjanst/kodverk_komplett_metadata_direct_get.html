@@ -21,11 +21,6 @@
 
 {% if kodverk_full %}
 
- <!-- ___    __    __  __  ___    __    ___  ____  ___    ____  _____  ____    ____  _  _  ____  ____  _  _  _____  _  _  ____ 
-     / __)  /__\  (  )(  )/ __)  /__\  / __)( ___)/ __)  ( ___)(  _  )(  _ \  ( ___)( \/ )( ___)(  _ \( \/ )(  _  )( \( )( ___)
-     \__ \ /(__)\  )(__)( \__ \ /(__)\( (_-. )__) \__ \   )__)  )(_)(  )   /   )__)  \  /  )__)  )   / \  /  )(_)(  )  (  )__) 
-     (___/(__)(__)(______)(___/(__)(__)\___/(____)(___/  (__)  (_____)(_)\_)  (____)  \/  (____)(_)\_) (__) (_____)(_)\_)(____) -->
-
 <div class="row">
     <div class="col-1"></div>
 
@@ -93,10 +88,6 @@
                             <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
                         </tr>
                         <tr>
-                            <td colspan="2">Mappning för rapportering</td>
-                            <td colspan="6">{{kodverk_full.mappning_för_rapportering|yesno:"Ja,Nej"}}</td>
-                        </tr>
-                        <tr>
                             <td colspan="2">Ägare till kodverk</td>
                             <td colspan="6">{{kodverk_full.ägare_till_kodverk}}</td>
                         </tr>
@@ -123,6 +114,19 @@
                         <tr>
                             <td colspan="2">Nyckelord</td>
                             <td colspan="6">{{nyckelord}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Underlag dokument</td>
+                            <td colspan="6">
+                                {% if  kodverk_full.underlag|length > 0 %}
+                                <a href="" id="underlagfil">
+                                    <span class="fas fa-file-download fa-2x">
+                                    </span>                         
+                                    </a>
+                                {% else %}
+                                Dokumentet saknas för tillfället
+                                {% endif %}
+                            </td>
                         </tr>
                     </tbody>
                     </table>
@@ -341,24 +345,6 @@ function format (d) {
     });
 });
     
-//     $.ajax({
-//         type: "GET",
-//         dataType: "json",
-//         url: '/kodtext_json/?q={{kodverk_id}}',
-//         success: function(data,textStatus,jqXHR) {
-//             console.log('JSON loaded successfully, statusCode =', textStatus);
-//             instantiate_table(data);
-//         },
-//         complete : function(data,textStatus,jqXHR) {
-//             console.log('JSON request complete, statusCode =', textStatus);
-            
-//         },
-//         fail : function(data,textStatus,jqXHR) {        
-//             $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen kodtext från servern");
-//         }
-//     });
-// 
-
 function showOptions() {
   var x = document.getElementById("showopt");
   if (x.style.display === "none") {
@@ -433,9 +419,6 @@ function get_form_function(url, div_to_replace, type_method){
 
 };
 
-// Urls.py
-// path("verify_comment_form/", views.verify_comment_form, name="verify_comment"),
-
 $(document).ready(function(){
 
 $("#open_kommentera_button").click(function(){
@@ -454,6 +437,14 @@ $("#open_verifiera_button").click(function(){
 });
 
 
+document.getElementById("underlagfil").addEventListener("click", function() {
+    debugger;
+    $.get( "/kodtjanst/media/{{kodverk_full.underlag}}", function( data ) {
+        $( ".result" ).html( data );
+        
+        console.log( "File served" );
+});
+});
 
 
 </script>
