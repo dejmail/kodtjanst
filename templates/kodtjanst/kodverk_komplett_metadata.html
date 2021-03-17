@@ -413,7 +413,6 @@ $("#open_verifiera_button").click(function(){
 
 
 document.getElementById("underlagfil").addEventListener("click", function() {
-    debugger;
     $.get( "/kodtjanst/media/{{kodverk_full.underlag}}", function( data ) {
         $( ".result" ).html( data );
         
