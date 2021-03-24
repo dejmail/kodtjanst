@@ -16,7 +16,8 @@ kodverk_ägare = [('Informatik','Informatik'),
                 ('Socialstyrelsen','Socialstyrelsen'),
                 ('Västra Götalandsregionen','Västra Götalandsregionen'),
                 ('Skatteverket','Skatteverket'),
-                ('Snomed International','Snomed International')]
+                ('Snomed International','Snomed International'),
+                ('Equalis','Equalis')]
 
 User = get_user_model()
 
