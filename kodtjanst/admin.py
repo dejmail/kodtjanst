@@ -10,7 +10,7 @@ from django import forms
 from django.forms import ModelChoiceField
 from django.conf import settings
 from .models import *
-from .forms import ExternaKodtextForm, MultiMappingForm
+from .forms import ExternaKodtextForm, MultiMappingForm, KodverkAdminForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
 from django.utils.html import format_html
 
@@ -192,6 +192,8 @@ def make_unpublished(modeladmin, request, queryset):
 make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
 class KodverkManager(admin.ModelAdmin):  
+
+    form = KodverkAdminForm
 
     inlines = [KodtextInline, NyckelOrdInline, ValidatedByInline]
     

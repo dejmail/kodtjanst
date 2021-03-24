@@ -73,13 +73,6 @@ class Kodverk(models.Model):
                      ('Administrativ','Administrativ'),
                      ('Klinisk','Klinisk')]
 
-    kodverk_ägare = [('Informatik','Informatik'),
-                    ('Inera','Inera'),
-                    ('Socialstyrelsen','Socialstyrelsen'),
-                    ('Västra Götalandsregionen','Västra Götalandsregionen'),
-                    ('Skatteverket','Skatteverket'),
-                    ('Snomed International','Snomed International')]
-
     intervall = [('Årligen','Årligen'), 
                  ('Månadsvis','Månadsvis'), 
                  ('Veckovis','Veckovis'),
@@ -99,7 +92,7 @@ class Kodverk(models.Model):
     beskrivning_av_informationsbehov = models.TextField(null=True,blank=True)
     identifier = models.CharField(max_length=255,null=True, blank=True)
     titel_på_kodverk = models.CharField(max_length=255, null=True)
-    ägare_till_kodverk = models.CharField(max_length=255,null=True, choices=kodverk_ägare)
+    ägare_till_kodverk = models.CharField(max_length=255,null=True)
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
     källa = models.CharField(max_length=255,null=True, blank=True)
 

@@ -7,16 +7,14 @@
         
     {% if cl.paginator.page_range|length > 1 %}
     
-    <table>
-    <tbody>
-        <thead>
+
     <span class="errornote">
         Det finns för många kodtexter för att visa alla, gärna bläddra igenom sidorna
     </span>
-        </thead>
+
     
 
-    <tr class="field-kodtext">
+    <p class="paginator">
         <td>
         {% if cl.has_previous %}
         <li><a href="?page={{ cl.previous_page_number }}">&laquo;</a></li>
@@ -51,11 +49,9 @@
         {% else %}
         <span class="disabled">&raquo;</span></li>
         {% endif %}
-    </td>
-    </tr>
-</div>
-</tbody>
-    </table>
+
+        </p>
+
     {% endif %}
 {% endwith %}
 
