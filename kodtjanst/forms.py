@@ -45,7 +45,8 @@ class KodverkAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(KodverkAdminForm, self).__init__(*args, **kwargs)
         # in case this comes in as csv string in which case it must be converted to a list
-        self.initial['ägare_till_kodverk'] = [i.strip() for i in self.instance.ägare_till_kodverk.split(',')]
+        if self.instance.ägare_till_kodverk != None:
+            self.initial['ägare_till_kodverk'] = [i.strip() for i in self.instance.ägare_till_kodverk.split(',')]
         
     ägare_till_kodverk = forms.MultipleChoiceField(choices = kodverk_ägare)
 
