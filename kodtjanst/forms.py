@@ -56,7 +56,8 @@ class KodverkAdminForm(forms.ModelForm):
 
     def clean(self):
         # must be saved as a csv string in the db, otherwise we see a list structure
-        self.cleaned_data['ägare_till_kodverk'] = ', '.join([i for i in self.cleaned_data['ägare_till_kodverk']])
+        if self.instance.ägare_till_kodverk != None:
+            self.cleaned_data['ägare_till_kodverk'] = ', '.join([i for i in self.cleaned_data['ägare_till_kodverk']])
 
 
 class ExternaKodtextForm(forms.ModelForm):
