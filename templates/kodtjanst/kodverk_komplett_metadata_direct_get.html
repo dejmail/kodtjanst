@@ -128,6 +128,18 @@
                                 {% endif %}
                             </td>
                         </tr>
+
+                        <tr>
+                            <td colspan="2">Underlag länk</td>
+                            <td colspan="6">
+                            {% if kodverk_full.länk_till_underlag|length > 0 %}
+                                <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
+                            {% else %}
+                                Ingen länk
+                            {% endif %}
+                            </td>
+                        </tr>
+                        
                     </tbody>
                     </table>
     
@@ -146,6 +158,9 @@
                             <th>Kod</th>
                             <th>Kodtext</th>
                             <th>Definition</th>
+                            {% if i.annan_kodtext %}
+                                <th>Annan kodtext</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -155,6 +170,9 @@
                         <td>{{i.kod|default_if_none:"Ingen" }}</td>
                         <td>{{i.kodtext}}</td>
                         <td>{{i.definition|default_if_none:"Ingen" }}</td>
+                        {% if i.annan_kodtext %}
+                            <td>i.annan_kodtext</td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                     </tbody>

@@ -206,7 +206,7 @@ class KodverkManager(admin.ModelAdmin):
                     'urval_referens',
                     'syfte',
                     'version',
-                    'ägare_till_kodverk',
+                    'clean_ägare',
                     'ansvarig',
                     'kategori')
 
@@ -233,6 +233,15 @@ class KodverkManager(admin.ModelAdmin):
         'extra_data'],
         }],
     ]
+
+    def clean_ägare(self, obj):
+        if obj.ägare_till_kodverk == None:
+            return None
+        elif "," in obj.ägare_till_kodverk:
+            return obj.ägare_till_kodverk.replace("'","").split(',')
+        else:
+            return  obj.ägare_till_kodverk
+        
 
     def save_model(self, request, obj, form, change):
         

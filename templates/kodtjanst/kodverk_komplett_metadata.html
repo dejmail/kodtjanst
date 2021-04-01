@@ -108,13 +108,23 @@
                                 Dokumentet saknas för tillfället
                                 {% endif %}
                             </td>
+                    
+                        <tr>
+                            <td colspan="2">Underlag länk</td>
+                            <td colspan="6">
+                            {% if kodverk_full.länk_till_underlag|length > 0 %}
+                                <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
+                            {% else %}
+                                Ingen länk
+                            {% endif %}
+                            </td>
                         </tr>
+                        
                     </tbody>
                     </table>
     
                 </div>
         </div>
-        
 
         <!-- Själva kodtext -->
         
@@ -123,19 +133,32 @@
                 <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
                     <thead>
                         <tr>
-                            <th></th>
                             <th>Kod</th>
                             <th>Kodtext</th>
-                            <th>Definition</th>
+                            <th>                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                {% if i.definition|length > 1 %}
+                                    Definition
+                                {% elif i.annan_kodtext|length > 1 %}
+                                    Annan kodtext
+                                {% else %}
+                                    Övrig
+                                {% endif %}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for i in kodtext_full %}
                     <tr>
-                        <td></td>
                         <td>{{i.kod|default_if_none:"Ingen" }}</td>
                         <td>{{i.kodtext}}</td>
-                        <td>{{i.definition|default_if_none:"Ingen" }}</td>
+                        <td>{%if i.definition|length > 1 %}
+                                {{i.definition}}
+                            {% elif i.annan_kodtext|length > 1 %}
+                                {{i.annan_kodtext}}
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -263,6 +286,7 @@
 
 function format (d) {
     // `d` is the original data object for the row
+    
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td>Kod:</td>'+
@@ -273,12 +297,12 @@ function format (d) {
             '<td>'+d.kodtext+'</td>'+
         '</tr>'+
         '<tr>'+
-            '<td>Annan kodtext:</td>'+
-            '<td>'+d.annan_kodtext+'</td>'+
-        '</tr>'+
-        '<tr>'+
             '<td>Definition:</td>'+
             '<td>'+d.definition+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Annan kodtext:</td>'+
+            '<td>'+d.annan_kodtext+'</td>'+
         '</tr>'+
     '</table>';
 };

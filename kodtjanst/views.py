@@ -143,6 +143,7 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             ansvarig_id,\
                             urval_referens_id,\
                             underlag,\
+                            länk_till_underlag,\
                             kodtjanst_nyckelord.nyckelord\
                         FROM kodtjanst_kodverk\
                         LEFT JOIN kodtjanst_nyckelord\
@@ -162,7 +163,12 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
 def return_kodtext_related_to_kodverk(url_parameter):
 
     cursor = connection.cursor()
-    sql_statement = f'''SELECT * from kodtjanst_kodtext WHERE kodtjanst_kodtext.kodverk_id = {url_parameter};'''
+    sql_statement = f'''SELECT id,
+                               annan_kodtext,
+                               definition,
+                               kod,
+                               kodtext                               
+                               from kodtjanst_kodtext WHERE kodtjanst_kodtext.kodverk_id = {url_parameter};'''
     cursor.execute(sql_statement)
     result = cursor.fetchall()
 
@@ -282,6 +288,7 @@ def return_komplett_metadata(request, url_parameter):
                             'ansvarig_id',
                             'urval_referens_id',
                             'underlag',
+                            'länk_till_underlag',
                             'nyckelord'
                             ]
         
@@ -291,30 +298,23 @@ def return_komplett_metadata(request, url_parameter):
             return_list_dict.append(dict(zip(result_column_names, return_result)))
         
         kodtext_search_result = return_kodtext_related_to_kodverk(url_parameter)
-        kodtext_column_names = ['annan_kodtext',
-                                'datum_skapat',
-                                'definition',
-                                'extra_data',
-                                'kod',
-                                'kodtext',
-                                'kodverk',
-                                'kommentar',
-                                'position',
-                                'senaste_ändring',
-                                'status',
-                                'ändrad_av']
+
+        kodtext_column_names = ['id',
+                               'annan_kodtext',
+                               'definition',
+                               'kod',
+                               'kodtext']
 
         kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
         
         kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition'])
-        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov'])
+        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov', 'länk_till_underlag'])
                     
 
         template_context = {'kodverk_full': return_list_dict[0],
                             'kodverk_id' : url_parameter,
                             'kodtext_full' : kodtext_dict,
-                            'nyckelord' : nyckelord_string}
-                            
+                            'nyckelord' : nyckelord_string}                            
         
         html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
 
@@ -425,6 +425,9 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
                            'giltig_tom',
                            'datum_skapat',
                            'senaste_ändring']
+
+
+
 
         kodtext_columns = ['kod',
                            'kodtext',

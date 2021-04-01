@@ -45,8 +45,14 @@ class KodverkAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(KodverkAdminForm, self).__init__(*args, **kwargs)
         # in case this comes in as csv string in which case it must be converted to a list
-        if self.instance.ägare_till_kodverk != None:
-            self.initial['ägare_till_kodverk'] = [i.strip() for i in self.instance.ägare_till_kodverk.split(',')]
+        if self.initial.get('ägare_till_kodverk') == None:
+            print('initial is none')
+            pass
+        else:
+            print('initial is not none')
+            #set_trace()
+            self.initial['ägare_till_kodverk'] = [i.strip() for i in self.instance.ägare_till_kodverk.replace("'"," ").split(',')]
+        
         
     ägare_till_kodverk = forms.MultipleChoiceField(choices = kodverk_ägare)
 
@@ -56,9 +62,9 @@ class KodverkAdminForm(forms.ModelForm):
 
     def clean(self):
         # must be saved as a csv string in the db, otherwise we see a list structure
-        if self.instance.ägare_till_kodverk != None:
-            self.cleaned_data['ägare_till_kodverk'] = ', '.join([i for i in self.cleaned_data['ägare_till_kodverk']])
-
+        if self.cleaned_data.get('ägare_till_kodverk') != None:
+            print('form clean method')
+            self.cleaned_data['ägare_till_kodverk'] =  ', '.join([i for i in self.cleaned_data['ägare_till_kodverk']])
 
 class ExternaKodtextForm(forms.ModelForm):
 
