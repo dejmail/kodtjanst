@@ -191,7 +191,14 @@ def make_unpublished(modeladmin, request, queryset):
     queryset.update(status='Publicera ej')
 make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
-class KodverkManager(admin.ModelAdmin):  
+class KodverkManager(admin.ModelAdmin):
+
+    class Media:
+    
+        css = {
+            'all': ('https://use.fontawesome.com/releases/v5.8.2/css/all.css',
+                    f'{settings.STATIC_URL}css/custom_icon.css',)
+            }   
 
     form = KodverkAdminForm
 
@@ -208,7 +215,8 @@ class KodverkManager(admin.ModelAdmin):
                     'version',
                     'clean_ägare',
                     'ansvarig',
-                    'kategori')
+                    'kategori',
+                    'has_underlag')
 
     exclude = ['ändrad_av',]
 
@@ -242,11 +250,27 @@ class KodverkManager(admin.ModelAdmin):
         else:
             return  obj.ägare_till_kodverk
         
+    def has_underlag(self, obj):
+
+        #if obj.titel_på_kodverk == "VGRKV_StatusKliniskProcess": set_trace()
+        if (obj.underlag != None) and (obj.underlag.name != ''):
+            return format_html(f'''<a href={obj.underlag}>
+                                    <i class="fas fa-file-download">
+                                    </i>
+                                    </a>''')
+        else:
+             return format_html(f'''
+                                    <i class="fas fa-exclamation-triangle"  style="color:red">
+                                    </i>
+                                    ''')
+    has_underlag.short_description = "Underlag fil"
 
     def save_model(self, request, obj, form, change):
         
         obj.ändrad_av_id = request.user.id
         super().save_model(request, obj, form, change)
+
+
 
 class KodtextIdandTextField(forms.ModelChoiceField):
 
