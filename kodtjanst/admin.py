@@ -13,6 +13,7 @@ from .models import *
 from .forms import ExternaKodtextForm, MultiMappingForm, KodverkAdminForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
 from django.utils.html import format_html
+from django.urls import path
 
 
 from pdb import set_trace
@@ -191,6 +192,17 @@ def make_unpublished(modeladmin, request, queryset):
     queryset.update(status='Publicera ej')
 make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
+
+class CodeableConceptInline(admin.TabularInline):
+    model = CodeableConceptAttributes
+    extra = 1
+
+    fieldsets = [
+    [None, {
+    'fields':[('källa', 'version_av_källa', 'ansvarig_förvaltare', 'ägare_till_kodverk')],
+    }
+    ]]
+
 class KodverkManager(admin.ModelAdmin):
 
     class Media:
@@ -202,7 +214,7 @@ class KodverkManager(admin.ModelAdmin):
 
     form = KodverkAdminForm
 
-    inlines = [KodtextInline, NyckelOrdInline, ValidatedByInline]
+    inlines = [CodeableConceptInline, KodtextInline, NyckelOrdInline, ValidatedByInline]
     
     save_on_top = True
 
@@ -234,8 +246,7 @@ class KodverkManager(admin.ModelAdmin):
         'fields': [('syfte'),
         ('beskrivning_av_informationsbehov'),
         ('giltig_från', 'giltig_tom'),
-        ('kategori', 'ägare_till_kodverk', 'ansvarig_förvaltare'),
-        ('källa', 'version_av_källa'),
+        ('kategori',),
         ('version', 'uppdateringsintervall'),
         'användning_av_kodverk',
         'extra_data'],
@@ -355,6 +366,9 @@ class MultiKodtextMappingManager(admin.ModelAdmin):
 
     formfield_overrides = { models.ManyToManyField: {'widget': SelectMultiple(attrs={'size':'30'})}, }
 
+
+    change_form_template = 'admin/mapping_template.html'
+
     class Media:
         js = (f'{settings.STATIC_URL}js/admin_multimap_loadkodtext.js',)
         css = {
@@ -397,8 +411,6 @@ class MultiKodtextMappingManager(admin.ModelAdmin):
     
     kodtext_map_to.short_description = 'Kodtext till'
 
-
-
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
@@ -407,3 +419,4 @@ admin.site.register(Nyckelord, NyckelordManager)
 admin.site.register(ValidatedBy)
 admin.site.register(CommentedKodverk, CommentedKodverkManager)
 admin.site.register(MultiKodtextMapping, MultiKodtextMappingManager)
+admin.site.register(CodeableConceptAttributes)

@@ -92,11 +92,11 @@ class Kodverk(models.Model):
     beskrivning_av_informationsbehov = models.TextField(null=True,blank=True)
     identifier = models.CharField(max_length=255,null=True, blank=True)
     titel_på_kodverk = models.CharField(max_length=255, null=True)
-    ägare_till_kodverk = models.CharField(max_length=255,null=True)
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
     källa = models.CharField(max_length=255,null=True, blank=True)
 
     version_av_källa = models.CharField(max_length=50, null=True, blank=True)
+    ägare_till_kodverk = models.CharField(max_length=255,null=True)
     kategori = models.CharField(max_length=255,null=True)
     underlag = models.FileField(null=True,blank=True, upload_to='')
     länk_till_underlag = models.URLField(null=True,blank=True)
@@ -121,6 +121,18 @@ class Kodverk(models.Model):
         return self.titel_på_kodverk
 
 pre_save.connect(has_uploaded_file_been_deleted, sender=Kodverk)
+
+
+class CodeableConceptAttributes(models.Model):
+
+    class Meta:
+        verbose_name_plural = 'Attributer som kan ha flera värde'
+
+    kodverk_from = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
+    källa = models.CharField(max_length=255,null=True, blank=True)
+    version_av_källa = models.CharField(max_length=50, null=True, blank=True)
+    ansvarig_förvaltare =  models.CharField(max_length=255, null=True)
+    ägare_till_kodverk = models.CharField(max_length=255,null=True)
 
 class Nyckelord(models.Model):
     
@@ -174,3 +186,5 @@ class CommentedKodverk(models.Model):
 
     def __str__(self):
         return self.comment_name
+
+
