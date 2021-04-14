@@ -15,5 +15,6 @@ urlpatterns = [
     path("kodverk_export_file/<kodverk_id>/", views.return_file_of_kodverk_and_kodtext, name="export_kodverk"),
     path("kodverk_verify_comment/", views.kodverk_verify_comment, name="verify_comment_form"),
     path("admin/ajax/kodtext_elements/<kodverk_id>/", views.load_kodtext, name="load_kodtext"),
+    path("previous_codeconcept_values_json/", views.previous_codeconcept_values_json, name="json_codeconcept_values"),
 
     ]

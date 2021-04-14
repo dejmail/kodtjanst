@@ -1,0 +1,55 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+{% block extra_js %}
+
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+
+<script>
+(function($) {
+    $(document).ready(function($) {
+        
+        var fields = ["ägare_till_kodverk", "källa", "ansvarig_förvaltare"];
+
+        function suggestPreviousValues(id, suggestions_array, fields){
+            var suggestions=[];
+            for (var field of fields.entries()) {
+                var string_field = field[1].toString();
+                if (id.includes(string_field) == true) {
+                    suggestions.push(suggestions_array[string_field]);
+              };
+              
+            };
+            
+            $(`#${id}`).autocomplete({source: suggestions[0]});
+            
+        };
+        
+        function getPreviousValues(id) {
+            
+            var req = new XMLHttpRequest();
+            req.responseType = 'json';
+            req.open('GET', '{% url "json_codeconcept_values" %}', true);
+            req.onload  = function() {
+                suggestPreviousValues(id, req.response, fields);
+            };
+            req.send(null);
+            
+        };
+
+        var table = document.getElementById("codeableconceptattributes_set-group");
+        var inputs = table.getElementsByTagName('input');
+        for (index = 0; index < inputs.length; ++index) {
+            if (inputs[index].name.includes('ägare_till_kodverk') ||
+                inputs[index].name.includes('källa') ||
+                inputs[index].name.includes('ansvarig_förvaltare')) { 
+                if (!inputs[index].name.includes('prefix')) {
+                document.getElementById(inputs[index].id).addEventListener("focus", getPreviousValues(inputs[index].id, fields));
+                };
+        }};
+
+        });
+    
+})(django.jQuery);
+</script>
+{% endblock extra_js %}

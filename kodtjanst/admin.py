@@ -13,6 +13,7 @@ from .models import *
 from .forms import ExternaKodtextForm, MultiMappingForm, KodverkAdminForm
 from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
 from django.utils.html import format_html
+from django.urls import path
 
 
 from pdb import set_trace
@@ -191,6 +192,29 @@ def make_unpublished(modeladmin, request, queryset):
     queryset.update(status='Publicera ej')
 make_unpublished.short_description = "Markera kodverk som Publicera ej"
 
+
+class CodeableConceptInline(admin.TabularInline):
+
+    class Media:
+
+        css = {'all' : ('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',)}
+
+    model = CodeableConceptAttributes
+    
+    extra = 1
+
+    fieldsets = [
+    [None, {
+    'fields':[('ägare_till_kodverk','källa', 'version_av_källa', 'ansvarig_förvaltare')],
+    }
+    ]]
+    
+
+class CodeableConceptManager(admin.ModelAdmin):
+
+    list_display = ('kodverk_from', 'källa', 'version_av_källa', 'ansvarig_förvaltare')
+
+
 class KodverkManager(admin.ModelAdmin):
 
     class Media:
@@ -200,9 +224,10 @@ class KodverkManager(admin.ModelAdmin):
                     f'{settings.STATIC_URL}css/custom_icon.css',)
             }   
 
+    change_form_template = 'change_form_autocomplete.html'
     form = KodverkAdminForm
 
-    inlines = [KodtextInline, NyckelOrdInline, ValidatedByInline]
+    inlines = [CodeableConceptInline, KodtextInline, NyckelOrdInline, ValidatedByInline]
     
     save_on_top = True
 
@@ -222,7 +247,7 @@ class KodverkManager(admin.ModelAdmin):
 
     actions = [make_unpublished]
 
-    list_filter = ('ägare_till_kodverk','kodverk_variant', DuplicatKodverkFilter, 'status')
+    list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
 
     search_fields = ('id','titel_på_kodverk','kategori')
 
@@ -234,8 +259,7 @@ class KodverkManager(admin.ModelAdmin):
         'fields': [('syfte'),
         ('beskrivning_av_informationsbehov'),
         ('giltig_från', 'giltig_tom'),
-        ('kategori', 'ägare_till_kodverk', 'ansvarig_förvaltare'),
-        ('källa', 'version_av_källa'),
+        ('kategori',),
         ('version', 'uppdateringsintervall'),
         'användning_av_kodverk',
         'extra_data'],
@@ -243,12 +267,10 @@ class KodverkManager(admin.ModelAdmin):
     ]
 
     def clean_ägare(self, obj):
-        if obj.ägare_till_kodverk == None:
-            return None
-        elif "," in obj.ägare_till_kodverk:
-            return obj.ägare_till_kodverk.replace("'","").split(',')
-        else:
-            return  obj.ägare_till_kodverk
+        
+        return ', '.join([i.get("ägare_till_kodverk") for i in obj.codeableconceptattributes_set.values() if i.get("ägare_till_kodverk") is not None])
+
+    clean_ägare.short_description = "Ägare"
         
     def has_underlag(self, obj):
 
@@ -355,6 +377,9 @@ class MultiKodtextMappingManager(admin.ModelAdmin):
 
     formfield_overrides = { models.ManyToManyField: {'widget': SelectMultiple(attrs={'size':'30'})}, }
 
+
+    change_form_template = 'admin/mapping_template.html'
+
     class Media:
         js = (f'{settings.STATIC_URL}js/admin_multimap_loadkodtext.js',)
         css = {
@@ -397,8 +422,6 @@ class MultiKodtextMappingManager(admin.ModelAdmin):
     
     kodtext_map_to.short_description = 'Kodtext till'
 
-
-
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
@@ -407,3 +430,4 @@ admin.site.register(Nyckelord, NyckelordManager)
 admin.site.register(ValidatedBy)
 admin.site.register(CommentedKodverk, CommentedKodverkManager)
 admin.site.register(MultiKodtextMapping, MultiKodtextMappingManager)
+admin.site.register(CodeableConceptAttributes, CodeableConceptManager)
