@@ -44,27 +44,10 @@ class KodverkAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(KodverkAdminForm, self).__init__(*args, **kwargs)
-        # in case this comes in as csv string in which case it must be converted to a list
-        if self.initial.get('ägare_till_kodverk') == None:
-            print('initial is none')
-            pass
-        else:
-            print('initial is not none')
-            #set_trace()
-            self.initial['ägare_till_kodverk'] = [i.strip() for i in self.instance.ägare_till_kodverk.replace("'"," ").split(',')]
-        
-        
-    ägare_till_kodverk = forms.MultipleChoiceField(choices = kodverk_ägare)
 
     class Meta:
         model = Kodverk
         fields = '__all__'
-
-    def clean(self):
-        # must be saved as a csv string in the db, otherwise we see a list structure
-        if self.cleaned_data.get('ägare_till_kodverk') != None:
-            print('form clean method')
-            self.cleaned_data['ägare_till_kodverk'] =  ', '.join([i for i in self.cleaned_data['ägare_till_kodverk']])
 
 class ExternaKodtextForm(forms.ModelForm):
 
@@ -73,11 +56,6 @@ class ExternaKodtextForm(forms.ModelForm):
     class Meta:
         model = ExternaKodtext
         fields = '__all__'
-
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     if db_field.name == 'id':
-    #         return KodtextIdandTextField(queryset=Kodtext.objects.all())
-    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
         
 def beslutad_kodtext_choices():
     beslutad_kodtext = Kodtext.objects.filter(kodverk__status='Beslutad').all().values('id','kod','kodtext')
