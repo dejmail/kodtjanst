@@ -73,12 +73,9 @@ class Kodverk(models.Model):
                      ('Administrativ','Administrativ'),
                      ('Klinisk','Klinisk')]
 
-    intervall = [('Årligen','Årligen'), 
-                 ('Månadsvis','Månadsvis'), 
-                 ('Veckovis','Veckovis'),
-                 ('Dagligen','Dagligen'),
-                 ('Vid behov', 'Vid behov'),
-                 ('Ej aktuellt', 'Ej aktuellt')]
+    intervall = [('Årligen','Årligen'),
+                 ('Halvårsvis' ,'Halvårsvis'),
+                 ('Vid behov', 'Vid behov')]
 
     statuser = [("Publicera ej","Publicera ej"),
                 ("Beslutad", "Beslutad")]
