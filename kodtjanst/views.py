@@ -109,6 +109,7 @@ def retur_general_sök(url_parameter):
                                 on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
                         WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodverk.beskrivning_av_informationsbehov LIKE "%{url_parameter}%"\
                         OR kodtjanst_nyckelord.nyckelord LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
@@ -276,8 +277,8 @@ def return_komplett_metadata(request, url_parameter):
         codeconcept_attributes = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
                                                                             ind_items=[4,6,7,12])
 
-        codeconcept_column_names = ['källa',
-                                    'ägare_till_kodverk',
+        codeconcept_column_names = ['ägare_till_kodverk',
+                                    'källa',
                                     'version_av_källa', 
                                     'ansvarig_förvaltare']
 
@@ -325,6 +326,7 @@ def return_komplett_metadata(request, url_parameter):
         kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
         
         kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition'])
+        
         return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov', 'länk_till_underlag'])
                     
 
@@ -607,10 +609,10 @@ def load_kodtext(request, kodverk_id):
 
 def previous_codeconcept_values_json(request):
 
-    ägare = CodeableConceptAttributes.objects.filter(Q(källa__isnull=False),
-                                                     Q(version_av_källa__isnull=False),
-                                                     Q(ansvarig_förvaltare__isnull=False),
-                                                     Q(ägare_till_kodverk__isnull=False))
+    ägare = CodeableConceptAttributes.objects.filter(~Q(källa=None) &
+                                                     ~Q(version_av_källa=None) &
+                                                     ~Q(ansvarig_förvaltare=None) &
+                                                     ~Q(ägare_till_kodverk=None))
     suggestion_dict = {}
     fields = ['källa','version_av_källa','ansvarig_förvaltare','ägare_till_kodverk']
     for entry in ägare.values():
@@ -623,5 +625,5 @@ def previous_codeconcept_values_json(request):
 
     for key,values in suggestion_dict.items():
         suggestion_dict[key] = list(set(values))
-        
+
     return JsonResponse(suggestion_dict, safe=False)
