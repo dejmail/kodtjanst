@@ -11,7 +11,7 @@
     <form id="verifiera_kodverk_form" action="{% url 'verify_comment_form' %}", method='POST' class="bootstrap4">{% csrf_token %}
         {{ verify|crispy }}
     
-    	<input type="submit" value="Skicka" id="verifiera_button" class="btn btn-light-blue" style="color: white;font-family:frutiger; background-color:#006298;">
+    	<input type="submit" value="Skicka" id="verifiera_button" class="btn btn-light-blue" style="color: white; background-color:#006298;">
     </form>
 </div>
 

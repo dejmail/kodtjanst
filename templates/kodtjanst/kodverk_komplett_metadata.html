@@ -4,20 +4,9 @@
 {% block mitten-span %}
 
 {% if kodverk_full %}
-
-     <div class="row">
-            
-        <div class="col-12">
-            <button class="col-12 btn btn-primary" onclick="showOptions()" style="background-color:#006298;">Tryck här för funktioner gällande kodverket.
-            </button>
-        </div>
-        
-    </div>
     
-        <row>
-            <div  id="showopt" class="col-12 align-middle" style="display: none; text-align: center;">
-            <br><br>
-                
+        <div class="row top-buffer-20 ">
+                <div class="col-12 text-center">
                 <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
                     <span class="fas fa-comment" style="font-size:smaller;"></span>  Kommentera
                 </button>        
@@ -36,11 +25,9 @@
                         {{ opponera|crispy }}
                 </button>
             </div>
-        </row>
-        <br>
-        <br>     
+        </div>
 
-     <div class="row mt-10" id="mitten-span-row">
+     <div class="row top-buffer-20" id="mitten-span-row">
 
         <!-- Alla metadata attribut -->      
         
@@ -224,7 +211,7 @@
                 
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
                 </div>
               </div>			
             </div>
@@ -247,7 +234,7 @@
 
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
                 </div>
               </div>			
             </div>
@@ -271,7 +258,7 @@
                   
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">stäng</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
                 </div>
               </div>			
             </div>
