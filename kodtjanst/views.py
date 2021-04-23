@@ -437,7 +437,6 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
                                         'kategori',
                                         'kodverk_variant',
                                         'uppdateringsintervall',
-                                        'ansvarig',
                                         'extra_data',            
                                         'användning_av_kodverk',
                                         'giltig_från',
@@ -491,21 +490,30 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
                         kodverk_worksheet.write(row_num, col_num, metadata_value, date_format)
                     elif column == 'syfte':                        
                         kodverk_worksheet.write(row_num, col_num, metadata_value, text_wrap)
-                    else:                        
-                        kodverk_worksheet.write(row_num, col_num, metadata_value)
+                    else:
+                        try:                    
+                            kodverk_worksheet.write(row_num, col_num, metadata_value)
+                        except TypeError as e:
+                            logger.debug(f'problem writing to kodverk worksheet - {e}')
 
                 if kodverk_metadata == "codeconcept" and (column in columns):
                     metadata_value = []                    
                     for single_record in codeconcepts:
                         metadata_value.append(getattr(single_record, column, ''))                    
-                    kodverk_worksheet.write(row_num, col_num, ', '.join(metadata_value))
+                    try:
+                        kodverk_worksheet.write(row_num, col_num, ', '.join(metadata_value))
+                    except TypeError as e:
+                        logger.debug(f'problem writing to kodverk worksheet - {e}')
                     del metadata_value
 
                 if kodverk_metadata == "sökord"  and (column in columns):
                     metadata_value = []                    
                     for single_record in sökord:
                         metadata_value.append(getattr(single_record, column))                    
-                    kodverk_worksheet.write(row_num, col_num, ', '.join(filter(None, metadata_value)))
+                    try:    
+                        kodverk_worksheet.write(row_num, col_num, ', '.join(filter(None, metadata_value)))
+                    except TypeError as e:
+                        logger.debug(f'problem writing to kodverk worksheet - {e}')
                     del metadata_value
 
         kodtexter = Kodtext.objects.filter(kodverk_id=kodverk_id).values('kod','kodtext','annan_kodtext','definition')
@@ -515,7 +523,10 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
             for col_num, (kodtext_attr, kodtext_value) in enumerate(kodtext.items()):
                 if type(kodtext_value) == dict:
                     kodtext_value = str(kodtext_value)
-                kodtext_worksheet.write(row_num, col_num, kodtext_value)
+                try:
+                    kodtext_worksheet.write(row_num, col_num, kodtext_value)
+                except TypeError as e:
+                    logger.debug(f'problem writing to kodtext worksheet - {e}')
             row_num += 1      
         
         filename = kodverk_set.titel_på_kodverk + '.xlsx'
