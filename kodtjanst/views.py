@@ -325,7 +325,7 @@ def return_komplett_metadata(request, url_parameter):
 
         kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
         
-        kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition'])
+        kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])
         
         return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov', 'länk_till_underlag'])
                     
