@@ -85,7 +85,7 @@ class Kodverk(models.Model):
                    ('urval','urval')]
 
     syfte = models.TextField(max_length=1000, null=True)
-    beskrivning_av_informationsbehov = models.TextField(null=True,blank=True)
+    beskrivning_av_informationsbehov = models.TextField(null=True,blank=True, verbose_name='Beskrivning av innehållet')
     identifier = models.CharField(max_length=255,null=True, blank=True)
     titel_på_kodverk = models.CharField(max_length=255, null=True)
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
@@ -105,7 +105,7 @@ class Kodverk(models.Model):
 
     extra_data = JSONField(null=True, blank=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan ha hierarkiska nivåer')
     
-    ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True)
+    ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True, verbose_name='Ansvarig kodverkare')
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
     användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)    
 

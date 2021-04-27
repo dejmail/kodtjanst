@@ -1,4 +1,4 @@
-{% extends "kodverk_partial_result.html" %}
+    {% extends "kodverk_partial_result.html" %}
 {% load static %}
 {% load crispy_forms_filters %}
 {% block mitten-span %}
@@ -8,32 +8,40 @@
         <div class="row top-buffer-20 ">
                 <div class="col-12 text-center">
                 <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
-                    <span class="fas fa-comment" style="font-size:smaller;"></span>  Kommentera
+                    <span class="fas fa-comment" style="font-size:smaller;"></span>&nbsp;Lämna synpunkter
                 </button>        
                 
                 <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
-                    <span class="fas fa-user-check" style="font-size:smaller;"> </span> Verifiera användning
+                    <span class="fas fa-user-check" style="font-size:smaller;"> </span>&nbsp;Verifiera användning
                 </button>
                 
                 <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
-                    <span class="fas fa-download" style="font-size:smaller;"></span> Ladda ner
+                    <span class="fas fa-download" style="font-size:smaller;"></span>&nbsp;Ladda ner
                 </button>
                 
                 <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
-                    <span class="fas fa-question-circle" style="font-size:smaller;"></span> Hjälp
+                    <span class="fas fa-question-circle" style="font-size:smaller;"></span>&nbsp;Hjälp
                     <form id="opponera_term_form" action="{% url 'verify_comment_form' %}", method='POST'>{% csrf_token %}
                         {{ opponera|crispy }}
                 </button>
             </div>
         </div>
 
+    <hr>
+
      <div class="row top-buffer-20" id="mitten-span-row">
 
         <!-- Alla metadata attribut -->      
-        
-        <div class="col-6" id="mitten-span-left-column">
-            <div>
-                <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md">
+
+        <div class="col-6" id="mitten-span-left-column col-centered">
+                
+            <div class="row rounded-bottom bg-info text-white w-25 p-1 justify-content-center mx-auto">
+                <strong>Kodverk</strong>
+            </div>
+
+                
+                <div class="row justify-content-md-center top-buffer-10 pr-1">
+                <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
                 <tbody>
                         <tr>
                             <td colspan="2">Titel</td>
@@ -122,14 +130,20 @@
                         
                     </tbody>
                     </table>
-    
                 </div>
         </div>
 
-        <!-- Själva kodtext -->
+
+    <!-- Själva kodtext -->
         
-        <div class="col-6" id="mitten-span-right-column">
-            <div>
+        <div class="col-6" id="mitten-span-right-column col-centered">
+
+            <div class="row rounded-bottom bg-info text-white w-25 p-1 justify-content-center mx-auto">
+                <strong>Kodtexter</strong>
+            </div>
+
+
+            <div class="row justify-content-md-center top-buffer-20 pl-1">
                 <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
                     <thead>
                         <tr>
@@ -165,8 +179,7 @@
                 </table>
             </div>
         </div>
-        </div>
-                  
+                 
 
         <div class="modal fade" id="help" role="dialog">
             <div class="modal-dialog">
@@ -175,9 +188,9 @@
                   <h4 class="modal-title" style="font-family: frutiger;">Instruktioner för verifiera/kommentera</h4>
                 </div>
                 <div class="modal-body">
-                    <h4 style="font-family: frutiger;">Kommentera kodverk</h4>
+                    <h4 style="font-family: frutiger;">Lämna synpunkter</h4>
                         <p>
-                            Funktionen Kommentera är tänkt att vara en möjlighet att framföra synpunkter om ett kodverk, 
+                            Funktionen <em>Lämna synpunkter</em> är tänkt att vara en möjlighet att framföra synpunkter om ett kodverk, 
                             hur och var det används eller om det finns felaktigheter. Det är viktigt att kommentaren tydligt 
                             anger vad som avses samt motiveras på ett adekvat sätt. Ange även den kontext som din kommentar 
                             gäller. Kommentarerna kommer sedan bearbetas av Kodverksgruppen. 
@@ -185,14 +198,14 @@
                             <ol>
                                 <li>Tryck på knappen Kommentera</li>
                                 <li>Fyll i kontaktuppgifter men namn, E-post och telefon så att vi kan nå dig för att ställa frågor.</li>
-                                <li>Avge dina kommentarer om kodverket. Var så tydlig du kan!</li>
+                                <li>Lägga in dina kommentarer om kodverket. Var så tydlig du kan!</li>
                                 <li>Tryck på Skicka</li>
                             </ol>
                             <br>
                         </p>
                     <h4 style="font-family: frutiger;">Verifiera användning</h4>
                     <p>
-                            Funktionen Verifiera användning ska användas för att visa information om var i verksamheten ett kodverk 
+                            Funktionen <em>Verifiera användning</em> ska användas för att visa information om var i verksamheten ett kodverk 
                             används. Det är således viktigt att de som söker och använder ett kodverk verifierar detta med denna funktion.
                             <br>Gör så här:<br>
                         <ol>
@@ -249,7 +262,7 @@
               <!-- Modal content-->
               <div class="modal-content">
                 <div class="modal-header">				
-                  <h4 class="modal-title" style="font-family: frutiger;">Verifiera andvändning av kodverket</h4>
+                  <h4 class="modal-title" style="font-family: frutiger;">Verifiera användning av kodverket</h4>
                 </div>
                 {% load crispy_forms_filters %}
                 <div class="modal-body">
@@ -263,7 +276,7 @@
               </div>			
             </div>
           </div>
-          
+        </div>    
 
         
 {% else %}

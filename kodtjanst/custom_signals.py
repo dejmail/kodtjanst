@@ -11,8 +11,8 @@ def has_uploaded_file_been_deleted(sender, instance, **kwargs):
         else:
             try:
                 if obj.underlag.name != instance.underlag.name: # file is cleared on model / changed to new file
-                    print(f"File paths are different, removing file {obj.underlag.name}, and replacing with {instance.underlag.name}")
-                    if os.path.exists(obj.underlag.path):
+                    if obj.underlag.name is not None:
+                        print(f"File paths are different, deleting file {obj.underlag.name}, and replacing with {instance.underlag.name}")
                         os.remove(obj.underlag.path)
             except ValueError as e:
                 print(e, f'Problem deleting file {obj.underlag.path}')

@@ -227,20 +227,18 @@ class KodverkManager(admin.ModelAdmin):
     change_form_template = 'change_form_autocomplete.html'
     form = KodverkAdminForm
 
-    inlines = [CodeableConceptInline, KodtextInline, NyckelOrdInline, ValidatedByInline]
+    inlines = [NyckelOrdInline, CodeableConceptInline, KodtextInline, ValidatedByInline]
     
     save_on_top = True
 
-    list_display = ('id',
-                    'titel_på_kodverk',
-                    'status',
-                    'kodverk_variant',
-                    'urval_referens',
+    list_display = ('titel_på_kodverk',
                     'syfte',
+                    'status',
                     'version',
                     'clean_ägare',
                     'ansvarig',
                     'kategori',
+                    'datum_skapat',
                     'has_underlag')
 
     exclude = ['ändrad_av',]
@@ -249,20 +247,21 @@ class KodverkManager(admin.ModelAdmin):
 
     list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
 
-    search_fields = ('id','titel_på_kodverk','kategori')
+    search_fields = ('titel_på_kodverk','kategori')
 
     fieldsets = [
         ['Main', {
-        'fields': [('titel_på_kodverk', 'status', 'kodverk_variant', 'urval_referens','identifier'),
-        ('underlag', 'länk_till_underlag')]}],
-        ['Extra', {
-        'fields': [('syfte'),
+        'fields': [('titel_på_kodverk'),
+        ('syfte'),
         ('beskrivning_av_informationsbehov'),
+        ('identifier', 'uppdateringsintervall', 'användning_av_kodverk'),
+        ('status', 'version'), 
         ('giltig_från', 'giltig_tom'),
-        ('kategori',),
-        ('version', 'uppdateringsintervall'),
-        'användning_av_kodverk',
-        'extra_data'],
+        ('ansvarig'),
+        ('underlag', 'länk_till_underlag'),
+        ]}],
+        ['Extra', {
+        'fields': [('extra_data')],
         }],
     ]
 

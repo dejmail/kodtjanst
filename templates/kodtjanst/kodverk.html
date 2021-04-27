@@ -4,6 +4,7 @@
 
 {# start of the row containing the search bar #}
 {% block search_bar %}
+<div class="container-fluid">
 <div class="row mt-5" id="search_bar_row">
 
 	{% block search-left-column %}	
@@ -23,5 +24,6 @@
 		<div class="col-3" id="search-right-column"></div>
 	{% endblock search-right-column %}
 	</div>
+</div>
 {% endblock search_bar %}
 {# end of the row containing the search bar #}
