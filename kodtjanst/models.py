@@ -75,7 +75,7 @@ class Kodverk(models.Model):
                  ('Vid behov', 'Vid behov')]
 
     statuser = [("Publicera ej","Publicera ej"),
-                ("Beslutad", "Beslutad"),
+                ("Aktiv", "Aktiv"),
                 ('Inaktiv', 'Inaktiv')]
 
     kodverk_typ = [('kodverk','kodverk'), 
