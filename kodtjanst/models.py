@@ -105,7 +105,7 @@ class Kodverk(models.Model):
 
     extra_data = JSONField(null=True, blank=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan ha hierarkiska nivåer')
     
-    ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True, verbose_name='Ansvarig kodverkare')
+    ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True, verbose_name='Ansvarig person')
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
     användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)    
 

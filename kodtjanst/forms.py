@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ModelChoiceField
 from .models import Kodtext
 from .models import Kodtext, Kodverk, MultiKodtextMapping
 from django.contrib.auth import (
@@ -10,6 +11,16 @@ from django.contrib.auth import (
 from pdb import set_trace
 
 from .models import ExternaKodtext, Kodverk
+
+
+class UserModelChoiceField(ModelChoiceField):
+    ''' 
+    A ModelChoiceField to represent User 
+    select boxes in the Auto Admin 
+    '''
+    def label_from_instance(self, obj):
+
+        return f"{obj.get_full_name()}"
 
 kodverk_ägare = [('Informatik','Informatik'),
                 ('Inera','Inera'),
@@ -41,6 +52,8 @@ class UserLoginForm(forms.Form):
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
 class KodverkAdminForm(forms.ModelForm):
+
+    ansvarig = UserModelChoiceField(User.objects.filter(first_name__isnull=False).exclude(first_name__exact='').order_by('first_name', 'last_name'))
 
     def __init__(self, *args, **kwargs):
         super(KodverkAdminForm, self).__init__(*args, **kwargs)

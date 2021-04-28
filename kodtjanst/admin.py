@@ -1,22 +1,22 @@
-from django.contrib import admin
-
-from .models import Kodverk, Kodtext
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.shortcuts import render
-from django.utils.translation import gettext_lazy as _
-from django.template.response import TemplateResponse
-from django import forms
-from django.forms import ModelChoiceField
-from django.conf import settings
-from .models import *
-from .forms import ExternaKodtextForm, MultiMappingForm, KodverkAdminForm
-from .custom_filters import DuplicatKodverkFilter, DuplicateKodtextFilter
-from django.utils.html import format_html
-from django.urls import path
-
-
 from pdb import set_trace
+
+from django import forms
+from django.conf import settings
+from django.contrib import admin
+from django.forms import ModelChoiceField, ValidationError
+from django.forms.models import BaseInlineFormSet
+
+from django.shortcuts import render
+from django.template.response import TemplateResponse
+from django.urls import path, reverse
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+
+from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter
+from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm
+from .models import *
+from .models import Kodtext, Kodverk
 
 admin.site.site_header = "KOLLI Admin"
 admin.site.site_title = "KOLLI Admin Portal"
@@ -77,6 +77,7 @@ class KodtextManager(admin.ModelAdmin):
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
+
 
 class InlineChangeList(object):
     can_show_all = True
@@ -198,6 +199,17 @@ def make_inaktiv(modeladmin, request, queryset):
 make_inaktiv.short_description = "Markera kodverk som Inaktiv"
 
 
+class CodeableConceptFormSet(BaseInlineFormSet):
+
+    def clean(self):
+        super(CodeableConceptFormSet, self).clean()
+        for form in self.forms:
+            if ('http://' in form.cleaned_data.get('källa')) and ("a href" not in form.cleaned_data.get('källa')):
+                form.add_error('källa', 'Skriv länken så - Exempel - <a href="http://www.google.com" target="_blank">Google</a>')
+            if 'http://' in form.cleaned_data.get('version_av_källa'):
+                form.add_error('version_av_källa', 'Skriv inte länkar - skriv versionen från Källan')                
+        return form.cleaned_data
+
 class CodeableConceptInline(admin.TabularInline):
 
     class Media:
@@ -205,7 +217,8 @@ class CodeableConceptInline(admin.TabularInline):
         css = {'all' : ('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',)}
 
     model = CodeableConceptAttributes
-    
+    formset = CodeableConceptFormSet
+
     extra = 1
 
     fieldsets = [
@@ -376,6 +389,7 @@ class CommentedKodverkManager(admin.ModelAdmin):
 
 
 from django.forms import SelectMultiple
+
 
 class MultiKodtextMappingManager(admin.ModelAdmin):
 
