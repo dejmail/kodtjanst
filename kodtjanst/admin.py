@@ -204,10 +204,15 @@ class CodeableConceptFormSet(BaseInlineFormSet):
     def clean(self):
         super(CodeableConceptFormSet, self).clean()
         for form in self.forms:
-            if ('http://' in form.cleaned_data.get('källa')) and ("a href" not in form.cleaned_data.get('källa')):
-                form.add_error('källa', 'Skriv länken så - Exempel - <a href="http://www.google.com" target="_blank">Google</a>')
-            if 'http://' in form.cleaned_data.get('version_av_källa'):
-                form.add_error('version_av_källa', 'Skriv inte länkar - skriv versionen från Källan')                
+        
+            if ('källa' in form.cleaned_data.keys()) and (form.cleaned_data.get('källa') is not None):
+                
+                if (any(substring in form.cleaned_data.get('källa') for substring in ['http://', 'https://'])) and ("a href" not in form.cleaned_data.get('källa')):
+                    form.add_error('källa', 'Skriv länken så - Exempel - <a href="http://www.google.com" target="_blank">Google</a>')
+            if ('version_av_källa' in form.cleaned_data.keys()) and (form.cleaned_data.get('version_av_källa') is not None):
+                
+                if any(substring in form.cleaned_data.get('version_av_källa') for substring in ['http://', 'https://']):
+                    form.add_error('version_av_källa', 'Skriv inte länkar - skriv versionen från Källan')                
         return form.cleaned_data
 
 class CodeableConceptInline(admin.TabularInline):
