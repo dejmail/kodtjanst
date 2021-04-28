@@ -114,7 +114,7 @@ def retur_general_sök(url_parameter):
                         OR kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.definition LIKE "%{url_parameter}%")
-                        AND kodtjanst_kodverk.status = 'Beslutad';'''
+                        AND kodtjanst_kodverk.status = 'Aktiv';'''
 
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
 

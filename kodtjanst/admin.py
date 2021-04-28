@@ -187,10 +187,15 @@ class NyckelordManager(admin.ModelAdmin):
         return "-"
 
 
-def make_unpublished(modeladmin, request, queryset):
+def make_aktiv(modeladmin, request, queryset):
     
-    queryset.update(status='Publicera ej')
-make_unpublished.short_description = "Markera kodverk som Publicera ej"
+    queryset.update(status='Aktiv')
+make_aktiv.short_description = "Markera kodverk som Aktiv"
+
+def make_inaktiv(modeladmin, request, queryset):
+    
+    queryset.update(status='Inaktiv')
+make_inaktiv.short_description = "Markera kodverk som Inaktiv"
 
 
 class CodeableConceptInline(admin.TabularInline):
@@ -243,7 +248,7 @@ class KodverkManager(admin.ModelAdmin):
 
     exclude = ['ändrad_av',]
 
-    actions = [make_unpublished]
+    actions = [make_aktiv, make_inaktiv]
 
     list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
 
