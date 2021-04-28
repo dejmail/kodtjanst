@@ -259,7 +259,7 @@ class KodverkManager(admin.ModelAdmin):
                     'status',
                     'version',
                     'clean_ägare',
-                    'ansvarig',
+                    'ansvarig_fullname',
                     'kategori',
                     'datum_skapat',
                     'has_underlag')
@@ -293,7 +293,13 @@ class KodverkManager(admin.ModelAdmin):
         return ', '.join([i.get("ägare_till_kodverk") for i in obj.codeableconceptattributes_set.values() if i.get("ägare_till_kodverk") is not None])
 
     clean_ägare.short_description = "Ägare"
-        
+    
+    def ansvarig_fullname(self, obj):
+        if obj.ansvarig:
+            return obj.ansvarig.get_full_name()
+        else:
+            return ''
+
     def has_underlag(self, obj):
 
         #if obj.titel_på_kodverk == "VGRKV_StatusKliniskProcess": set_trace()
