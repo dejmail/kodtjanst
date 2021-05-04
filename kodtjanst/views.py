@@ -109,7 +109,7 @@ def retur_general_sök(url_parameter):
                                 on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
                         WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodverk.beskrivning_av_informationsbehov LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodverk.beskrivning_av_innehållet  LIKE "%{url_parameter}%"\
                         OR kodtjanst_nyckelord.nyckelord LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
@@ -127,7 +127,7 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
 
     cursor = connection.cursor()
     sql_statement = f'''SELECT syfte,\
-                            beskrivning_av_informationsbehov,\
+                            beskrivning_av_innehållet ,\
                             identifier,\
                             titel_på_kodverk,\
                             ägare_till_kodverk,\
@@ -287,7 +287,7 @@ def return_komplett_metadata(request, url_parameter):
         #set_trace()
 
         result_column_names = ['syfte',
-                            'beskrivning_av_informationsbehov',
+                            'beskrivning_av_innehållet ',
                             'identifier',
                             'titel_på_kodverk',
                             'ägare_till_kodverk',
@@ -327,7 +327,7 @@ def return_komplett_metadata(request, url_parameter):
         
         kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])
         
-        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_informationsbehov', 'länk_till_underlag'])
+        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet ', 'länk_till_underlag'])
                     
 
         template_context = {'kodverk_full': return_list_dict[0],
@@ -430,7 +430,7 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         
         kodverk_columns = {'kodverk' : ['titel_på_kodverk',
                                         'syfte',
-                                        'beskrivning_av_informationsbehov',
+                                        'beskrivning_av_innehållet ',
                                         'status',
                                         'identifier',
                                         'version',
@@ -636,3 +636,33 @@ def previous_codeconcept_values_json(request):
         suggestion_dict[key] = list(set(values))
 
     return JsonResponse(suggestion_dict, safe=False)
+
+
+def all_kodverk_and_kodtext_as_json(request):
+
+    kodverk = Kodverk.objects.prefetch_related('kodtext_set').filter(status="Aktiv")
+    
+    
+    suggestion_dict = {}
+    kodverk_fields = ['titel_på_kodverk', 'datum_skapat', 'syfte', 'kodverk_variant', 'beskrivning_av_innehållet ']
+    kodtext_fields = ['kod', 'kodtext']
+
+    for index, entry in enumerate(kodverk, start=1):
+        
+        if suggestion_dict.get(index) is None:
+            suggestion_dict[index] = {}
+
+        if suggestion_dict[index].get('metadata') is None:
+            suggestion_dict[index]['metadata'] = {}
+
+        if suggestion_dict[index].get('kodtext') is None:
+            suggestion_dict[index]['kodtext'] = {}
+
+        if suggestion_dict[index].get('metadata') is not None:
+            suggestion_dict[index]['metadata'] = {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}
+
+        if suggestion_dict[index].get('kodtext') is not None:
+            for kodtext_number, kodtext in enumerate(entry.kodtext_set.values(), 1):
+                suggestion_dict[index]['kodtext'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields}       
+
+    return JsonResponse(suggestion_dict, safe=False, json_dumps_params={'ensure_ascii': False})
