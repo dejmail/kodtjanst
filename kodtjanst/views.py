@@ -287,7 +287,7 @@ def return_komplett_metadata(request, url_parameter):
         #set_trace()
 
         result_column_names = ['syfte',
-                            'beskrivning_av_innehållet ',
+                            'beskrivning_av_innehållet',
                             'identifier',
                             'titel_på_kodverk',
                             'ägare_till_kodverk',
@@ -327,7 +327,7 @@ def return_komplett_metadata(request, url_parameter):
         
         kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])
         
-        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet ', 'länk_till_underlag'])
+        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk_till_underlag'])
                     
 
         template_context = {'kodverk_full': return_list_dict[0],
@@ -430,7 +430,7 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         
         kodverk_columns = {'kodverk' : ['titel_på_kodverk',
                                         'syfte',
-                                        'beskrivning_av_innehållet ',
+                                        'beskrivning_av_innehållet',
                                         'status',
                                         'identifier',
                                         'version',
@@ -644,7 +644,7 @@ def all_kodverk_and_kodtext_as_json(request):
     
     
     suggestion_dict = {}
-    kodverk_fields = ['titel_på_kodverk', 'datum_skapat', 'syfte', 'kodverk_variant', 'beskrivning_av_innehållet ']
+    kodverk_fields = ['titel_på_kodverk', 'datum_skapat', 'syfte', 'kodverk_variant', 'beskrivning_av_innehållet']
     kodtext_fields = ['kod', 'kodtext']
 
     for index, entry in enumerate(kodverk, start=1):

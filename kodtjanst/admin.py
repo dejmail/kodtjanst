@@ -276,7 +276,7 @@ class KodverkManager(admin.ModelAdmin):
         ['Main', {
         'fields': [('titel_på_kodverk'),
         ('syfte'),
-        ('beskrivning_av_innehållet '),
+        ('beskrivning_av_innehållet'),
         ('identifier', 'uppdateringsintervall', 'användning_av_kodverk'),
         ('status', 'version'), 
         ('giltig_från', 'giltig_tom'),
