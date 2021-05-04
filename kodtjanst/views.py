@@ -655,14 +655,14 @@ def all_kodverk_and_kodtext_as_json(request):
         if suggestion_dict[index].get('metadata') is None:
             suggestion_dict[index]['metadata'] = {}
 
-        if suggestion_dict[index].get('kodtext') is None:
-            suggestion_dict[index]['kodtext'] = {}
+        if suggestion_dict[index].get('kodverk') is None:
+            suggestion_dict[index]['kodverk'] = {}
 
         if suggestion_dict[index].get('metadata') is not None:
             suggestion_dict[index]['metadata'] = {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}
 
-        if suggestion_dict[index].get('kodtext') is not None:
+        if suggestion_dict[index].get('kodverk') is not None:
             for kodtext_number, kodtext in enumerate(entry.kodtext_set.values(), 1):
-                suggestion_dict[index]['kodtext'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields}       
+                suggestion_dict[index]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields}       
 
     return JsonResponse(suggestion_dict, safe=False, json_dumps_params={'ensure_ascii': False})
