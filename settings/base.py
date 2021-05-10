@@ -136,6 +136,9 @@ TIME_ZONE = 'Europe/Stockholm'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
+
+DATE_FORMAT  = 'Y-m-d'
+DATETIME_FORMAT  =  'Y-m-d H:M:S'

@@ -1,6 +1,8 @@
 import re
 import logging
+from datetime import datetime
 from kodtjanst.logging import setup_logging
+
 
 from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -173,7 +175,8 @@ def return_kodtext_related_to_kodverk(url_parameter):
                                annan_kodtext,
                                definition,
                                kod,
-                               kodtext                               
+                               kodtext,
+                               position                            
                                from kodtjanst_kodtext WHERE kodtjanst_kodtext.kodverk_id = {url_parameter};'''
     cursor.execute(sql_statement)
     result = cursor.fetchall()
@@ -321,14 +324,22 @@ def return_komplett_metadata(request, url_parameter):
                                'annan_kodtext',
                                'definition',
                                'kod',
-                               'kodtext']
+                               'kodtext',
+                               'position']
 
         kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
+
+        if all([kodtext['position'] for kodtext in kodtext_dict]):
+            kodtext_dict = sorted(kodtext_dict, key = lambda i: i['position'])
+        elif all([kodtext['kod'] for kodtext in kodtext_dict]):
+            kodtext_dict = sorted(kodtext_dict, key = lambda i: i['kod'])
+        else:
+            kodtext_dict = sorted(kodtext_dict, key = lambda i: i['kodtext'])
         
-        kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])
-        
-        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk_till_underlag'])
-                    
+
+        kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])        
+
+        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk_till_underlag'])           
 
         template_context = {'kodverk_full': return_list_dict[0],
                             'kodverk_id' : url_parameter,
@@ -488,7 +499,7 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
                     metadata_value = getattr(kodverk_set, column)                    
                     if column in date_columns:                        
                         kodverk_worksheet.write(row_num, col_num, metadata_value, date_format)
-                    elif column == 'syfte':                        
+                    elif (column in ['syfte', 'beskrivning_av_innehållet']):
                         kodverk_worksheet.write(row_num, col_num, metadata_value, text_wrap)
                     else:
                         try:                    
@@ -642,7 +653,6 @@ def all_kodverk_and_kodtext_as_json(request):
 
     kodverk = Kodverk.objects.prefetch_related('kodtext_set').filter(status="Aktiv")
     
-    
     suggestion_dict = {}
     kodverk_fields = ['titel_på_kodverk', 'datum_skapat', 'syfte', 'kodverk_variant', 'beskrivning_av_innehållet']
     kodtext_fields = ['kod', 'kodtext']
@@ -663,6 +673,14 @@ def all_kodverk_and_kodtext_as_json(request):
 
         if suggestion_dict[index].get('kodverk') is not None:
             for kodtext_number, kodtext in enumerate(entry.kodtext_set.values(), 1):
-                suggestion_dict[index]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields}       
+                suggestion_dict[index]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields}
+    
+    
+    sorted_date_list = sorted([i[0] for i in kodverk.all().values_list('senaste_ändring')], reverse=True)
+    
+    last_modified = {'Last-Modified': sorted_date_list[0].strftime('%Y-%m-%d %H:%M:%S')}
 
-    return JsonResponse(suggestion_dict, safe=False, json_dumps_params={'ensure_ascii': False})
+    response =  JsonResponse(suggestion_dict, safe=False, json_dumps_params={'ensure_ascii': False})
+    response['Last-Modified'] = last_modified
+
+    return response
