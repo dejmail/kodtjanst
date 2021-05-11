@@ -24,9 +24,9 @@ window.addEventListener("load", function() {
 		if (data.unreadcomments == 0) {
 			return element[0]
 		} else if (data.unreadcomments == 1) {
-			return element[0].innerHTML += '<span class="text-danger"> - ' + data.unreadcomments + " Oberarbetad kommentar</span>";
+			return element[0].innerHTML += '<span class="text-danger"> - ' + data.unreadcomments + " Nytt kommentar</span>";
 		} else if (data.unreadcomments > 1) {
-			return element[0].innerHTML += '<span class="text-danger"> - ' + data.unreadcomments + " Oberarbetade kommentarer</span>";
+			return element[0].innerHTML += '<span class="text-danger"> - ' + data.unreadcomments + " Nya kommentarer</span>";
 		};
 	}
 
