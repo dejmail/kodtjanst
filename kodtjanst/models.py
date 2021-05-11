@@ -179,6 +179,7 @@ class CommentedKodverk(models.Model):
     comment_epost = models.EmailField(null=True)
     comment_telefon = models.CharField(max_length=255, null=True)
     comment_kontext = models.TextField(max_length=2000, null=True)
+    comment_status = models.CharField(choices=[('Pågår','Pågår'),('Klart','Klart'),('Nytt', 'Nytt')], max_length=5, null=True)
 
     def __str__(self):
         return self.comment_name

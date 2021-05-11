@@ -396,7 +396,7 @@ class CommentedKodverkManager(admin.ModelAdmin):
     model = CommentedKodverk
     extra = 1
 
-    list_display = ('kodverk_id','comment_name','comment_epost','comment_telefon', 'comment_kontext') 
+    list_display = ('kodverk_id','comment_name','comment_epost','comment_telefon', 'comment_kontext', 'comment_status') 
 
 
 from django.forms import SelectMultiple
