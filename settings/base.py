@@ -141,4 +141,4 @@ USE_L10N = False
 USE_TZ = True
 
 DATE_FORMAT  = 'Y-m-d'
-DATETIME_FORMAT  =  'Y-m-d H:M:S'
+DATETIME_FORMAT  =  'Y-m-d, H:m:s'
