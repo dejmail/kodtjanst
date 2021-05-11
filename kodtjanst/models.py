@@ -175,6 +175,7 @@ class CommentedKodverk(models.Model):
     
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
+    comment_datum = models.DateTimeField(auto_now_add=True)
     comment_name = models.CharField(max_length=255, null=True)
     comment_epost = models.EmailField(null=True)
     comment_telefon = models.CharField(max_length=255, null=True)
