@@ -16,5 +16,7 @@ urlpatterns = [
     path("admin/ajax/kodtext-elements/<kodverk_id>/", views.load_kodtext, name="load_kodtext"),
     path("kodverk/previous-codeconcept-values/", views.previous_codeconcept_values_json, name="json_codeconcept_values"),
     path("kodverk/alla", views.all_kodverk_and_kodtext_as_json, name="alla_kodverk"),
+    path('unread_comments/', views.return_number_of_recent_comments, name='unread_comments'),
+
 
     ]

@@ -649,6 +649,14 @@ def previous_codeconcept_values_json(request):
     return JsonResponse(suggestion_dict, safe=False)
 
 
+def return_number_of_recent_comments(request):
+    
+    if request.method == 'GET':
+        total_comments = CommentedKodverk.objects.all()
+        status_list = [i.get('status') for i in total_comments.values()]
+        return JsonResponse({'unreadcomments' : len(status_list)-status_list.count("Klart"),
+                             'totalcomments' : len(status_list)})
+
 def all_kodverk_and_kodtext_as_json(request):
 
     kodverk = Kodverk.objects.prefetch_related('kodtext_set').filter(status="Aktiv")
