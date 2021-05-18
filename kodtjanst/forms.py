@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelChoiceField
 from .models import Kodtext
-from .models import Kodtext, Kodverk, MultiKodtextMapping
+from .models import Kodtext, Kodverk, MultiKodtextMapping, CommentedKodverk
 from django.contrib.auth import (
     authenticate,
     get_user_model
@@ -61,6 +61,20 @@ class KodverkAdminForm(forms.ModelForm):
     class Meta:
         model = Kodverk
         fields = '__all__'
+
+
+class KommentarAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = CommentedKodverk
+        fields = ('kodverk', 'handläggare', 'namn', 'epost', 'kontakt', 'kommentar', 'kommentar', 'handläggnings_kommentar', 'status',)
+        exclude = ('kodverk_id',)
+
+    handläggare = UserModelChoiceField(User.objects.filter(first_name__isnull=False).exclude(first_name__exact='').order_by('first_name', 'last_name'))
+
+    def __init__(self, *args, **kwargs):
+        super(KommentarAdminForm, self).__init__(*args, **kwargs)
+
 
 class ExternaKodtextForm(forms.ModelForm):
 
@@ -124,8 +138,8 @@ class KommenteraKodverk(forms.Form):
 
     namn = forms.CharField()
     epost = forms.EmailField()
-    telefon = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Skypenamn eller telefon"}))
-    kommentar_kontext = forms.CharField(widget=forms.Textarea, max_length=2000, label='Kommentar')
+    kontakt = forms.CharField(max_length=30, label="Kontakt", widget=forms.TextInput(attrs={'placeholder': "Teams namn eller telefon"}))
+    kommentar = forms.CharField(widget=forms.Textarea, max_length=2000, label='Kommentar')
     kodverk = forms.CharField(widget=forms.HiddenInput())  
 
 class VerifyKodverk(forms.Form):

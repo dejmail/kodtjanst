@@ -175,12 +175,14 @@ class CommentedKodverk(models.Model):
     
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
-    comment_datum = models.DateTimeField(auto_now_add=True)
-    comment_name = models.CharField(max_length=255, null=True)
-    comment_epost = models.EmailField(null=True)
-    comment_telefon = models.CharField(max_length=255, null=True)
-    comment_kontext = models.TextField(max_length=2000, null=True)
-    comment_status = models.CharField(choices=[('Pågår','Pågår'),('Klart','Klart'),('Nytt', 'Nytt')], max_length=5, null=True)
+    handläggare = models.ForeignKey(User, on_delete=models.PROTECT, related_name='kommentar_handläggare', null=True)
+    datum_skapat = models.DateTimeField(auto_now_add=True)
+    namn = models.CharField(max_length=255, null=True)
+    epost = models.EmailField(null=True)
+    kontakt = models.CharField(max_length=255, null=True)
+    kommentar = models.TextField(max_length=2000, null=True)
+    handläggnings_kommentar = models.TextField(max_length=2000, null=True)
+    status = models.CharField(choices=[('Pågår','Pågår'),('Klart','Klart'),('Nytt', 'Nytt')], max_length=5, null=True)
 
     def __str__(self):
-        return self.comment_name
+        return self.namn
