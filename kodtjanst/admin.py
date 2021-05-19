@@ -14,7 +14,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter
-from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm
+from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm, KommentarAdminForm
 from .models import *
 from .models import Kodtext, Kodverk
 
@@ -394,9 +394,30 @@ class ExternaKodtextManager(admin.ModelAdmin):
 class CommentedKodverkManager(admin.ModelAdmin):
     
     model = CommentedKodverk
+    form = KommentarAdminForm
     extra = 1
+    readonly_fields = ('kodverk_link',)
+    exclude = ('kodverk',)
 
-    list_display = ('comment_datum','kodverk_id','comment_name','comment_epost','comment_telefon', 'comment_kontext', 'comment_status') 
+    fieldsets = [
+    ['Main', {
+    'fields': [('kodverk_link', 'status',),
+        ('namn', 'epost', 'kontakt'),
+    ('kommentar',),
+    ('handläggnings_kommentar', 'handläggare',),
+
+    ]}],
+    ]    
+
+    list_display = ('datum_skapat','kodverk_link','namn','epost','kontakt', 'kommentar', 'handläggare','status',) 
+
+    def kodverk_link(self, instance):
+        
+        link = f'admin:{instance._meta.app_label}_kodverk_change'
+        url = reverse(link, args=(instance.kodverk.pk,))
+        return format_html(f'<a href="{url}">{instance.kodverk.titel_på_kodverk}</a>')
+
+    kodverk_link.short_description = 'Kodverk'
 
 
 from django.forms import SelectMultiple

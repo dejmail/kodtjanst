@@ -580,10 +580,11 @@ def kodverk_verify_comment(request):
                 
                 kommentera_kodverk = CommentedKodverk()
                 kommentera_kodverk.kodverk = Kodverk(id=form.cleaned_data.get("kodverk"))
-                kommentera_kodverk.comment_kontext = form.cleaned_data.get('kommentar_kontext')
-                kommentera_kodverk.comment_epost = form.cleaned_data.get('epost')
-                kommentera_kodverk.comment_name = form.cleaned_data.get('namn')                
-                kommentera_kodverk.comment_telefon = form.cleaned_data.get('telefon')              
+                kommentera_kodverk.kommentar = form.cleaned_data.get('kommentar')
+                kommentera_kodverk.epost = form.cleaned_data.get('epost')
+                kommentera_kodverk.namn = form.cleaned_data.get('namn')                
+                kommentera_kodverk.kontakt = form.cleaned_data.get('kontakt')
+                kommentera_kodverk.status = 'Nytt'
                 
                 kommentera_kodverk.save()
 
