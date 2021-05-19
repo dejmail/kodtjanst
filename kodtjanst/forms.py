@@ -53,7 +53,7 @@ class UserLoginForm(forms.Form):
 
 class KodverkAdminForm(forms.ModelForm):
 
-    ansvarig = UserModelChoiceField(User.objects.filter(first_name__isnull=False).exclude(first_name__exact='').order_by('first_name', 'last_name'))
+    ansvarig = UserModelChoiceField(User.objects.filter(first_name__isnull=False).exclude(first_name__exact='').order_by('first_name', 'last_name'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(KodverkAdminForm, self).__init__(*args, **kwargs)
