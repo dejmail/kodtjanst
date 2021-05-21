@@ -1,12 +1,16 @@
 from pdb import set_trace
+import requests
+import re
 
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.core.validators import URLValidator
 from django.forms import ModelChoiceField, ValidationError
 from django.forms.models import BaseInlineFormSet
 
 from django.shortcuts import render
+from django.template import response
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.html import format_html
@@ -204,11 +208,33 @@ class CodeableConceptFormSet(BaseInlineFormSet):
     def clean(self):
         super(CodeableConceptFormSet, self).clean()
         for form in self.forms:
-        
             if ('källa' in form.cleaned_data.keys()) and (form.cleaned_data.get('källa') is not None):
                 
-                if (any(substring in form.cleaned_data.get('källa') for substring in ['http://', 'https://'])) and ("a href" not in form.cleaned_data.get('källa')):
-                    form.add_error('källa', 'Skriv länken så - Exempel - <a href="http://www.google.com" target="_blank">Google</a>')
+                if 'http' in form.cleaned_data.get('källa'):
+
+                    try:
+                        split_text = re.split(r'\blänk=\b|\bklartext=\b', form.cleaned_data.get('källa'))
+                        clean_list = list(filter(None, split_text))
+                        if len(clean_list) != 2:
+                            form.add_error('källa', 'Skriv länken så länk=http://www.länk.se klartext=rubrik')
+                            return form.cleaned_data                                               
+                        else:
+                            http_link, link_text = clean_list
+                    except ValueError as e:
+                        form.add_error('källa', 'Skriv länken så länk=http://www.länk.se klartext=rubrik')
+                        raise
+                                    
+                    validate = URLValidator()
+                    try:
+                        validate(http_link.strip())
+                    except ValidationError:
+                        form.add_error('källa', 'HTTP länk format är inte valid')
+                        raise
+                    try:
+                        requests.get(http_link)
+                    except requests.exceptions.ConnectionError:
+                        form.add_error('källa', 'HTTP länken är inte nåbar, kolla tillgänglighet och stavning')
+                    
             if ('version_av_källa' in form.cleaned_data.keys()) and (form.cleaned_data.get('version_av_källa') is not None):
                 
                 if any(substring in form.cleaned_data.get('version_av_källa') for substring in ['http://', 'https://']):
@@ -260,7 +286,7 @@ class KodverkManager(admin.ModelAdmin):
                     'version',
                     'clean_ägare',
                     'ansvarig_fullname',
-                    'kategori',
+                    'clean_källa',
                     'datum_skapat',
                     'has_underlag')
 
@@ -270,7 +296,7 @@ class KodverkManager(admin.ModelAdmin):
 
     list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
 
-    search_fields = ('titel_på_kodverk','kategori')
+    search_fields = ('titel_på_kodverk',)
 
     fieldsets = [
         ['Main', {
@@ -293,6 +319,29 @@ class KodverkManager(admin.ModelAdmin):
         return ', '.join([i.get("ägare_till_kodverk") for i in obj.codeableconceptattributes_set.values() if i.get("ägare_till_kodverk") is not None])
 
     clean_ägare.short_description = "Ägare"
+
+
+    def clean_källa(self, obj):
+        return_string = ''
+        
+        for i in obj.codeableconceptattributes_set.values():
+        
+            if i.get("källa") is not None:
+                        
+                if all(substring in i.get('källa') for substring in ['länk', 'klartext']):
+                    
+                    http_link, link_text = list(filter(None, re.split(r'\blänk=\b|\bklartext=\b', i.get("källa"))))
+                    format_link = f'<a href="{http_link.strip()}" target="_blank">{link_text}</a>'
+                    safe_link = format_html(format_link)
+                    if return_string == '':
+                        return_string += safe_link
+                    else:
+                        return_string += ', ' + safe_link
+                else:
+                    return i.get('källa')    
+        return mark_safe(return_string)
+
+    clean_källa.short_description = "Källa"
     
     def ansvarig_fullname(self, obj):
         if obj.ansvarig:
