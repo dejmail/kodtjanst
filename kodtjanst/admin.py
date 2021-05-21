@@ -228,7 +228,7 @@ class CodeableConceptFormSet(BaseInlineFormSet):
                     try:
                         validate(http_link.strip())
                     except ValidationError:
-                        form.add_error('källa', 'HTTP länk format är inte valid')
+                        form.add_error('källa', 'Skriv länken så länk=http://www.länk.se klartext=rubrik')
                         raise
                     try:
                         requests.get(http_link)
