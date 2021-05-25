@@ -447,6 +447,7 @@ class CommentedKodverkManager(admin.ModelAdmin):
     extra = 1
     readonly_fields = ('kodverk_link',)
     exclude = ('kodverk',)
+    list_filter = ('status',)
 
     fieldsets = [
     ['Main', {
