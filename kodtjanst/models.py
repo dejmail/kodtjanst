@@ -86,7 +86,7 @@ class Kodverk(models.Model):
 
     syfte = models.TextField(max_length=1000, null=True)
     beskrivning_av_innehållet = models.TextField(null=True,blank=True, verbose_name='Beskrivning av innehållet')
-    identifier = models.CharField(max_length=255,null=True, blank=True)
+    identifierare = models.CharField(max_length=255,null=True, blank=True)
     titel_på_kodverk = models.CharField(max_length=255, null=True)
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
     
