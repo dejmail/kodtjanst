@@ -1,6 +1,6 @@
 import re
 import logging
-from datetime import datetime
+from datetime import datetime, date
 from kodtjanst.logging import setup_logging
 
 
@@ -659,10 +659,10 @@ def return_number_of_recent_comments(request):
         return JsonResponse({'unreadcomments' : len(status_list)-status_list.count("Klart"),
                              'totalcomments' : len(status_list)})
 
-def all_kodverk_and_kodtext_as_json(request):
+def structure_kodverk_queryset_as_json(queryset):
 
-    kodverk = Kodverk.objects.prefetch_related('kodtext_set').filter(status="Aktiv")
-    
+    kodverk = queryset
+
     suggestion_dict = {}
     kodverk_fields = ['titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status']
     kodtext_fields = ['kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
@@ -694,10 +694,7 @@ def all_kodverk_and_kodtext_as_json(request):
 
         if suggestion_dict[index].get('kodverk') is not None:
             for kodtext_number, kodtext in enumerate(entry.kodtext_set.values(), 1):
-                suggestion_dict[index]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields}
-            
-            
-    
+                suggestion_dict[index]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields} 
     
     sorted_date_list = sorted([i[0] for i in kodverk.all().values_list('senaste_ändring')], reverse=True)
     
@@ -705,5 +702,21 @@ def all_kodverk_and_kodtext_as_json(request):
 
     response =  JsonResponse(suggestion_dict, safe=False, json_dumps_params={'ensure_ascii': False})
     response['Last-Modified'] = last_modified
+
+    return response
+
+def all_kodverk_and_kodtext_as_json(request):
+
+    kodverk = Kodverk.objects.prefetch_related('kodtext_set').filter(status="Aktiv")
+
+    response = structure_kodverk_queryset_as_json(kodverk)
+
+    return response
+
+def content_changes_from_date(request, year, month, day):
+
+    queryset = Kodverk.objects.prefetch_related('kodtext_set').filter(status="Aktiv").filter(senaste_ändring__gte=date(int(year), int(month), int(day)))
+    
+    response = structure_kodverk_queryset_as_json(queryset)
 
     return response
