@@ -111,7 +111,8 @@ def retur_general_sök(url_parameter):
                                 on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
                         WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodverk.beskrivning_av_innehållet  LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodverk.beskrivning_av_innehållet LIKE "%{url_parameter}%"\
+                        OR kodtjanst_kodverk.användning_av_kodverk LIKE "%{url_parameter}%"\
                         OR kodtjanst_nyckelord.nyckelord LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
                         OR kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
@@ -159,12 +160,6 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
     clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
     cursor.execute(clean_statement)
     result = cursor.fetchall()
-    
-    
-#underlaginstruktion_för_kodverket,\
-#mappning_för_rapportering,\
-
-
     return result
 
 
@@ -287,7 +282,6 @@ def return_komplett_metadata(request, url_parameter):
 
         codeconcept_dict = attach_column_names_to_search_result(codeconcept_attributes,codeconcept_column_names)
 
-        #set_trace()
 
         result_column_names = ['syfte',
                             'beskrivning_av_innehållet',
@@ -317,7 +311,7 @@ def return_komplett_metadata(request, url_parameter):
         
         for return_result in exact_kodverk_request:
             return_list_dict.append(dict(zip(result_column_names, return_result)))
-        
+
         kodtext_search_result = return_kodtext_related_to_kodverk(url_parameter)
 
         kodtext_column_names = ['id',
