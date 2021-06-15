@@ -1,6 +1,7 @@
 const user_input = $("#user-input");
 const search_icon = $('#search-icon');
 const target_div = $('#mitten-span-middle-column');
+var currentPage = window.document.domain;
 
 function endpoint_check() {
 
@@ -72,16 +73,20 @@ user_input.keyup(function () {
 document.body.addEventListener("click", function(e) {
 	// e.target was the clicked element
 	if(e.target && e.target.nodeName == "A") {
-    // Stop the browser redirecting to  the HREF value.
-    event.preventDefault();    
-	console.log("sending", e.target.id, "ID to URL", e.target.href);
-    // Attach event listeners for browser history and hash changes.
-    
-    //changeBrowserURL(null, e.target.href);            
-	// Get page and replace current content.
-	//debugger;
-	getPage(e.target.href);
-	popStateHandler();
+
+		if (e.target.hostname == currentPage) {	
+			// catch only internal A clicks, allow external links to proceed
+			// Stop the browser redirecting to  the HREF value.
+			e.preventDefault();    
+			console.log("sending", e.target.id, "ID to URL", e.target.href);
+			// Attach event listeners for browser history and hash changes.
+		
+			//changeBrowserURL(null, e.target.href);            
+			// Get page and replace current content.
+			//debugger;
+			getPage(e.target.href);
+			popStateHandler();
+		}
 	}
 });
 
