@@ -5,7 +5,7 @@
 
 {% if kodverk_full %}
     
-        <div class="row top-buffer-20 ">
+        <div class="row top-buffer-20">
                 <div class="col-12 text-center">
                 <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
                     <span class="fas fa-comment" style="font-size:smaller;"></span>&nbsp;Lämna synpunkter
@@ -29,113 +29,171 @@
 
     <hr>
 
+    <div class="container-fluid">
+
      <div class="row top-buffer-20" id="mitten-span-row">
 
-        <!-- Alla metadata attribut -->      
+        <!-- Alla metadata attribut -->
 
-        <div class="col-6" id="mitten-span-left-column col-centered">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-left-column text-centered col-centered">
                 
-            <div class="row rounded-bottom bg-info text-white w-25 p-1 justify-content-center mx-auto">
-                <strong>Kodverk</strong>
-            </div>
-
-                
-                <div class="row justify-content-md-center top-buffer-10 pr-1">
-                <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
-                <tbody>
-                        <tr>
-                            <td colspan="2">Titel</td>
-                            <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Syfte</td>
-                            <td colspan="6">{{kodverk_full.syfte}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Beskrivning av innehållet</td>
-                            <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Användning</td>
-                            <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Ägare till kodverk</td>
-                            <td colspan="6">
-                                            {% for attribute in codeconcept %}
-                                                {{attribute.ägare_till_kodverk}}<br>
-                                            {% endfor %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Giltig från</td>
-                            <td colspan="6">{{kodverk_full.giltig_från}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Giltig tom</td>
-                            <td colspan="6">{{kodverk_full.giltig_tom}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Senaste ändring</td>
-                            <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Ansvarig förvaltare</td>
-                            <td colspan="6">
-                                {% for attribute in codeconcept %}
-                                
-                                    {% if codeconcept|length > 1 %}
-                                        {{attribute.ansvarig_förvaltare}} - ({{attribute.ägare_till_kodverk}})<br>
-                                    {% else %}
-                                        {{attribute.ansvarig_förvaltare}}
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Status</td>
-                            <td colspan="6">{{kodverk_full.status}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Nyckelord</td>
-                            <td colspan="6">{{nyckelord}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Beslutsunderlag dokument</td>
-                            <td colspan="6">
-                                {% if  kodverk_full.underlag|length > 0 %}
-                                    <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
-                                        <span class="fas fa-file-download fa-2x">
-                                        </span>                            
-                                    </a>
-                                {% else %}
-                                Dokumentet saknas för tillfället
-                                {% endif %}
-                            </td>
-                    
-                        <tr>
-                            <td colspan="2">Underlag länk</td>
-                            <td colspan="6">
-                            {% if kodverk_full.länk_till_underlag|length > 0 %}
-                                <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
-                            {% else %}
-                                Ingen länk
-                            {% endif %}
-                            </td>
-                        </tr>
-                        
-                    </tbody>
-                    </table>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button class="btn btn-sm bg-info text-white" id="kodverk">
+                        <strong>Kodverk</strong>
+                    </button>
                 </div>
+            </div>
+                
+            <div class="row justify-content-md-center top-buffer-10 pr-1">
+            <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
+            <tbody>
+                    <tr>
+                        <td colspan="2">Titel</td>
+                        <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Syfte</td>
+                        <td colspan="6">{{kodverk_full.syfte}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Beskrivning av innehållet</td>
+                        <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Användning</td>
+                        <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Ägare till kodverk</td>
+                        <td colspan="6">
+                                        {% for attribute in codeconcept %}
+                                            {{attribute.ägare_till_kodverk}}<br>
+                                        {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Giltig från</td>
+                        <td colspan="6">{{kodverk_full.giltig_från}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Giltig tom</td>
+                        <td colspan="6">{{kodverk_full.giltig_tom}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Senaste ändring</td>
+                        <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Ansvarig förvaltare</td>
+                        <td colspan="6">
+                            {% for attribute in codeconcept %}
+                            
+                                {% if codeconcept|length > 1 %}
+                                    {{attribute.ansvarig_förvaltare}} - ({{attribute.ägare_till_kodverk}})<br>
+                                {% else %}
+                                    {{attribute.ansvarig_förvaltare}}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Status</td>
+                        <td colspan="6">{{kodverk_full.status}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Beslutsunderlag dokument</td>
+                        <td colspan="6" style="vertical-align:middle;">
+                            {% if  kodverk_full.underlag|length > 0 %}
+                                <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
+                                    <span class="fas fa-file-download fa-2x">
+                                    </span>                            
+                                </a>
+                            {% else %}
+                            Dokumentet saknas för tillfället
+                            {% endif %}
+                        </td>
+                    </tr>
+                
+                    <tr>
+                        <td colspan="2">Underlag länk</td>
+                        <td colspan="6">
+                        {% if kodverk_full.länk_till_underlag|length > 0 %}
+                            <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
+                        {% else %}
+                            Ingen länk
+                        {% endif %}
+                        </td>
+                    </tr>
+                    
+                </tbody>
+                </table>
+            </div>
         </div>
 
 
     <!-- Själva kodtext -->
-        
-        <div class="col-6" id="mitten-span-right-column col-centered">
 
-            <div class="row rounded-bottom bg-info text-white w-25 p-1 justify-content-center mx-auto">
-                <strong>Kodtexter</strong>
+    
+{% if codeconcept|length > 1 %}
+
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-right-column col-centered">
+
+        <div class="row">
+            <div class="col-12 text-center">
+                <button class="btn btn-sm bg-info text-white" id="kodverk">
+                    <strong>Codeable Concept</strong>
+                </button>
+            </div>
+        </div>
+
+        <p class="top-buffer-10">Denna kodverk är en codeable koncept. Kodtexter väljas från källorna
+            som visas nedan vid användning kodverket. Kodtexter kan kommer från en av källorna, eller 
+            man kan kombinera kodtexterna från alla källor.</p>
+
+        <div class="row justify-content-md-center top-buffer-10 pl-1">
+            <table class="table table-bordered table-striped table-md" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Källa</th>
+                        <th>Länk</th>
+                        <th>Information</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in kodtext_full %}
+                <tr>
+                    <td>{{i.kod|default_if_none:"Ingen" }}</td>
+                    <td>{{i.kodtext}}</td>
+                    <td>{%if i.definition|length > 1 %}
+                            {{i.definition}}
+                        {% elif i.annan_kodtext|length > 1 %}
+                            {{i.annan_kodtext}}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+
+    </div>
+    </div>
+
+{% else %}
+
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-right-column col-centered">
+
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button class="btn btn-sm bg-info text-white" id="kodverk">
+                        <strong>Kodtexter</strong>
+                    </button>
+                </div>
             </div>
 
 
@@ -175,104 +233,13 @@
                 </table>
             </div>
         </div>
-                 
+    </div>
+{% endif %}         
 
-        <div class="modal fade" id="help" role="dialog">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">				
-                  <h4 class="modal-title" style="font-family: frutiger;">Instruktioner för verifiera/kommentera</h4>
-                </div>
-                <div class="modal-body">
-                    <h4 style="font-family: frutiger;">Lämna synpunkter</h4>
-                        <p>
-                            Funktionen <em>Lämna synpunkter</em> är tänkt att vara en möjlighet att framföra synpunkter om ett kodverk, 
-                            hur och var det används eller om det finns felaktigheter. Det är viktigt att kommentaren tydligt 
-                            anger vad som avses samt motiveras på ett adekvat sätt. Ange även den kontext som din kommentar 
-                            gäller. Kommentarerna kommer sedan bearbetas av Kodverksgruppen. 
-                            <br>Gör så här:<br>
-                            <ol>
-                                <li>Tryck på knappen Kommentera</li>
-                                <li>Fyll i kontaktuppgifter men namn, E-post och telefon så att vi kan nå dig för att ställa frågor.</li>
-                                <li>Lägga in dina kommentarer om kodverket. Var så tydlig du kan!</li>
-                                <li>Tryck på Skicka</li>
-                            </ol>
-                            <br>
-                        </p>
-                    <h4 style="font-family: frutiger;">Verifiera användning</h4>
-                    <p>
-                            Funktionen <em>Verifiera användning</em> ska användas för att visa information om var i verksamheten ett kodverk 
-                            används. Det är således viktigt att de som söker och använder ett kodverk verifierar detta med denna funktion.
-                            <br>Gör så här:<br>
-                        <ol>
-                            <li>När du sökt och funnit ett kodverk som motsvarar ert behov tryck på knappen Verifiera användning</li>
-                            <li>Fyll i E-postadress</li>
-                            <li>Välj ett användningsområde i listan Verifierar att kodverket används i.</li>
-                                <ol>
-                                    <li>Finns inte det avsedda användningsområdet i listan, välj Annan.</li>
-                                    <li>Skriv sedan i ett nytt användningsområde i fältet Om annat.</li>
-                                </ol>
-
-                            <li>Tryck på Skicka</li>
-                        </ol>
-                    </p>
-                    
-                
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
-                </div>
-              </div>			
-            </div>
-          </div>
-
-        
-        <!--           
-            Kommentera Kodverk modal
-        -->
-
-          <div class="modal fade" id="Comment" role="dialog">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">				
-                <h4 class="modal-title" style="font-family: frutiger;">Kommentera kodverket</h4>
-                </div>
-                <div class="modal-body">
-
-                    <div id="populate_form_comment" class="form-group"></div>
-
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
-                </div>
-              </div>			
-            </div>
-          </div>
-
-        <!--           
-            Verify Kodverk modal
-        -->
-
-          <div class="modal fade" id="verify" role="dialog">
-            <div class="modal-dialog">		  
-              <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">				
-                  <h4 class="modal-title" style="font-family: frutiger;">Verifiera användning av kodverket</h4>
-                </div>
-                {% load crispy_forms_filters %}
-                <div class="modal-body">
-
-                    <div id="populate_form_verify"></div>
-                  
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
-                </div>
-              </div>			
-            </div>
-          </div>
-        </div>    
+    {% block help %}
+        {% include "help.html" %}  
+    {% endblock help %}
+  
 
         
 {% else %}
@@ -280,26 +247,19 @@
 {% endif %}
 
 {% endblock mitten-span %}
-
+     
 {% block extra_javascript %}
 {{ super }}
 
 <link rel="stylesheet" href="{% static '/css/main.css' %}" media="screen">
-
 <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
-
-
 <link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}" media="screen">
-
-
-
 <script>
 
 /* Formatting function for row details - modify as you need */
 
 function format (d) {
     // `d` is the original data object for the row
-    
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td>Kod:</td>'+
@@ -355,7 +315,7 @@ function format (d) {
         "language": {
             "url": "{% url 'translation_text' %}",
             "emptyTable": "Inga kodtexter som kan visas"
-    } 
+    },
     });
 });
     
