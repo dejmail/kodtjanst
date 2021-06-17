@@ -280,8 +280,9 @@ class KodverkManager(admin.ModelAdmin):
     
     save_on_top = True
 
-    list_display = ('titel_på_kodverk',
-                    'syfte',
+    list_display = ('id', 
+                    'titel_på_kodverk',
+                    'safe_syfte',
                     'status',
                     'version',
                     'clean_ägare',
@@ -289,6 +290,8 @@ class KodverkManager(admin.ModelAdmin):
                     'clean_källa',
                     'datum_skapat',
                     'has_underlag')
+
+    list_display_links = ('titel_på_kodverk',)
 
     exclude = ['ändrad_av',]
 
@@ -342,6 +345,14 @@ class KodverkManager(admin.ModelAdmin):
         return mark_safe(return_string)
 
     clean_källa.short_description = "Källa"
+
+    def safe_syfte(self, obj):
+
+        return mark_safe(obj.syfte)
+
+        
+
+
     
     def ansvarig_fullname(self, obj):
         if obj.ansvarig:
