@@ -41,9 +41,31 @@ class DuplicateKodtextFilter(SimpleListFilter):
             return queryset
         if self.value().lower() == 'dubbletter':
             duplicate_names = Kodtext.objects.values('kodtext').annotate(Count('kodtext')).order_by().filter(kodtext__count__gt=1)
-            #set_trace()
+            
             # You can then retrieve all these duplicate objects using this query:
-            print(len(duplicate_names))
+            
             duplicate_objects = Kodtext.objects.filter(kodtext__in=[item['kodtext'] for item in duplicate_names]).order_by('kodtext','kodverk')
 
             return duplicate_objects
+
+
+class SwedishLettersinKodFilter(SimpleListFilter):
+
+    title = "Svenska bokstäver i kod"
+    parameter_name = 'q'
+
+
+    def lookups(self, request, model_admin):
+        return (
+            ('ÄäÅåÖö', 'ÄäÅåÖö'),
+        )
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        
+        queryset = Kodtext.objects.all()
+
+        for letter in ['ÄÅÖ']:
+            queryset.filter(kod__icontains=letter)
+        return queryset

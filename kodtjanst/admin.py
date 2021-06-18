@@ -17,7 +17,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter
+from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter, SwedishLettersinKodFilter
 from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm, KommentarAdminForm
 from .models import *
 from .models import Kodtext, Kodverk
@@ -29,6 +29,7 @@ admin.site.index_title = "Välkommen till KOLLI Portalen"
 class KodtextManager(admin.ModelAdmin):
 
     list_display = ('id',
+                    'kod',
                     'kodtext', 
                     'kodverk_grupp',
                     'definition',
@@ -36,7 +37,7 @@ class KodtextManager(admin.ModelAdmin):
                     'extra_data'
                     )
 
-    list_filter = ('status', DuplicateKodtextFilter,)
+    list_filter = ('status', DuplicateKodtextFilter, SwedishLettersinKodFilter)
 
     fieldsets = [
         ['Main', {
@@ -349,10 +350,6 @@ class KodverkManager(admin.ModelAdmin):
     def safe_syfte(self, obj):
 
         return mark_safe(obj.syfte)
-
-        
-
-
     
     def ansvarig_fullname(self, obj):
         if obj.ansvarig:
