@@ -80,6 +80,7 @@ class Kodverk(models.Model):
 
     kodverk_typ = [('kodverk','kodverk'), 
                    ('codeable concept','codeable concept'),
+                   ('paraply','paraply'), 
                    ('code set','code set'), 
                    ('alpha response','alpha response'), 
                    ('urval','urval')]
