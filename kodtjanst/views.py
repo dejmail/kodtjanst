@@ -203,10 +203,10 @@ def highlight_search_term_i_definition(search_term, result_dict_list):
 
 def make_dictionary_field_html_safe(result_list_of_dictionaries=[], fields=[]):
 
-    for entry.pk, entry in enumerate(result_list_of_dictionaries):
+    for index, entry in enumerate(result_list_of_dictionaries):
         for field in fields:
             if entry.get(f'{field}') is not None:
-                result_list_of_dictionaries[entry.pk].update({f'{field}' : format_html(entry.get(f'{field}'))})
+                result_list_of_dictionaries[index].update({f'{field}' : format_html(entry.get(f'{field}'))})
     return result_list_of_dictionaries
 
 def kodverk_sok(request):
