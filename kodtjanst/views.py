@@ -203,10 +203,10 @@ def highlight_search_term_i_definition(search_term, result_dict_list):
 
 def make_dictionary_field_html_safe(result_list_of_dictionaries=[], fields=[]):
 
-    for index, entry in enumerate(result_list_of_dictionaries):
+    for entry.pk, entry in enumerate(result_list_of_dictionaries):
         for field in fields:
             if entry.get(f'{field}') is not None:
-                result_list_of_dictionaries[index].update({f'{field}' : format_html(entry.get(f'{field}'))})
+                result_list_of_dictionaries[entry.pk].update({f'{field}' : format_html(entry.get(f'{field}'))})
     return result_list_of_dictionaries
 
 def kodverk_sok(request):
@@ -662,33 +662,31 @@ def structure_kodverk_queryset_as_json(queryset):
     kodtext_fields = ['kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
     codeableconcept_fields = ['ägare_till_kodverk', 'ansvarig_förvaltare','källa', 'version_av_källa']
 
-    for index, entry in enumerate(kodverk, start=1):
+    for entry in kodverk:
         
-        if suggestion_dict.get(index) is None:
-            suggestion_dict[index] = {}
+        if suggestion_dict.get(entry.pk) is None:
+            suggestion_dict[entry.pk] = {}
 
-        if suggestion_dict[index].get('metadata') is None:
-            suggestion_dict[index]['metadata'] = {}
+        if suggestion_dict[entry.pk].get('metadata') is None:
+            suggestion_dict[entry.pk]['metadata'] = {}
 
-        if suggestion_dict[index].get('kodverk') is None:
-            suggestion_dict[index]['kodverk'] = {}
+        if suggestion_dict[entry.pk].get('kodverk') is None:
+            suggestion_dict[entry.pk]['kodverk'] = {}
 
-        if suggestion_dict[index].get('metadata') is not None:
-            suggestion_dict[index]['metadata'] = {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}
-            suggestion_dict[index]['metadata']['codeable_concept'] = {}
+        if suggestion_dict[entry.pk].get('metadata') is not None:
+            suggestion_dict[entry.pk]['metadata'] = {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}
+            suggestion_dict[entry.pk]['metadata']['codeable_concept'] = {}
             
             for codeconcept_idx, codeableconcept in enumerate(entry.codeableconceptattributes_set.values(), 1):
-                #set_trace()
-                suggestion_dict[index]['metadata']['codeable_concept'][codeconcept_idx] = {key:value for key,value in codeableconcept.items() if key in codeableconcept_fields}
-                # {attr:getattr(entry, attr) for attr in codeableconcept if attr in codeableconcept_fields}
+                suggestion_dict[entry.pk]['metadata']['codeable_concept'][codeconcept_idx] = {key:value for key,value in codeableconcept.items() if key in codeableconcept_fields}                
 
             nyckelord = [i.get('nyckelord') for i in entry.nyckelord_set.values() if i is not None]
             if len(nyckelord) > 0:
-                suggestion_dict[index]['metadata']['sökord'] = nyckelord
+                suggestion_dict[entry.pk]['metadata']['sökord'] = nyckelord
 
-        if suggestion_dict[index].get('kodverk') is not None:
+        if suggestion_dict[entry.pk].get('kodverk') is not None:
             for kodtext_number, kodtext in enumerate(entry.kodtext_set.values(), 1):
-                suggestion_dict[index]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields} 
+                suggestion_dict[entry.pk]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields} 
     
     sorted_date_list = sorted([i[0] for i in kodverk.all().values_list('senaste_ändring')], reverse=True)
     
