@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelChoiceField
-from .models import Kodtext
-from .models import Kodtext, Kodverk, MultiKodtextMapping, CommentedKodverk
+from django.forms.fields import ChoiceField
+from .models import Kodtext, Kodverk, MultiKodtextMapping, CommentedKodverk, ArbetsKommentar
 from django.contrib.auth import (
     authenticate,
     get_user_model
@@ -62,6 +62,16 @@ class KodverkAdminForm(forms.ModelForm):
         model = Kodverk
         fields = '__all__'
 
+class ArbetsKommentarForm(forms.ModelForm):
+
+    class Meta:
+        model = ArbetsKommentar
+        fields = ('kommentar',)
+
+    kodverk = ModelChoiceField(Kodverk.objects.filter(status='Aktiv').order_by('titel_på_kodverk'), help_text="Bara kodverk med 'Aktiv' status visas")
+
+    def __init__(self, *args, **kwargs):
+        super(ArbetsKommentarForm, self).__init__(*args, **kwargs)
 
 class KommentarAdminForm(forms.ModelForm):
 

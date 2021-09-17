@@ -84,7 +84,7 @@ class KodtextSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Kodtext
-        fields = ('kod','kodtext','kodverk','annan_kodtext','definition','kommentar','position','status')
+        fields = ('kod','kodtext','kodverk', 'kodverk_id','annan_kodtext','definition','kommentar','position','status')
         # Optional - see options below
         data_wizard = {
             'header_row': 0,

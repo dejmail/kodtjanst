@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import JSONField
+from django.urls import reverse
+
 from pdb import set_trace
 import datetime
 import os
@@ -10,6 +12,9 @@ import os
 from django.db.models import signals
 from django.db.models.signals import pre_save
 from kodtjanst.custom_signals import has_uploaded_file_been_deleted
+
+from simple_history.models import HistoricalRecords
+
 
 statuser = [("Publicera ej","Publicera ej"),
             ("Beslutad", "Beslutad"),
@@ -34,6 +39,8 @@ class Kodtext(models.Model):
     senaste_ändring = models.DateField(auto_now=True)
     status = models.CharField(max_length=50, blank=True, null=True, choices=statuser)
     ändrad_av = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.id)
@@ -108,10 +115,17 @@ class Kodverk(models.Model):
     
     ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True, verbose_name='Ansvarig person')
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
-    användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)    
+    användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)
+
+    history = HistoricalRecords()
+
 
     def __str__(self):
         return self.titel_på_kodverk
+
+    def get_absolute_url(self):
+        return reverse('kodverk_komplett_metadata', kwargs={'kodverk_id' : str(self.id)})
+
 
 pre_save.connect(has_uploaded_file_been_deleted, sender=Kodverk)
 
@@ -126,6 +140,8 @@ class CodeableConceptAttributes(models.Model):
     version_av_källa = models.CharField(max_length=50, null=True, blank=True)
     ansvarig_förvaltare =  models.CharField(max_length=255, null=True)
     ägare_till_kodverk = models.CharField(max_length=255,null=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         
@@ -145,30 +161,27 @@ class Nyckelord(models.Model):
 class MultiKodtextMapping(models.Model):
 
     text_description = models.CharField(max_length=255, blank=True, null=True)
-    kodtext_from = models.ManyToManyField('Kodtext', related_name="field_from")#, on_delete=models.PROTECT)
-    kodtext_to = models.ManyToManyField('Kodtext', related_name="field_to")#, on_delete=models.PROTECT)
+    kodtext_from = models.ManyToManyField('Kodtext', related_name="field_from")
+    kodtext_to = models.ManyToManyField('Kodtext', related_name="field_to")
     order_dictionary = JSONField(null=True, blank=True, help_text='Ordning av attributer som mappas')
 
     def __str__(self):
         return str(self.id)
 
     
-class ValidatedBy(models.Model):
+class ArbetsKommentar(models.Model):
     class Meta:     
-        verbose_name_plural = "Verifierad av"
+        verbose_name_plural = "Arbets Kommentar"
 
     id = models.AutoField(primary_key=True)
     kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
-    domän_kontext = models.TextField(max_length=2000, null=True, blank=True)
-    domän_stream = models.CharField(max_length=255, null=True)
-    domän_epost = models.EmailField(null=True)
-    domän_telefon = models.CharField(max_length=255, null=True, blank=True)
+    angivet_av =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='angivet_av', null=True, blank=True, verbose_name='Angivet av person')
+    kommentar = models.TextField(max_length=5000, null=True, blank=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
-        if self.domän_stream is None:
-            return '' 
-        else:
-            return self.domän_stream
+        return self.kommentar
 
 class CommentedKodverk(models.Model):
     class Meta:
@@ -187,3 +200,20 @@ class CommentedKodverk(models.Model):
 
     def __str__(self):
         return self.namn
+
+class ValidatedBy(models.Model):
+    class Meta:     
+        verbose_name_plural = "Verifierad av"
+
+    id = models.AutoField(primary_key=True)
+    kodverk = models.ForeignKey("Kodverk", to_field="id", on_delete=models.CASCADE, blank=True, null=True)
+    domän_kontext = models.TextField(max_length=2000, null=True, blank=True)
+    domän_stream = models.CharField(max_length=255, null=True)
+    domän_epost = models.EmailField(null=True)
+    domän_telefon = models.CharField(max_length=255, null=True, blank=True)
+    
+    def __str__(self):
+        if self.domän_stream is None:
+            return '' 
+        else:
+            return self.domän_stream

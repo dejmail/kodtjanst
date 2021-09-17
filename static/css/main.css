@@ -112,7 +112,12 @@ nav {
     list-style-position: inside;
     padding: 0;
   }
-  
+
+
+ breaklongline {
+  word-wrap: break-word !important;
+ }
+
   .tooltip {
     position: relative;
     display: inline-block;
@@ -142,6 +147,15 @@ nav {
     visibility: visible;
   }
 
+.text_highlight_red {
+background-color: #cc5047;
+}
+
+.text_highlight_green {
+  background-color: rgb(59, 179, 59);
+  }
+  
+  
 
 .komplett_metadata_tabell>tbody>tr>td, .komplett_metadata_tabell>tbody>tr>th, .komplett_metadata_tabell>tfoot>tr>td, .komplett_metadata_tabell>tfoot>tr>th, .komplett_metadata_tabell>thead>tr>td, .komplett_metadata_tabell>thead>tr>th {
     padding: 2px;

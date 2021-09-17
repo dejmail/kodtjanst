@@ -1,6 +1,8 @@
 import re
 import logging
 from datetime import datetime, date
+
+from django.utils.safestring import mark_safe
 from kodtjanst.logging import setup_logging
 
 
@@ -17,7 +19,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 
 
-from .models import Kodverk, Kodtext, ExternaKodtext, ValidatedBy, CommentedKodverk, CodeableConceptAttributes
+from .models import Kodverk, Kodtext, ExternaKodtext, CommentedKodverk, CodeableConceptAttributes, ArbetsKommentar
 from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
 
@@ -39,145 +41,65 @@ logger = logging.getLogger(__name__)
 
 RE_PATTERN = re.compile(r'\s+')
 
-@login_required
-def home(request):
-    return render(request, "home.html", {})
-
-def login_view(request):
-    next = request.GET.get('next')
-    if request.method == 'POST':
-        form = UserLoginForm(request.POST)
-        #set_trace()
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            login(request,user)
-            if next:
-                return redirect(next)
-            else:
-                return redirect('/')
-
-        context = {'login_form' : form}
-    
-    else:
-        context = {'login_form' : UserLoginForm()}
-        
-    return render(request, "login.html", context)
-
-def logout_view(request):
-    logout(request)
-    return redirect('/')
-
 def retur_alla_kodverk(url_parameter):
 
-    cursor = connection.cursor()
-    sql_statement = f'''SELECT DISTINCT kodtjanst_kodverk.id,\
-                               kodtjanst_kodverk.titel_på_kodverk,\
-                               kodtjanst_kodverk.syfte\
-                            FROM kodtjanst_kodverk\
-                            LEFT JOIN kodtjanst_kodtext\
-                                ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
-                            LEFT JOIN kodtjanst_validatedby\
-                                ON kodtjanst_kodverk.id = kodtjanst_validatedby.kodverk_id\
-                            LEFT JOIN kodtjanst_nyckelord\
-                                on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
-                            WHERE kodtjanst_kodverk.status = 'Beslutad';'''
+    queryset = Kodverk.objects.filter(status='Aktiv').values_list('id','titel_på_kodverk','syfte')
 
-    clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
-
-    cursor.execute(clean_statement)
-    result = cursor.fetchall()
-    
-    return result
-
+    return queryset
 
 def retur_general_sök(url_parameter):
-    cursor = connection.cursor()
-    ''' 
-    need to reduce the number of fields being returned, we are not using all of them,
-    but this also affects the parsing as it is position based, so need to be careful
-    '''
 
-    sql_statement = f'''SELECT DISTINCT kodtjanst_kodverk.id,\
-                               kodtjanst_kodverk.titel_på_kodverk,\
-                               kodtjanst_kodverk.syfte\
-                            FROM kodtjanst_kodverk\
-                            LEFT JOIN kodtjanst_kodtext\
-                                ON kodtjanst_kodtext.kodverk_id = kodtjanst_kodverk.id\
-                            LEFT JOIN kodtjanst_validatedby\
-                                ON kodtjanst_kodverk.id = kodtjanst_validatedby.kodverk_id\
-                            LEFT JOIN kodtjanst_nyckelord\
-                                on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
-                        WHERE (kodtjanst_kodverk.titel_på_kodverk LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodverk.syfte LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodverk.beskrivning_av_innehållet LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodverk.användning_av_kodverk LIKE "%{url_parameter}%"\
-                        OR kodtjanst_nyckelord.nyckelord LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodtext.kodtext LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodtext.annan_kodtext LIKE "%{url_parameter}%"\
-                        OR kodtjanst_kodtext.definition LIKE "%{url_parameter}%")
-                        AND kodtjanst_kodverk.status = 'Aktiv';'''
+    queryset = Kodverk.objects.filter(Q(status='Aktiv'),
+                                      Q(syfte__icontains=url_parameter) | 
+                                      Q(beskrivning_av_innehållet__icontains=url_parameter) |
+                                      Q(användning_av_kodverk__icontains=url_parameter) |
+                                      Q(nyckelord__nyckelord__icontains=url_parameter) |
+                                      Q(kodtext__kodtext__icontains=url_parameter) |
+                                      Q(kodtext__annan_kodtext__icontains=url_parameter) |
+                                      Q(kodtext__definition__icontains=url_parameter)).distinct().values_list('id',
+                                                                                                              'titel_på_kodverk',
+                                                                                                              'syfte')
 
-    clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
-
-    cursor.execute(clean_statement)
-    result = cursor.fetchall()
-    
-    return result
+    return queryset
 
 def retur_komplett_förklaring_custom_sql(url_parameter):
 
-    cursor = connection.cursor()
-    sql_statement = f'''SELECT syfte,\
-                            beskrivning_av_innehållet ,\
-                            identifierare,\
-                            titel_på_kodverk,\
-                            ägare_till_kodverk,\
-                            version,\
-                            källa,\
-                            version_av_källa,\
-                            kategori,\
-                            användning_av_kodverk,\
-                            status,\
-                            uppdateringsintervall,\
-                            ansvarig_förvaltare,\
-                            senaste_ändring,\
-                            giltig_från,\
-                            giltig_tom,\
-                            ändrad_av_id,\
-                            ansvarig_id,\
-                            urval_referens_id,\
-                            underlag,\
-                            länk_till_underlag,\
-                            kodtjanst_nyckelord.nyckelord\
-                        FROM kodtjanst_kodverk\
-                        LEFT JOIN kodtjanst_nyckelord\
-                            on kodtjanst_kodverk.id = kodtjanst_nyckelord.kodverk_from_id\
-                        LEFT JOIN kodtjanst_codeableconceptattributes\
-                            on kodtjanst_kodverk.id = kodtjanst_codeableconceptattributes.kodverk_from_id\
-                        WHERE kodtjanst_kodverk.id = {url_parameter};'''
-    clean_statement = re.sub(RE_PATTERN, ' ', sql_statement)
-    cursor.execute(clean_statement)
-    result = cursor.fetchall()
-    return result
-
+    queryset = Kodverk.objects.filter(id=url_parameter).values_list('syfte',
+                            'beskrivning_av_innehållet',
+                            'identifierare',
+                            'titel_på_kodverk',
+                            'codeableconceptattributes__ägare_till_kodverk',
+                            'version',
+                            'codeableconceptattributes__källa',
+                            'codeableconceptattributes__version_av_källa',
+                            'kodverk_variant',
+                            'kategori',
+                            'användning_av_kodverk',
+                            'status',
+                            'uppdateringsintervall',
+                            'codeableconceptattributes__ansvarig_förvaltare',
+                            'senaste_ändring',
+                            'giltig_från',
+                            'giltig_tom',
+                            'ändrad_av_id',
+                            'ansvarig_id',
+                            'urval_referens_id',
+                            'underlag',
+                            'länk_till_underlag',
+                            'nyckelord__nyckelord')
+    
+    return queryset
 
 def return_kodtext_related_to_kodverk(url_parameter):
 
-    cursor = connection.cursor()
-    sql_statement = f'''SELECT id,
-                               annan_kodtext,
-                               definition,
-                               kod,
-                               kodtext,
-                               position                            
-                               from kodtjanst_kodtext WHERE kodtjanst_kodtext.kodverk_id = {url_parameter};'''
-    cursor.execute(sql_statement)
-    result = cursor.fetchall()
+    queryset = Kodtext.objects.filter(kodverk_id=url_parameter).values_list('id',
+                                                                            'annan_kodtext',
+                                                                            'definition',
+                                                                            'kod',
+                                                                            'kodtext',
+                                                                            'position')
 
-    return result
-
+    return queryset
 
 def attach_column_names_to_search_result(search_result, search_column_names):
 
@@ -254,6 +176,8 @@ def convert_list_of_tuples_to_string(tuple_list, start=None, stop=None, single_p
     position within each list or tuple.
     '''
     
+    if len(tuple_list) == 0:
+        return ''
     if tuple(tuple_list)[0][0] is None:
         return ''
     if single_position is not None:
@@ -261,10 +185,10 @@ def convert_list_of_tuples_to_string(tuple_list, start=None, stop=None, single_p
     elif (start is not None) and (stop is not None):
         return ', '.join([i[start:stop] for i in tuple_list])
 
-def return_komplett_metadata(request, url_parameter):
+def return_komplett_metadata(request, kodverk_id):
 
-    if url_parameter:
-        exact_kodverk_request = retur_komplett_förklaring_custom_sql(url_parameter)
+    if kodverk_id:
+        exact_kodverk_request = retur_komplett_förklaring_custom_sql(kodverk_id)
         
         nyckelord = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
                                                                 start=-1, 
@@ -273,7 +197,7 @@ def return_komplett_metadata(request, url_parameter):
         nyckelord_string = convert_list_of_tuples_to_string(nyckelord, single_position=0)
         
         codeconcept_attributes = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
-                                                                            ind_items=[4,6,7,12])
+                                                                            ind_items=[4,6,8,13])
 
         codeconcept_column_names = ['ägare_till_kodverk',
                                     'källa',
@@ -291,6 +215,7 @@ def return_komplett_metadata(request, url_parameter):
                             'version',
                             'källa',
                             'version_av_källa',
+                            'kodverk_variant',
                             'kategori',
                             'användning_av_kodverk',
                             'status',
@@ -304,15 +229,14 @@ def return_komplett_metadata(request, url_parameter):
                             'urval_referens_id',
                             'underlag',
                             'länk_till_underlag',
-                            'nyckelord'
-                            ]
+                            'nyckelord']
         
         return_list_dict = []
         
         for return_result in exact_kodverk_request:
             return_list_dict.append(dict(zip(result_column_names, return_result)))
 
-        kodtext_search_result = return_kodtext_related_to_kodverk(url_parameter)
+        kodtext_search_result = return_kodtext_related_to_kodverk(kodverk_id)
 
         kodtext_column_names = ['id',
                                'annan_kodtext',
@@ -330,13 +254,12 @@ def return_komplett_metadata(request, url_parameter):
         else:
             kodtext_dict = sorted(kodtext_dict, key = lambda i: i['kodtext'])
         
-
         kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])        
 
         return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk_till_underlag'])           
 
         template_context = {'kodverk_full': return_list_dict[0],
-                            'kodverk_id' : url_parameter,
+                            'kodverk_id' : kodverk_id,
                             'kodtext_full' : kodtext_dict,
                             'nyckelord' : nyckelord_string,
                             'codeconcept' : codeconcept_dict} 
@@ -347,15 +270,13 @@ def return_komplett_metadata(request, url_parameter):
     else:
         return None
 
-def kodverk_komplett_metadata(request):
-
-    url_parameter = request.GET.get("q")
+def kodverk_komplett_metadata(request, kodverk_id):
     
     if request.is_ajax():
-        template_context = return_komplett_metadata(request, url_parameter) 
+        template_context = return_komplett_metadata(request, kodverk_id) 
         return render(request, "kodverk_komplett_metadata.html", context=template_context)
     elif request.method == 'GET':
-        template_context = return_komplett_metadata(request, url_parameter) 
+        template_context = return_komplett_metadata(request, kodverk_id) 
         return render(request, "kodverk_komplett_metadata_direct_get.html", context=template_context)
     else:
         kodverk = Kodverk.objects.none()
@@ -417,7 +338,7 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
 
     if kodverk_id is None:
         return HttpResponse('''<div class="alert alert-success">
-                                   Sök parameter saknas, problem med inskickning.
+                                   Ingen fil hittades med inskickat siffran.
                                    </div>''')
     
     if (request.is_ajax()) or (request.method == 'GET'):
@@ -712,3 +633,23 @@ def content_changes_from_date(request, year, month, day):
     response = structure_kodverk_queryset_as_json(queryset)
 
     return response
+
+def show_kodverk_history(request, id):
+
+    history_qs = Kodverk.history.filter(id=id)
+        
+    for history in history_qs:
+        if history.prev_record:
+            delta = history.diff_against(history.prev_record)
+            return_list = []
+            for field in delta.changed_fields:
+                return_list.append(f"""Attributet <strong>{field}</strong> har ändrats från - <span class="text_highlight_red">"{getattr(delta.old_record, field)}"</span></br>
+                till <span class="text_highlight_green">"{getattr(delta.new_record, field)}"</span></br>""")
+            return_text = '</br>'.join(return_list)
+
+            return render(request, 
+                          'feeds/kodverk_feed.html', 
+                          {'history': mark_safe(return_text),
+                          'history_delta' : delta}, status=200)
+        else:
+            return "No history"

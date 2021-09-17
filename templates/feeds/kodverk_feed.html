@@ -1,0 +1,63 @@
+{% autoescape off %}
+
+<style type="text/css">
+  .tg  {border-collapse:collapse;
+        border-spacing:0;}
+  .tg td{border-color:black;
+    border-style:solid;
+    border-width:1px;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    overflow:hidden;
+    padding:10px 5px;
+    word-break:normal;}
+  .tg th{border-color:black;
+    border-style:solid;
+    border-width:1px;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    font-weight:bold;
+    overflow:hidden;
+    padding:10px 5px;
+    word-break:normal;}
+  .tg .tg-0lax{text-align:left;
+               vertical-align:top;}
+
+accent_kodverk{
+ background-color: lightgrey;
+ font-weight: bold;
+}
+</style>
+
+
+Förändringar har skett i attributen i kodverket <strong class="accent_kodverk">{{ obj.titel_på_kodverk }}</strong>.
+<br><br>
+
+  <table class="tg">
+  <thead>
+    <tr>
+      <th class="tg-0lax">Attribut</th>
+      <th class="tg-0lax">Datum ändrat</th>
+      <th class="tg-0lax">Ändrat från</th>
+      <th class="tg-0lax">Ändrat till</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for delta_date, delta in history %}
+            {% if delta.changes %}
+              {% for changes in delta.changes %}
+              <tr>
+                <td class="tg-0lax">{{changes.field}}</td>
+                <td class="tg-0lax">{{delta_date}}</td>
+                <td class="tg-0lax">{{changes.old}}</td>
+                <td class="tg-0lax">{{changes.new}}</td>
+              </tr>
+              {% endfor %}
+            {% endif %}
+    {%endfor%}
+    </tbody>
+    </table>
+<br>
+<hr>
+
+{% endautoescape %}

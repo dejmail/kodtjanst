@@ -17,16 +17,18 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from simple_history.admin import SimpleHistoryAdmin
+
 from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter, SwedishLettersinKodFilter
-from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm, KommentarAdminForm
+from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm, KommentarAdminForm, ArbetsKommentarForm
 from .models import *
-from .models import Kodtext, Kodverk
+from .models import Kodtext, Kodverk, ArbetsKommentar
 
 admin.site.site_header = "KOLLI Admin"
 admin.site.site_title = "KOLLI Admin Portal"
 admin.site.index_title = "Välkommen till KOLLI Portalen"
 
-class KodtextManager(admin.ModelAdmin):
+class KodtextManager(SimpleHistoryAdmin):
 
     list_display = ('id',
                     'kod',
@@ -161,17 +163,18 @@ class NyckelOrdInline(admin.TabularInline):
     }
     ]]
 
-
-
-class ValidatedByInline(admin.TabularInline):
-    model = ValidatedBy
+class ArbetsKommentarInline(admin.TabularInline):
+    model = ArbetsKommentar
+    form = ArbetsKommentarForm
     extra = 1
 
     fieldsets = [
     [None, {
-    'fields':[('domän_stream','domän_epost','domän_telefon','domän_kontext')],
+    'fields':[('kommentar',)],
     }
     ]]
+
+
 
 class NyckelordManager(admin.ModelAdmin):
 
@@ -260,24 +263,25 @@ class CodeableConceptInline(admin.TabularInline):
     ]]
     
 
-class CodeableConceptManager(admin.ModelAdmin):
+class CodeableConceptManager(SimpleHistoryAdmin):
 
     list_display = ('kodverk_from', 'källa', 'version_av_källa', 'ansvarig_förvaltare')
 
 
-class KodverkManager(admin.ModelAdmin):
+class KodverkManager(SimpleHistoryAdmin):
 
     class Media:
     
         css = {
             'all': ('https://use.fontawesome.com/releases/v5.8.2/css/all.css',
-                    f'{settings.STATIC_URL}css/custom_icon.css',)
+                    f'{settings.STATIC_URL}css/custom_icon.css',
+                    f'{settings.STATIC_URL}css/main.css',)
             }   
 
     change_form_template = 'change_form_autocomplete.html'
     form = KodverkAdminForm
 
-    inlines = [NyckelOrdInline, CodeableConceptInline, KodtextInline, ValidatedByInline]
+    inlines = [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
     
     save_on_top = True
 
@@ -302,6 +306,8 @@ class KodverkManager(admin.ModelAdmin):
 
     search_fields = ('titel_på_kodverk',)
 
+    history_list_display = ['changed_fields']
+
     fieldsets = [
         ['Main', {
         'fields': [('titel_på_kodverk', 'kodverk_variant'),
@@ -317,6 +323,16 @@ class KodverkManager(admin.ModelAdmin):
         'fields': [('extra_data')],
         }],
     ]
+
+    def changed_fields(self, obj):
+        if obj.prev_record:
+            delta = obj.diff_against(obj.prev_record)
+            return_text = ""
+            for field in delta.changed_fields:
+                return_text += f"""{field} - <span class="text_highlight_red">{getattr(delta.old_record, field)}</span></br>
+                --> <span class="text_highlight_green">{getattr(delta.new_record, field)}</span>"""
+            return mark_safe(return_text)
+        return None
 
     def clean_ägare(self, obj):
         
@@ -350,6 +366,8 @@ class KodverkManager(admin.ModelAdmin):
     def safe_syfte(self, obj):
 
         return mark_safe(obj.syfte)
+
+    safe_syfte.short_description = "Syfte"
     
     def ansvarig_fullname(self, obj):
         if obj.ansvarig:
@@ -377,7 +395,33 @@ class KodverkManager(admin.ModelAdmin):
         obj.ändrad_av_id = request.user.id
         super().save_model(request, obj, form, change)
 
+class ArbetsKommentarManager(admin.ModelAdmin):
 
+    form = ArbetsKommentarForm
+
+    def save_model(self, request, obj, form, change):
+        set_trace()
+        super(ArbetsKommentarManager, self).save_model(request, obj, form, change)
+
+    def get_formsets_with_inlines(self, request, obj):
+        set_trace()
+        return super().get_formsets_with_inlines(request, obj=obj)
+
+    def get_inline_formsets(self, request, formsets, inline_instances, obj):
+        set_trace()
+        return super().get_inline_formsets(request, formsets, inline_instances, obj=obj)
+
+    # def save_new_objects(self, commit=True):
+    #     saved_instances = super(ArbetsKommentarForm, self).save_new_objects(commit)
+    #     if commit:
+    #         # create book for press
+    #     return saved_instances
+
+    # def save_existing_objects(self, commit=True):
+    #     saved_instances = super(ArbetsKommentarForm, self).save_existing_objects(commit)
+    #     if commit:
+    #         # update book for press
+    #     return saved_instances
 
 class KodtextIdandTextField(forms.ModelChoiceField):
 
@@ -535,7 +579,7 @@ admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
 #admin.site.register(ExternaKodverk)
 admin.site.register(Nyckelord, NyckelordManager)
-admin.site.register(ValidatedBy)
+admin.site.register(ArbetsKommentar, ArbetsKommentarManager)
 admin.site.register(CommentedKodverk, CommentedKodverkManager)
 admin.site.register(MultiKodtextMapping, MultiKodtextMappingManager)
 admin.site.register(CodeableConceptAttributes, CodeableConceptManager)

@@ -17,7 +17,7 @@
             <tbody id="myTable">
             {% for info in kodverk %}
                 <tr>
-                    <td><a href="{% url 'kodverk_komplett_metadata' %}?q={{info.id}}" id={{info.id}}>{{info.titel_på_kodverk}}</td>
+                    <td><a href="{% url 'kodverk_komplett_metadata' info.id %}" id={{info.id}}>{{info.titel_på_kodverk}}</td>
                     <td>{{info.syfte}}</td>
                     
                 </tr>

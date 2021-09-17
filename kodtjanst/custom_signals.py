@@ -15,6 +15,7 @@ def has_uploaded_file_been_deleted(sender, instance, **kwargs):
                         print(f"File paths are different, deleting file {obj.underlag.name}, and replacing with {instance.underlag.name}")
                         os.remove(obj.underlag.path)
             except ValueError as e:
-                print(e, f'Problem deleting file {obj.underlag.path}')
+                logger.error(e, f'Problem deleting file {obj.underlag.path}')
+                return "Could not delete file"
     except sender.DoesNotExist:
         pass

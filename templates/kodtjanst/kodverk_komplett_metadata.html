@@ -1,10 +1,12 @@
 {% extends "kodverk_partial_result.html" %}
 {% load static %}
+
 {% load crispy_forms_filters %}
+
 {% block mitten-span %}
 
-{% if kodverk_full %}
-    
+{% if kodverk_full  %}
+{% load zip %}
         <div class="row top-buffer-20">
                 <div class="col-12 text-center">
                 <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
@@ -84,19 +86,21 @@
                         <td colspan="2">Senaste ändring</td>
                         <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
                     </tr>
+
                     <tr>
                         <td colspan="2">Ansvarig förvaltare</td>
                         <td colspan="6">
-                            {% for attribute in codeconcept %}
-                            
-                                {% if codeconcept|length > 1 %}
-                                    {{attribute.ansvarig_förvaltare}} - ({{attribute.ägare_till_kodverk}})<br>
+
+                                {% if kodverk_full.kodverk_variant == "codeable concept" %}
+                                    {% for attribute, kodtext in codeconcept|zip:kodtext_full %}
+                                        {{kodtext.kod}} - {{attribute.ansvarig_förvaltare}}<br>
+                                    {% endfor %}
                                 {% else %}
                                     {{attribute.ansvarig_förvaltare}}
                                 {% endif %}
-                            {% endfor %}
                         </td>
                     </tr>
+
                     <tr>
                         <td colspan="2">Status</td>
                         <td colspan="6">{{kodverk_full.status}}</td>
@@ -110,7 +114,7 @@
                                     </span>                            
                                 </a>
                             {% else %}
-                            Dokumentet saknas för tillfället
+                                Dokumentet saknas för tillfället
                             {% endif %}
                         </td>
                     </tr>
@@ -135,53 +139,13 @@
     <!-- Själva kodtext -->
 
     
-{% if codeconcept|length > 1 %}
+{% if kodverk_full.kodverk_variant == "codeable concept" %}
 
-    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-right-column col-centered">
+    {% include "codeable_concept_template.html" %}
 
-        <div class="row">
-            <div class="col-12 text-center">
-                <button class="btn btn-sm bg-info text-white" id="kodverk">
-                    <strong>Codeable Concept</strong>
-                </button>
-            </div>
-        </div>
+{% elif kodverk_full.kodverk_variant == "paraply" %}
 
-        <p class="top-buffer-10">Detta kodverk är ett codeable concept i VGRs referensinformationsmodell. Kodtexter väljas från källorna
-            som visas nedan vid användning kodverket. Kodtexter väljs från urvalet som visas nedan vid tillämpning av kodverket.</p>
-
-        <div class="row justify-content-md-center top-buffer-10 pl-1">
-            <table class="table table-bordered table-striped table-md" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Källa</th>
-                        <th>Länk</th>
-                        <th>Information</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for i in kodtext_full %}
-                <tr>
-                    <td>{{i.kod|default_if_none:"Ingen" }}</td>
-                    <td>{{i.kodtext}}</td>
-                    <td>{%if i.definition|length > 1 %}
-                            {{i.definition}}
-                        {% elif i.annan_kodtext|length > 1 %}
-                            {{i.annan_kodtext}}
-                        {% else %}
-                            &nbsp;
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-        </div>
-
-
-    </div>
-    </div>
+    {% include "paraply_template.html" %}
 
 {% else %}
 
@@ -238,8 +202,6 @@
     {% block help %}
         {% include "help.html" %}  
     {% endblock help %}
-  
-
         
 {% else %}
         <p>Ingen definition hittades...</p>
