@@ -116,29 +116,7 @@ class Kodverk(models.Model):
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
     användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)
 
-    history = HistoricalRecords()
-
-    __history_date = None
-
-    @property
-    def _history_date(self):
-        return self.__history_date
-
-    @_history_date.setter
-    def _history_date(self, value):
-        if value is None:
-            d = datetime(2019, 1, 1, 23, 59, 59, 0)
-            self.__history_date = d
-        else:
-            self.__history_date = value
-
-    @property
-    def _history_date(self):
-        return self.__history_date
-
-    @_history_date.setter
-    def _history_date(self, value):
-        self.__history_date = value
+    history = HistoricalRecords(excluded_fields=['datum_skapat'])
 
     def __str__(self):
         return self.titel_på_kodverk
