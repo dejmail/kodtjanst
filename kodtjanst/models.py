@@ -118,6 +118,15 @@ class Kodverk(models.Model):
 
     history = HistoricalRecords()
 
+    __history_date = None
+
+    @property
+    def _history_date(self):
+        return self.__history_date
+
+    @_history_date.setter
+    def _history_date(self, value):
+        self.__history_date = value
 
     def __str__(self):
         return self.titel_på_kodverk
