@@ -20,7 +20,7 @@ urlpatterns = [
     path("kodverk/alla", views.all_kodverk_and_kodtext_as_json, name="alla_kodverk"),
     re_path(r'kodverk/delta/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<day>[0-9]{2})/',views.content_changes_from_date, name="content_changes_from_date"),
     path('kodverk/rss/senaste', SenasteKodverkFlöde(), name="recently_published_kodverk"),
-    path('kodverk/rss/ändringar', ÄndringariKodverkFlöde(), name="recently_changed_kodverk"),
+    path('kodverk/rss/andringar', ÄndringariKodverkFlöde(), name="recently_changed_kodverk"),
 
     path("admin/ajax/kodtext-elements/<kodverk_id>/", views.load_kodtext, name="load_kodtext"),
 
