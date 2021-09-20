@@ -126,6 +126,18 @@ class Kodverk(models.Model):
 
     @_history_date.setter
     def _history_date(self, value):
+        if value is None:
+            d = datetime(2019, 1, 1, 23, 59, 59, 0)
+            self.__history_date = d
+        else:
+            self.__history_date = value
+
+    @property
+    def _history_date(self):
+        return self.__history_date
+
+    @_history_date.setter
+    def _history_date(self, value):
         self.__history_date = value
 
     def __str__(self):
