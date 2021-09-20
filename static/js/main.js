@@ -142,3 +142,25 @@ function popStateHandler() {
 	  });
 }
 };
+
+$(document).ready(function(){
+	$('[data-toggle="popover_nyakodverk"]').popover({
+		 //trigger: 'focus',
+		 trigger: 'hover',
+		 html: true,
+		 content: function () {
+			   return '<div class="media"><div class="media-body"><p>Nya kodverk publicerades av VGR IS. Kopiera ut länkan geno att höger klicka och klistra in i RSS program t.ex Outlook</p></div></div>';
+		 },
+   }) 
+});
+
+$(document).ready(function(){
+	$('[data-toggle="popover_ändringar"]').popover({
+		 //trigger: 'focus',
+		 trigger: 'hover',
+		 html: true,
+		 content: function () {
+			   return '<div class="media"><div class="media-body"><p>Förändringar som har skett i kodverk från VGR IS. Kopiera ut länkan geno att höger klicka och klistra in i RSS program t.ex Outlook</p></div></div>';
+		 },
+   }) 
+});

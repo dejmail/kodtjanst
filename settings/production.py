@@ -40,8 +40,8 @@ TEMPLATES[0]['DIRS'].append('templates/kodtjanst')
 
 # Email settings
 
-EMAIL_HOST = 'mail.vgrinformatik.se'
+EMAIL_HOST = ''
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'info@vgrinformatik.se'
+EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True

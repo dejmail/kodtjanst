@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('kategori', models.CharField(max_length=255, null=True)),
                 ('underlag', models.TextField(blank=True, max_length=100, null=True)),
                 ('länk_till_underlag', models.URLField(blank=True, null=True)),
-                ('kodverk_variant', models.CharField(blank=True, choices=[('kodverk', 'kodverk'), ('codeable concept', 'codeable concept'), ('paraply', 'paraply'), ('code set', 'code set'), ('alpha response', 'alpha response'), ('urval', 'urval')], max_length=17, null=True)),
+                ('kodverk_variant', models.CharField(blank=True, choices=[('kodverk', 'kodverk'), ('codeable concept', 'codeable concept'), ('code set', 'code set'), ('alpha response', 'alpha response'), ('urval', 'urval')], max_length=17, null=True)),
                 ('status', models.CharField(blank=True, choices=[('Publicera ej', 'Publicera ej'), ('Aktiv', 'Aktiv'), ('Inaktiv', 'Inaktiv')], max_length=25, null=True)),
                 ('uppdateringsintervall', models.CharField(blank=True, choices=[('Årligen', 'Årligen'), ('Halvårsvis', 'Halvårsvis'), ('Vid behov', 'Vid behov')], max_length=20, null=True)),
                 ('datum_skapat', models.DateField(blank=True, editable=False)),

@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='kodverk',
             name='kodverk_variant',
-            field=models.CharField(blank=True, choices=[('kodverk', 'kodverk'), ('codeable concept', 'codeable concept'), ('paraply', 'paraply'), ('code set', 'code set'), ('alpha response', 'alpha response'), ('urval', 'urval')], max_length=17, null=True),
+            field=models.CharField(blank=True, choices=[('kodverk', 'kodverk'), ('codeable concept', 'codeable concept'), ('code set', 'code set'), ('alpha response', 'alpha response'), ('urval', 'urval')], max_length=17, null=True),
         ),
     ]
