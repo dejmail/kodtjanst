@@ -36,7 +36,7 @@ class Kodtext(models.Model):
     kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
     kommentar = models.TextField(null=True, blank=True)
     position = models.PositiveIntegerField(null=True,blank=True)
-    senaste_ändring = models.DateField(auto_now=True)
+    senaste_ändring = models.DateField(auto_now=True, blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True, choices=statuser)
     ändrad_av = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
 
