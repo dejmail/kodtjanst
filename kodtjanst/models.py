@@ -40,7 +40,7 @@ class Kodtext(models.Model):
     status = models.CharField(max_length=50, blank=True, null=True, choices=statuser)
     ändrad_av = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(excluded_fields=['datum_skapat'])
 
     def __str__(self):
         return str(self.id)

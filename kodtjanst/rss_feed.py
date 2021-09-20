@@ -4,7 +4,7 @@ from .models import Kodverk, Kodtext
 from pdb import set_trace
 
 class SenasteKodverkFlöde(Feed):
-    title = "VGR IS - Nya kodverk"
+    title = "VGR IoS - Nya kodverk"
     link = "/nyakodverk/"
     description = "Nya publicerade kodverk."
 
@@ -18,7 +18,7 @@ class SenasteKodverkFlöde(Feed):
         return item.beskrivning_av_innehållet
 
 class ÄndringariKodverkFlöde(Feed):
-    title = "VGR IS - Kodverk förändringar"
+    title = "VGR IoS - Kodverk förändringar"
     link = "/ändradkodverk/"
     description = "Ändringar och tillägg till kodverk och kodtexter."
     description_template = "feeds/kodverk_feed.html"

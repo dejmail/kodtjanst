@@ -1,0 +1,75 @@
+{% extends "kodverk.html" %}
+{% load static %}
+
+{% block search_bar %}
+{% endblock search_bar %}
+
+{% block mitten-span %}
+<div class="row mt-10" id="mitten-span-row">
+  <div class="col-2" id="mitten-span-left-column"></div>
+  <div class="col-8" id="mitten-span-middle-column">
+    <div class="top-buffer-20" id="mitten-span-row">
+        
+      <div class="row">
+          <div class="col-12 text-center">
+                  Förändrings historiken av <strong><a href="{%url 'kodverk_komplett_metadata' kodverk_id=258%}">{{kodverk}}</a></strong> kodverket.
+          </div>
+      </div>
+          
+      <div class="row justify-content-md-center top-buffer-10 pr-1">
+      <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
+      <tbody>
+              <tr>
+                  <th colspan="2">Datum</th>
+                  <th colspan="2">Attribut</th>
+                  <th colspan="2">Ändrat från</th>
+                  <th colspan="2">Ändrat till</th>
+              </tr>
+              {% for delta_date, delta in history %}
+               <tr>
+                 <td colspan="2">{{delta_date}}</td>
+                 {% if delta.changes %}
+                   {% for changes in delta.changes %}
+                     {% if forloop.counter == 1 %}
+                       <td colspan="2">{{changes.field}}</td>
+                       {% if changes.old == "" %}
+                         <td colspan="2">Tom sträng</td>
+                         {% else %}
+                         <td colspan="2">{{changes.old}}</td>
+                       {% endif %}
+                       {% if changes.new == "" %}
+                       <td colspan="2">Tom sträng</td>
+                       {% else %}
+                         <td colspan="2">{{changes.new}}</td>
+                       {% endif %}
+                     </tr>
+                     {% else %}
+                     </tr>
+                       <tr>
+                       <td></td>
+                       <td colspan="2">{{changes.field|default:'-'}}</td>
+                       {% if changes.old == "" %}
+                         <td colspan="2">Tom sträng</td>
+                         {% else %}
+                         <td colspan="2">{{changes.old}}</td>
+                       {% endif %}
+                       {% if changes.new == "" %}
+                       <td colspan="2">Tom sträng</td>
+                       {% else %}
+                         <td colspan="2">{{changes.new}}</td>
+                       {% endif %}
+                     </tr>
+                     {% endif %}
+                   {% endfor %}                    
+                 {% endif %}
+               {%endfor%}
+          </tbody>
+          </table>
+      </div>
+  </div>
+  </div>
+  <div class="col-2" id="mitten-span-right-column"></div>
+</div>
+
+{% endblock mitten-span %}
+

@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 from kodtjanst.logging import setup_logging
 
 
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.core import serializers
@@ -18,14 +18,11 @@ from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 
-
 from .models import Kodverk, Kodtext, ExternaKodtext, CommentedKodverk, CodeableConceptAttributes, ArbetsKommentar
 from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
-
 from io import BytesIO
 import xlsxwriter
-
 
 import json
 from pdb import set_trace
@@ -634,22 +631,15 @@ def content_changes_from_date(request, year, month, day):
 
     return response
 
-def show_kodverk_history(request, id):
+def show_kodverk_history(request, pk):
 
-    history_qs = Kodverk.history.filter(id=id)
-        
+    history_qs = Kodtext.history.filter(kodverk__id=pk)
+    list_of_changes = []
     for history in history_qs:
         if history.prev_record:
-            delta = history.diff_against(history.prev_record)
-            return_list = []
-            for field in delta.changed_fields:
-                return_list.append(f"""Attributet <strong>{field}</strong> har ändrats från - <span class="text_highlight_red">"{getattr(delta.old_record, field)}"</span></br>
-                till <span class="text_highlight_green">"{getattr(delta.new_record, field)}"</span></br>""")
-            return_text = '</br>'.join(return_list)
-
-            return render(request, 
-                          'feeds/kodverk_feed.html', 
-                          {'history': mark_safe(return_text),
-                          'history_delta' : delta}, status=200)
-        else:
-            return "No history"
+            list_of_changes.append([history.history_date, history.diff_against(history.prev_record)])
+    
+    return render(request, "kodverk_historik_detaljer.html", 
+                          {"history": list_of_changes, 
+                           "kodverk" : history_qs.first().kodverk.titel_på_kodverk,
+                           "url" : get_object_or_404(Kodverk, pk=history_qs.first().kodverk_id)})

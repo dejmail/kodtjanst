@@ -31,7 +31,6 @@ class Migration(migrations.Migration):
                 ('kodverk_variant', models.CharField(blank=True, choices=[('kodverk', 'kodverk'), ('codeable concept', 'codeable concept'), ('code set', 'code set'), ('alpha response', 'alpha response'), ('urval', 'urval')], max_length=17, null=True)),
                 ('status', models.CharField(blank=True, choices=[('Publicera ej', 'Publicera ej'), ('Aktiv', 'Aktiv'), ('Inaktiv', 'Inaktiv')], max_length=25, null=True)),
                 ('uppdateringsintervall', models.CharField(blank=True, choices=[('Årligen', 'Årligen'), ('Halvårsvis', 'Halvårsvis'), ('Vid behov', 'Vid behov')], max_length=20, null=True)),
-                ('datum_skapat', models.DateField(blank=True, editable=False)),
                 ('senaste_ändring', models.DateField(blank=True, editable=False, null=True)),
                 ('giltig_från', models.DateField(null=True)),
                 ('giltig_tom', models.DateField(default=datetime.date(2099, 12, 31), null=True)),
@@ -58,7 +57,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
                 ('annan_kodtext', models.CharField(blank=True, max_length=255, null=True)),
-                ('datum_skapat', models.DateField(blank=True, editable=False)),
                 ('definition', models.TextField(blank=True, max_length=500, null=True)),
                 ('extra_data', models.JSONField(blank=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan ha hierarkiska nivåer', null=True)),
                 ('kod', models.CharField(blank=True, max_length=255, null=True)),
