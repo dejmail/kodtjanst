@@ -12,7 +12,7 @@
         
       <div class="row">
           <div class="col-12 text-center">
-                  Förändrings historiken av <strong><a href="{%url 'kodverk_komplett_metadata' kodverk_id=258%}">{{kodverk}}</a></strong> kodverket.
+                  Förändrings historiken av <strong><a href="{%url 'kodverk_komplett_metadata' kodverk_id=url.pk%}">{{kodverk}}</a></strong> kodverket.
           </div>
       </div>
           
@@ -25,6 +25,9 @@
                   <th colspan="2">Ändrat från</th>
                   <th colspan="2">Ändrat till</th>
               </tr>
+
+              {% if history|length > 1 %}
+
               {% for delta_date, delta in history %}
                <tr>
                  <td colspan="2">{{delta_date}}</td>
@@ -63,6 +66,14 @@
                    {% endfor %}                    
                  {% endif %}
                {%endfor%}
+
+               {% else %}
+
+               <tr class="table-warning">
+                <td colspan="28" class="text-center">För närvarande har inga förändringar skett i kodverket sedan publicering.</td>
+                </tr>
+
+               {% endif %}
           </tbody>
           </table>
       </div>
