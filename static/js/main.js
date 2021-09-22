@@ -149,7 +149,7 @@ $(document).ready(function(){
 		 trigger: 'hover',
 		 html: true,
 		 content: function () {
-			   return '<div class="media"><div class="media-body"><p>Nya kodverk publicerades av VGR IoS. Kopiera länkadressen från ikonen genom att höger klicka, kopiera och sedan klistra in i RSS program t.ex Outlook</p></div></div>';
+			   return '<div class="media"><div class="media-body"><p>Nya kodverk publicerade av VGR IoS. Kopiera länkadressen från ikonen genom att högerklicka, kopiera och sedan klistra in i RSS program t.ex Outlook</p></div></div>';
 		 },
    }) 
 });
@@ -160,7 +160,7 @@ $(document).ready(function(){
 		 trigger: 'hover',
 		 html: true,
 		 content: function () {
-			   return '<div class="media"><div class="media-body"><p>Förändringar som har skett i kodverk från VGR IoS. Kopiera länkadressen från ikonen genom att höger klicka, kopiera och klistra in i RSS program t.ex Outlook</p></div></div>';
+			   return '<div class="media"><div class="media-body"><p>Förändringar som har skett i kodverk från VGR IoS. Kopiera länkadressen från ikonen genom att högerklicka, kopiera och klistra in i RSS program t.ex Outlook</p></div></div>';
 		 },
    }) 
 });
