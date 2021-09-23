@@ -37,7 +37,7 @@ class ÄndringariKodverkFlöde(Feed):
         
     def items(self):
         history = []
-        for entry in Kodverk.objects.filter(status="Aktiv"):
+        for entry in Kodtext.objects.filter(kodverk__status="Aktiv"):
             if entry.history.count() > 1:
                 history.append(entry.id)
         return Kodverk.objects.filter(id__in=history)
