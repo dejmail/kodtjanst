@@ -47,6 +47,7 @@ def retur_alla_kodverk(url_parameter):
 def retur_general_sök(url_parameter):
 
     queryset = Kodverk.objects.filter(Q(status='Aktiv'),
+                                      Q(titel_på_kodverk__icontains=url_parameter) |
                                       Q(syfte__icontains=url_parameter) | 
                                       Q(beskrivning_av_innehållet__icontains=url_parameter) |
                                       Q(användning_av_kodverk__icontains=url_parameter) |
