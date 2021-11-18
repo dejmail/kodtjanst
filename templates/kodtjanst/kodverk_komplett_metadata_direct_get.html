@@ -105,19 +105,7 @@
                         <td colspan="2">Senaste ändring</td>
                         <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
                     </tr>
-                    <tr>
-                        <td colspan="2">Ansvarig förvaltare</td>
-                        <td colspan="6">
-                            {% for attribute in codeconcept %}
-                            
-                                {% if codeconcept|length > 1 %}
-                                    {{attribute.ansvarig_förvaltare}} - ({{attribute.ägare_till_kodverk}})<br>
-                                {% else %}
-                                    {{attribute.ansvarig_förvaltare}}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                    </tr>
+
                     <tr>
                         <td colspan="2">Status</td>
                         <td colspan="6">{{kodverk_full.status}}</td>
@@ -135,17 +123,7 @@
                             {% endif %}
                         </td>
                     </tr>
-                
-                    <tr>
-                        <td colspan="2">Underlag länk</td>
-                        <td colspan="6">
-                        {% if kodverk_full.länk_till_underlag|length > 0 %}
-                            <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
-                        {% else %}
-                            Ingen länk
-                        {% endif %}
-                        </td>
-                    </tr>
+
                     
                 </tbody>
                 </table>

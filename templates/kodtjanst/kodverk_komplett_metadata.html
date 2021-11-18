@@ -88,20 +88,6 @@
                     </tr>
 
                     <tr>
-                        <td colspan="2">Ansvarig förvaltare</td>
-                        <td colspan="6">
-
-                                {% if kodverk_full.kodverk_variant == "codeable concept" %}
-                                    {% for attribute, kodtext in codeconcept|zip:kodtext_full %}
-                                        {{kodtext.kod}} - {{attribute.ansvarig_förvaltare}}<br>
-                                    {% endfor %}
-                                {% else %}
-                                    {{attribute.ansvarig_förvaltare}}
-                                {% endif %}
-                        </td>
-                    </tr>
-
-                    <tr>
                         <td colspan="2">Status</td>
                         <td colspan="6">{{kodverk_full.status}}</td>
                     </tr>
@@ -116,17 +102,6 @@
                             {% else %}
                                 Dokumentet saknas för tillfället
                             {% endif %}
-                        </td>
-                    </tr>
-                
-                    <tr>
-                        <td colspan="2">Underlag länk</td>
-                        <td colspan="6">
-                        {% if kodverk_full.länk_till_underlag|length > 0 %}
-                            <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
-                        {% else %}
-                            Ingen länk
-                        {% endif %}
                         </td>
                     </tr>
                     
