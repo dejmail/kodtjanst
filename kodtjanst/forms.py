@@ -54,7 +54,8 @@ class UserLoginForm(forms.Form):
 class KodverkAdminForm(forms.ModelForm):
 
     ansvarig = UserModelChoiceField(User.objects.filter(first_name__isnull=False).exclude(first_name__exact='').order_by('first_name', 'last_name'), required=False)
-    användning_av_kodverk = forms.ChoiceField(choices=(("kodverk anpassat för verksamhet eller system","kodverk anpassat för verksamhet eller system"),
+    användning_av_kodverk = forms.ChoiceField(choices=(("anpassat för verksamhet","anpassat för verksamhet"),
+                                                       ("anpassat för system","anpassat för system"),
                                                        ("kodverk för VGR:s referensinformationsarkitektur","kodverk för VGR:s referensinformationsarkitektur")))
 
     def __init__(self, *args, **kwargs):
