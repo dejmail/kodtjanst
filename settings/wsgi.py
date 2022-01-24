@@ -11,8 +11,6 @@ import os
 import sys
 import socket
 import logging
-from kodtjanst.logging import setup_logging
-
 logger = logging.getLogger(__name__)
 
 from django.core.wsgi import get_wsgi_application
