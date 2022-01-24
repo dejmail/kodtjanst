@@ -139,8 +139,8 @@
                     <tr>
                         <td colspan="2">Underlag länk</td>
                         <td colspan="6">
-                        {% if kodverk_full.länk_till_underlag|length > 0 %}
-                            <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
+                        {% if kodverk_full.länk|length > 0 %}
+                            <a href="{{kodverk_full.länk}}">{{kodverk_full.länk|slice:":50"}}</a>
                         {% else %}
                             Ingen länk
                         {% endif %}

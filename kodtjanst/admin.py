@@ -9,6 +9,8 @@ from django.core.validators import URLValidator
 from django.forms import ModelChoiceField, ValidationError
 from django.forms.models import BaseInlineFormSet
 
+from django.contrib.admin.options import *
+
 from django.shortcuts import render
 from django.template import response
 from django.template.response import TemplateResponse
@@ -20,7 +22,8 @@ from django.utils.translation import gettext_lazy as _
 from simple_history.admin import SimpleHistoryAdmin
 
 from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter, SwedishLettersinKodFilter
-from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm, KommentarAdminForm, ArbetsKommentarForm
+from .forms import KodverkAdminForm, MultiMappingForm, KommentarAdminForm, ArbetsKommentarForm
+#ExternaKodtextForm
 from .models import *
 from .models import Kodtext, Kodverk, ArbetsKommentar
 
@@ -289,6 +292,7 @@ class KodverkManager(SimpleHistoryAdmin):
                     'titel_på_kodverk',
                     'safe_syfte',
                     'status',
+                    'kodverk_variant',
                     'version',
                     'clean_ägare',
                     'ansvarig_fullname',
@@ -317,7 +321,7 @@ class KodverkManager(SimpleHistoryAdmin):
         ('status', 'version'), 
         ('giltig_från', 'giltig_tom'),
         ('ansvarig'),
-        ('underlag', 'länk_till_underlag'),
+        ('underlag', 'länk'),
         ]}],
         ['Extra', {
         'fields': [('extra_data')],
@@ -400,15 +404,15 @@ class ArbetsKommentarManager(admin.ModelAdmin):
     form = ArbetsKommentarForm
 
     def save_model(self, request, obj, form, change):
-        set_trace()
+        #set_trace()
         super(ArbetsKommentarManager, self).save_model(request, obj, form, change)
 
-    def get_formsets_with_inlines(self, request, obj):
-        set_trace()
-        return super().get_formsets_with_inlines(request, obj=obj)
+    # def get_formsets_with_inlines(self, request, obj):
+    #     #set_trace()
+    #     return super().get_formsets_with_inlines(request, obj=obj)
 
     def get_inline_formsets(self, request, formsets, inline_instances, obj):
-        set_trace()
+        #set_trace()
         return super().get_inline_formsets(request, formsets, inline_instances, obj=obj)
 
     # def save_new_objects(self, commit=True):
@@ -428,69 +432,20 @@ class KodtextIdandTextField(forms.ModelChoiceField):
      def label_from_instance(self, obj):
          return f"{obj.id} - {obj.kodtext}"
 
+from django.contrib.admin import helpers, widgets
+
 class ExternaKodtextManager(admin.ModelAdmin):
 
-    form = ExternaKodtextForm
-
-    
-    list_display = ('get_kodtext',
-                    'mappad_id',
+    list_display = ('mappad_id',
                     'mappad_text',
                     'clickable_url',                    
                     'kommentar',
-                    'kodverk_grupp')
-    
-    def get_kodtext(self, obj):
-        
-        return obj.kodtext
-
-    get_kodtext.short_description = 'Kodtext'
-
+                    'kodverk')
 
     def clickable_url(self, obj):
         return format_html("<a href='{url}' target='_blank' rel='noopener noreferrer'>{url}</a>", url=obj.resolving_url)
 
     clickable_url.short_description = "URL"
-    
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):    
-
-        if db_field.name == "kodtext":
-            kwargs["queryset"] = Kodtext.objects.all()
-            return KodtextIdandTextField(queryset=Kodtext.objects.all())
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(ExternaKodtextManager, self).get_form(request, obj, **kwargs)
-        if obj is None:
-            form.base_fields['kodverk'].initial = Kodverk.objects.all()
-            form.base_fields['kodtext'].initial = Kodtext.objects.none()
-        else:
-            
-            form.base_fields['kodverk'].initial =  Kodverk.objects.filter(titel_på_kodverk=obj.kodtext.kodverk.titel_på_kodverk).values()[0].get('titel_på_kodverk')
-        return form
-    
-    def save(self, commit=True):
-        extra_field = self.cleaned_data.get('kodverk', None)
-        return super(form, self).save(commit=commit)
-
-    def save_model(self, request, obj, form, change):
-
-        #remove the extra field from the form
-        del form.fields['kodverk']
-        super(ExternaKodtextManager, self).save_model(request, obj, form, change)
-    
-    def kodverk_grupp(self, obj):
-        
-        
-        display_text = ", ".join([
-            "<a href={}>{}</a>".format(
-                reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
-                args=(obj.kodtext.id,)),
-                obj.kodtext.kodverk.titel_på_kodverk)
-           
-        ]).replace(' ' ,'_')
-            
-    kodverk_grupp.short_description = 'Kodverk'
 
 class CommentedKodverkManager(admin.ModelAdmin):
     

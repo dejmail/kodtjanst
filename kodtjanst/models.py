@@ -49,8 +49,9 @@ class ExternaKodtext(models.Model):
 
     class Meta:
         verbose_name_plural = "Externa Kodtext"
-
-    kodtext = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
+    
+    #kodtext = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
+    kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
     mappad_id = models.CharField(max_length=255)
     mappad_text = models.CharField(max_length=255)
     resolving_url = models.URLField()
@@ -67,6 +68,16 @@ class ExternaKodverk(models.Model):
     namn = models.CharField(max_length=255)
     url = models.URLField()
     kodterm_url = models.URLField(null=True)    
+
+
+# class KodverkVariations(models.Model):
+
+#     class Meta:
+#         verbose_name_plural = "Kodverk varianter"
+
+#     kodverk_typ = models.CharField(choices=[('VGR kodverk', 'VGR kodverk'), 
+#                    ('Externt kodverk hänvisning', 'Externt kodverk hänvisning'),
+#                    ('VGR codeable concept','VGR codeable concept')], max_length=30)
 
 class Kodverk(models.Model):
 
@@ -85,11 +96,9 @@ class Kodverk(models.Model):
                 ("Aktiv", "Aktiv"),
                 ('Inaktiv', 'Inaktiv')]
 
-    kodverk_typ = [('kodverk','kodverk'), 
-                   ('codeable concept','codeable concept'),
-                   ('code set','code set'), 
-                   ('alpha response','alpha response'), 
-                   ('urval','urval')]
+    kodverk_typ = [('VGR kodverk', 'VGR kodverk'), 
+                   ('Externt kodverk hänvisning', 'Externt kodverk hänvisning'),
+                   ('VGR codeable concept','VGR codeable concept')]
 
     syfte = models.TextField(max_length=1000, null=True)
     beskrivning_av_innehållet = models.TextField(null=True,blank=True, verbose_name='Beskrivning av innehållet')
@@ -99,15 +108,15 @@ class Kodverk(models.Model):
     
     kategori = models.CharField(max_length=255,null=True)
     underlag = models.FileField(null=True,blank=True, upload_to='')
-    länk_till_underlag = models.URLField(null=True,blank=True)
-    kodverk_variant = models.CharField(max_length=17, null=True, blank=True, choices=kodverk_typ)
+    länk = models.URLField(null=True,blank=True)
+    kodverk_variant = models.CharField(max_length=26, null=True, blank=True, choices=kodverk_typ)
     status = models.CharField(max_length=25, blank=True, null=True, choices=statuser)
     uppdateringsintervall =  models.CharField(max_length=20, null=True, choices=intervall, blank=True)
         
     datum_skapat = models.DateField(auto_now_add=True)
     senaste_ändring = models.DateField(auto_now=True, blank=True, null=True)
-    giltig_från = models.DateField(null=True)
-    giltig_tom = models.DateField(default= datetime.date(2099, 12, 31), null=True)
+    giltig_från = models.DateField(null=True, blank=True)
+    giltig_tom = models.DateField(default= datetime.date(2099, 12, 31), null=True, blank=True)
     ändrad_av = models.ForeignKey(User, on_delete=models.PROTECT, related_name='ändrad_av_person')
 
     extra_data = JSONField(null=True, blank=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan ha hierarkiska nivåer')
@@ -115,6 +124,8 @@ class Kodverk(models.Model):
     ansvarig =  models.ForeignKey(User, on_delete=models.PROTECT, related_name='ansvarig_person', null=True, blank=True, verbose_name='Ansvarig person')
     urval_referens = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, help_text='Välja kodverket som är huvud kodverket')
     användning_av_kodverk = models.CharField(max_length=255, null=True, blank=True)
+
+    #mall = models.ForeignKey(KodverkVariations, on_delete=models.PROTECT, related_name='mall')
 
     history = HistoricalRecords(excluded_fields=['datum_skapat'])
 
@@ -215,3 +226,4 @@ class ValidatedBy(models.Model):
             return '' 
         else:
             return self.domän_stream
+

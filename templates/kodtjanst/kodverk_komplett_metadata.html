@@ -4,10 +4,9 @@
 {% load crispy_forms_filters %}
 
 {% block mitten-span %}
-
 {% if kodverk_full  %}
-{% load zip %}
-        <div class="row top-buffer-20">
+
+        <div class="row top-buffer-10">
                 <div class="col-12 text-center">
                 <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
                     <span class="fas fa-comment" style="font-size:smaller;"></span>&nbsp;Lämna synpunkter
@@ -31,169 +30,26 @@
 
     <hr>
 
+
     <div class="container-fluid">
 
-     <div class="row top-buffer-20" id="mitten-span-row">
+     <div class="row" id="mitten-span-row">
 
         <!-- Alla metadata attribut -->
 
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-left-column text-centered col-centered">
-                
-            <div class="row">
-                <div class="col-12 text-center">
-                    <button class="btn btn-sm bg-info text-white" id="kodverk">
-                        <strong>Kodverk</strong>
-                    </button>
-                </div>
-            </div>
-                
-            <div class="row justify-content-md-center top-buffer-10 pr-1">
-            <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
-            <tbody>
-                    <tr>
-                        <td colspan="2">Titel</td>
-                        <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Syfte</td>
-                        <td colspan="6">{{kodverk_full.syfte}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Beskrivning av innehållet</td>
-                        <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Användning</td>
-                        <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Ägare till kodverk</td>
-                        <td colspan="6">
-                                        {% for attribute in codeconcept %}
-                                            {{attribute.ägare_till_kodverk}}<br>
-                                        {% endfor %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Giltig från</td>
-                        <td colspan="6">{{kodverk_full.giltig_från}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Giltig tom</td>
-                        <td colspan="6">{{kodverk_full.giltig_tom}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Senaste ändring</td>
-                        <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
-                    </tr>
+        {% if kodverk_full.kodverk_variant == "Externt kodverk hänvisning" %}
 
-                    <tr>
-                        <td colspan="2">Ansvarig förvaltare</td>
-                        <td colspan="6">
+            {% include "externt_kodverk_hänvisning.html" %}
 
-                                {% if kodverk_full.kodverk_variant == "codeable concept" %}
-                                    {% for attribute, kodtext in codeconcept|zip:kodtext_full %}
-                                        {{kodtext.kod}} - {{attribute.ansvarig_förvaltare}}<br>
-                                    {% endfor %}
-                                {% else %}
-                                    {{attribute.ansvarig_förvaltare}}
-                                {% endif %}
-                        </td>
-                    </tr>
+        {% elif kodverk_full.kodverk_variant == "VGR codeable concept" %}
 
-                    <tr>
-                        <td colspan="2">Status</td>
-                        <td colspan="6">{{kodverk_full.status}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Beslutsunderlag dokument</td>
-                        <td colspan="6" style="vertical-align:middle;">
-                            {% if  kodverk_full.underlag|length > 0 %}
-                                <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
-                                    <span class="fas fa-file-download fa-2x">
-                                    </span>                            
-                                </a>
-                            {% else %}
-                                Dokumentet saknas för tillfället
-                            {% endif %}
-                        </td>
-                    </tr>
-                
-                    <tr>
-                        <td colspan="2">Underlag länk</td>
-                        <td colspan="6">
-                        {% if kodverk_full.länk_till_underlag|length > 0 %}
-                            <a href="{{kodverk_full.länk_till_underlag}}">{{kodverk_full.länk_till_underlag|slice:":50"}}</a>
-                        {% else %}
-                            Ingen länk
-                        {% endif %}
-                        </td>
-                    </tr>
-                    
-                </tbody>
-                </table>
-            </div>
-        </div>
+            {% include "codeable_concept.html" %}
 
+        {% else  %}
 
-    <!-- Själva kodtext -->
+            {% include "vgr_kodverk.html" %}
 
-    
-{% if kodverk_full.kodverk_variant == "codeable concept" %}
-
-    {% include "codeable_concept_template.html" %}
-
-{% else %}
-
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-right-column col-centered">
-
-            <div class="row">
-                <div class="col-12 text-center">
-                    <button class="btn btn-sm bg-info text-white" id="kodverk">
-                        <strong>Kodtexter</strong>
-                    </button>
-                </div>
-            </div>
-
-
-            <div class="row justify-content-md-center top-buffer-20 pl-1">
-                <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Kod</th>
-                            <th>Kodtext</th>
-                            <th>                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                {% if i.definition|length > 1 %}
-                                    Definition
-                                {% elif i.annan_kodtext|length > 1 %}
-                                    Annan kodtext
-                                {% else %}
-                                    Övrig
-                                {% endif %}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for i in kodtext_full %}
-                    <tr>
-                        <td>{{i.kod|default_if_none:"Ingen" }}</td>
-                        <td>{{i.kodtext}}</td>
-                        <td>{%if i.definition|length > 1 %}
-                                {{i.definition}}
-                            {% elif i.annan_kodtext|length > 1 %}
-                                {{i.annan_kodtext}}
-                            {% else %}
-                                &nbsp;
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-{% endif %}         
+        {% endif %}
 
     {% block help %}
         {% include "help.html" %}  

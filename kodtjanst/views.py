@@ -83,7 +83,7 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             'ansvarig_id',
                             'urval_referens_id',
                             'underlag',
-                            'länk_till_underlag',
+                            'länk',
                             'nyckelord__nyckelord')
     
     return queryset
@@ -97,6 +97,20 @@ def return_kodtext_related_to_kodverk(url_parameter):
                                                                             'kodtext',
                                                                             'position')
 
+    return queryset
+
+def return_external_kodtext_related_to_kodverk(url_parameter):
+
+    queryset = ExternaKodtext.objects.filter(kodverk_id=url_parameter).values('id',
+                                                                                        'mappad_id',
+                                                                                        'mappad_text',
+                                                                                        'resolving_url')
+    return queryset
+
+def return_kommentar_related_to_kodverk(url_parameter):
+
+    queryset = ArbetsKommentar.objects.filter(kodverk_id=url_parameter).values('id',
+                                                                                'kommentar')
     return queryset
 
 def attach_column_names_to_search_result(search_result, search_column_names):
@@ -226,7 +240,7 @@ def return_komplett_metadata(request, kodverk_id):
                             'ansvarig_id',
                             'urval_referens_id',
                             'underlag',
-                            'länk_till_underlag',
+                            'länk',
                             'nyckelord']
         
         return_list_dict = []
@@ -245,6 +259,8 @@ def return_komplett_metadata(request, kodverk_id):
 
         kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
 
+        externa_kodtext = return_external_kodtext_related_to_kodverk(kodverk_id)
+
         if all([kodtext['position'] for kodtext in kodtext_dict]):
             kodtext_dict = sorted(kodtext_dict, key = lambda i: i['position'])
         elif all([kodtext['kod'] for kodtext in kodtext_dict]):
@@ -254,13 +270,15 @@ def return_komplett_metadata(request, kodverk_id):
         
         kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])        
 
-        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk_till_underlag'])           
+        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk'])           
 
         template_context = {'kodverk_full': return_list_dict[0],
                             'kodverk_id' : kodverk_id,
                             'kodtext_full' : kodtext_dict,
                             'nyckelord' : nyckelord_string,
-                            'codeconcept' : codeconcept_dict} 
+                            'codeconcept' : codeconcept_dict,
+                            'external_kodtext' : externa_kodtext,
+                            'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)} 
         
         html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
 
