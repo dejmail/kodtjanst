@@ -32,10 +32,10 @@ STATIC_URL = '/kodtjanst-dev/static/'
 
 # media files  - for where files are uploaded to
 MEDIA_URL = '/kodtjanst/media/'
-MEDIA_ROOT = '/home/vgrinfor/public_html/kodtjanst/media'
+MEDIA_ROOT = '/home/vgrinfor/public_html/kodtjanst-dev/media'
 
 # Template directories
-TEMPLATES[0]['DIRS'].append('templates/kodtjanst')
+TEMPLATES[0]['DIRS'].append('templates/kodtjanst-dev')
 
 
 # Email settings

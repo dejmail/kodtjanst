@@ -18,9 +18,11 @@ logger = logging.getLogger(__name__)
 from django.core.wsgi import get_wsgi_application
 
 if socket.gethostname() == 'suijin.oderland.com':
+    logger.info('Using prouction settings')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.production')
 elif 'dev' in os.getcwd():
     logger.info('Using dev settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.dev')
 else:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.local')
 
