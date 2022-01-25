@@ -18,6 +18,7 @@ from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django.forms import Textarea
 
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -177,6 +178,10 @@ class ArbetsKommentarInline(admin.TabularInline):
     }
     ]]
 
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':10, 'cols':40})}
+    }
+
 
 
 class NyckelordManager(admin.ModelAdmin):
@@ -265,6 +270,19 @@ class CodeableConceptInline(admin.TabularInline):
     }
     ]]
     
+class ExternaKodtextInline(admin.TabularInline):
+
+    model = ExternaKodtext
+    extra = 1
+    fieldsets = [
+    [None, {
+    'fields':[('mappad_id', 'mappad_text', 'resolving_url', 'kommentar')]
+    }
+    ]]
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':10, 'cols':40})}
+    }
+
 
 class CodeableConceptManager(SimpleHistoryAdmin):
 
@@ -282,12 +300,8 @@ class KodverkManager(SimpleHistoryAdmin):
             }   
 
     change_form_template = 'change_form_autocomplete.html'
-    form = KodverkAdminForm
-
-    inlines = [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
-    
+    form = KodverkAdminForm    
     save_on_top = True
-
     list_display = ('id', 
                     'titel_på_kodverk',
                     'safe_syfte',
@@ -299,19 +313,12 @@ class KodverkManager(SimpleHistoryAdmin):
                     'clean_källa',
                     'datum_skapat',
                     'has_underlag')
-
     list_display_links = ('titel_på_kodverk',)
-
     exclude = ['ändrad_av',]
-
     actions = [make_aktiv, make_inaktiv]
-
     list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
-
     search_fields = ('titel_på_kodverk',)
-
     history_list_display = ['changed_fields']
-
     fieldsets = [
         ['Main', {
         'fields': [('titel_på_kodverk', 'kodverk_variant'),
@@ -328,13 +335,22 @@ class KodverkManager(SimpleHistoryAdmin):
         }],
     ]
 
+    def get_inlines(self, request, obj):
+        #set_trace()
+        if obj is None:
+            return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
+        elif ExternaKodtext.objects.filter(kodverk__titel_på_kodverk=obj.titel_på_kodverk) is None:
+            return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
+        elif obj.kodverk_variant == 'VGR codeable concept':
+            return [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
+
     def changed_fields(self, obj):
         if obj.prev_record:
             delta = obj.diff_against(obj.prev_record)
             return_text = ""
             for field in delta.changed_fields:
-                return_text += f"""{field} - <span class="text_highlight_red">{getattr(delta.old_record, field)}</span></br>
-                --> <span class="text_highlight_green">{getattr(delta.new_record, field)}</span>"""
+                return_text += f"""från --> <span class="text_highlight_yellow">{getattr(delta.old_record, field)}</span></br></br>
+                till --> <span class="text_highlight_green">{getattr(delta.new_record, field)}</span></br>"""
             return mark_safe(return_text)
         return None
 
