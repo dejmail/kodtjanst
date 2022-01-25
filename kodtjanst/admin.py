@@ -330,7 +330,8 @@ class KodverkManager(SimpleHistoryAdmin):
         ('ansvarig'),
         ('underlag', 'länk'),
         ]}],
-        ['Extra', {
+        ['Övriga attribut', {
+        'classes': ('collapse',),
         'fields': [('extra_data')],
         }],
     ]
@@ -343,6 +344,8 @@ class KodverkManager(SimpleHistoryAdmin):
             return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
         elif obj.kodverk_variant == 'VGR codeable concept':
             return [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
+        elif obj.kodverk_variant == 'Externt kodverk hänvisning':
+            return [NyckelOrdInline, ArbetsKommentarInline]
 
     def changed_fields(self, obj):
         if obj.prev_record:
