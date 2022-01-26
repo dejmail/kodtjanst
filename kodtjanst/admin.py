@@ -40,7 +40,6 @@ class KodtextManager(SimpleHistoryAdmin):
                     'kodverk_grupp',
                     'definition',
                     'annan_kodtext',
-                    'extra_data'
                     )
 
     list_filter = ('status', DuplicateKodtextFilter, SwedishLettersinKodFilter)
@@ -340,7 +339,7 @@ class KodverkManager(SimpleHistoryAdmin):
         #set_trace()
         if obj is None:
             return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
-        elif ExternaKodtext.objects.filter(kodverk__titel_på_kodverk=obj.titel_på_kodverk) is None:
+        elif not ExternaKodtext.objects.filter(kodverk__titel_på_kodverk=obj.titel_på_kodverk):
             return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
         elif obj.kodverk_variant == 'VGR codeable concept':
             return [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
@@ -458,7 +457,6 @@ class ExternaKodtextManager(admin.ModelAdmin):
     list_display = ('mappad_id',
                     'mappad_text',
                     'clickable_url',                    
-                    'kommentar',
                     'kodverk')
 
     def clickable_url(self, obj):
