@@ -48,7 +48,8 @@ class Kodtext(models.Model):
 class ExternaKodtext(models.Model):
 
     class Meta:
-        verbose_name_plural = "Externa Kodtext"
+        verbose_name_plural = "Externa Kodtexter"
+        verbose_name = "Extern Kodtext"
     
     #kodtext = models.ForeignKey(to='Kodtext', to_field='id', on_delete=models.CASCADE)
     kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
@@ -68,6 +69,8 @@ class ExternaKodverk(models.Model):
     namn = models.CharField(max_length=255)
     url = models.URLField()
     kodterm_url = models.URLField(null=True)    
+
+
 
 
 # class KodverkVariations(models.Model):
