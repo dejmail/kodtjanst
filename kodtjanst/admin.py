@@ -336,15 +336,17 @@ class KodverkManager(SimpleHistoryAdmin):
     ]
 
     def get_inlines(self, request, obj):
-        #set_trace()
+        
         if obj is None:
             return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
-        elif not ExternaKodtext.objects.filter(kodverk__titel_på_kodverk=obj.titel_på_kodverk):
-            return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
-        elif obj.kodverk_variant == 'VGR codeable concept':
-            return [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
-        elif obj.kodverk_variant == 'Externt kodverk hänvisning':
-            return [NyckelOrdInline, ArbetsKommentarInline]
+        else:
+            if obj.kodverk_variant == 'VGR codeable concept':
+                return [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
+            elif obj.kodverk_variant == 'Externt kodverk hänvisning':
+                return [NyckelOrdInline, ArbetsKommentarInline]
+            else:
+                #elif not ExternaKodtext.objects.filter(kodverk__titel_på_kodverk=obj.titel_på_kodverk):
+                return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
 
     def changed_fields(self, obj):
         if obj.prev_record:
