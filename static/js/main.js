@@ -22,7 +22,7 @@ let scheduled_function = true
 
 user_input.keyup(function () {
 	
-	changeBrowserURL('', '/');
+	// changeBrowserURL('', '/');
 	$("#mitten-span-middle-column").empty();
 
 	const request_parameters = {
