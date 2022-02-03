@@ -223,11 +223,17 @@ $("#open_verifiera_button").click(function(){
                     });
 });
 
-document.getElementById("underlagfil").addEventListener("click", function() {
+if (document.body.contains(document.getElementById("ElementId2")) == true) {
+
+    document.getElementById("underlagfil").addEventListener("click", function() {
     e.preventDefault();  //stop the browser from following
     window.location.href = "/kodtjanst/media/{{kodverk_full.underlag}}";
     console.log( "File served" );
-});
+    });
+} else {
+    console.log('underlag fil id missing, skipping addEventListener')
+}
+
 
 
 </script>
