@@ -2,36 +2,30 @@
 
     <div class="row justify-content-md-center top-buffer-10 pr-1">
 
-        <div class="table-info bg-info col-6 p-2 rounded text-white text-center">Codeable Concept</div>
+        <div class="table-info bg-info p-2 rounded text-white text-center">Externt kodverk</div>
 
         <div class="row mt21">
             <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
             <tbody>
                     <tr>
-                        <td colspan="2">Titel</td>
-                        <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+                        <td colspan="1">Titel</td>
+                        <td colspan="1"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
                     </tr>
                     <tr>
-                        <td colspan="2">Beskrivning av innehållet</td>
-                        <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
+                        <td colspan="1">Beskrivning av innehållet</td>
+                        <td colspan="1">{{kodverk_full.beskrivning_av_innehållet }}</td>
                     </tr>
                     <tr>
-                        <td colspan="2">Användning</td>
-                        <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Kommentar</td>
-                        {% for komment in kommentar %}
-                            <td colspan="6">{{komment.kommentar}}</td>
-                        {% endfor %}
+                        <td colspan="1">Ägare</td>
+                        <td colspan="1">{{kodverk_full.ägare_till_kodverk}}</td>
                     </tr>
                     {% if kodverk_full.länk %}
                     <tr>
-                        <td colspan="2">Länk</td>
-                        <td colspan="6"><a href={{kodverk_full.länk}}>{{kodverk_full.länk|truncatechars:50}}</a></td>                    
+                        <td colspan="1">Länk</td>
+                        <td colspan="1"><a href={{kodverk_full.länk}}>{{kodverk_full.länk|truncatechars:50}}</a></td>                    
                     </tr>
                     {% endif %}
-                    <tr>
+                    <!-- <tr>
                         <td colspan="2">Beslutsunderlag dokument</td>
                         <td colspan="6" style="vertical-align:middle;">
                             {% if  kodverk_full.underlag|length > 0 %}
@@ -43,14 +37,18 @@
                                 Dokumentet saknas för tillfället
                             {% endif %}
                         </td>
-                    </tr>
+                    </tr> -->
                     {% if external_kodtext %}
-                        {% for kodtext in external_kodtext %}
                         <tr>
-                            <td colspan="2">Mappad ID|Beskrivning</td>
-                            <td colspan="6"><a href="{{kodtext.resolving_url}}" target="_blank" rel="noopener noreferrer">{{kodtext.mappad_id}} | {{kodtext.mappad_text|truncatechars:50}}</a></td>
+                            <td colspan="1">Identifierare</td>
+                            <td colspan="1">
+                                <ul>
+                                {% for kodtext in external_kodtext %}
+                                    <li><a href="{{kodtext.resolving_url}}" target="_blank" rel="noopener noreferrer">{{kodtext.mappad_id}} | {{kodtext.mappad_text|truncatechars:50}}</a></li>
+                                {% endfor %}
+                                </ul>
+                            </td>
                         </tr>
-                        {% endfor %}
                     {% endif %}
     
             </tbody>
