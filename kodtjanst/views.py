@@ -40,7 +40,7 @@ RE_PATTERN = re.compile(r'\s+')
 
 def retur_alla_kodverk(url_parameter):
 
-    queryset = Kodverk.objects.filter(status='Aktiv').values_list('id','titel_på_kodverk','syfte')
+    queryset = Kodverk.objects.filter(status='Aktiv').values('id','titel_på_kodverk','syfte','länk','kodverk_variant')
 
     return queryset
 
@@ -54,9 +54,11 @@ def retur_general_sök(url_parameter):
                                       Q(nyckelord__nyckelord__icontains=url_parameter) |
                                       Q(kodtext__kodtext__icontains=url_parameter) |
                                       Q(kodtext__annan_kodtext__icontains=url_parameter) |
-                                      Q(kodtext__definition__icontains=url_parameter)).distinct().values_list('id',
-                                                                                                              'titel_på_kodverk',
-                                                                                                              'syfte')
+                                      Q(kodtext__definition__icontains=url_parameter)).distinct().values('id',
+                                                                                                        'titel_på_kodverk',
+                                                                                                        'syfte',
+                                                                                                        'länk',
+                                                                                                        'kodverk_variant')
 
     return queryset
 
@@ -153,18 +155,19 @@ def kodverk_sok(request):
                         'syfte']
 
         if url_parameter == '*all':
-            sql_search = retur_alla_kodverk(url_parameter)
+            queryset = retur_alla_kodverk(url_parameter)
         else:
-            sql_search = retur_general_sök(url_parameter)
+            queryset = retur_general_sök(url_parameter)
         
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
         
-        search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
+        #search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
         # search_result = highlight_search_term_i_definition(url_parameter, search_result)
-        search_result = make_dictionary_field_html_safe(search_result, fields=['syfte'])
+        
+        search_result = make_dictionary_field_html_safe(queryset, fields=['syfte','länk'])
 
         html = render_to_string(
-            template_name="kodverk_partial_result.html", context={'kodverk': search_result,                                                            
+            template_name="kodverk_partial_result.html", context={'kodverk': queryset,
                                                                   'searched_for_term' : url_parameter})
 
         return JsonResponse(data=html, safe=False)
