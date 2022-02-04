@@ -353,8 +353,8 @@ class KodverkManager(SimpleHistoryAdmin):
             delta = obj.diff_against(obj.prev_record)
             return_text = ""
             for field in delta.changed_fields:
-                return_text += f"""från --> <span class="text_highlight_yellow">{getattr(delta.old_record, field)}</span></br></br>
-                till --> <span class="text_highlight_green">{getattr(delta.new_record, field)}</span></br>"""
+                return_text += f"""<p><strong>{field}</strong> ändrad från --> <span class="text_highlight_yellow">{getattr(delta.old_record, field)}</span>
+                till --> <span class="text_highlight_green">{getattr(delta.new_record, field)}</span></p>"""
             return mark_safe(return_text)
         return None
 
