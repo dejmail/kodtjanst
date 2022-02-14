@@ -15,7 +15,7 @@
     <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
     <tbody>
             <tr>
-                <td colspan="2">Titel</td>
+                <td colspan="2">Namn</td>
                 <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
             </tr>
             <tr>
@@ -31,7 +31,7 @@
                 <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
             </tr>
             <tr>
-                <td colspan="2">Ägare till kodverk</td>
+                <td colspan="2">Ägare till kodverket</td>
                 <td colspan="6">
                                 {% for attribute in codeconcept %}
                                     {{attribute.ägare_till_kodverk}}<br>
@@ -50,21 +50,6 @@
                 <td colspan="2">Senaste ändring</td>
                 <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
             </tr>
-
-            <tr>
-                <td colspan="2">Ansvarig förvaltare</td>
-                <td colspan="6">
-
-                        {% if kodverk_full.kodverk_variant == "codeable concept" %}
-                            {% for attribute, kodtext in codeconcept|zip:kodtext_full %}
-                                {{kodtext.kod}} - {{attribute.ansvarig_förvaltare}}<br>
-                            {% endfor %}
-                        {% else %}
-                            {{attribute.ansvarig_förvaltare}}
-                        {% endif %}
-                </td>
-            </tr>
-
             <tr>
                 <td colspan="2">Status</td>
                 <td colspan="6">{{kodverk_full.status}}</td>
