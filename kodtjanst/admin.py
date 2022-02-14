@@ -303,7 +303,7 @@ class KodverkManager(SimpleHistoryAdmin):
     save_on_top = True
     list_display = ('id', 
                     'titel_på_kodverk',
-                    'safe_syfte',
+                    'beskrivning_av_innehållet',
                     'status',
                     'kodverk_variant',
                     'version',
@@ -385,12 +385,6 @@ class KodverkManager(SimpleHistoryAdmin):
         return mark_safe(return_string)
 
     clean_källa.short_description = "Källa"
-
-    def safe_syfte(self, obj):
-
-        return mark_safe(obj.syfte)
-
-    safe_syfte.short_description = "Syfte"
     
     def ansvarig_fullname(self, obj):
         if obj.ansvarig:
@@ -402,7 +396,6 @@ class KodverkManager(SimpleHistoryAdmin):
 
     def has_underlag(self, obj):
 
-        #if obj.titel_på_kodverk == "VGRKV_StatusKliniskProcess": set_trace()
         if (obj.underlag != None) and (obj.underlag.name != ''):
             return format_html(f'''<a href={obj.underlag}>
                                     <i class="fas fa-file-download">
