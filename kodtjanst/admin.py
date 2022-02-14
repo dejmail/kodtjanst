@@ -398,6 +398,8 @@ class KodverkManager(SimpleHistoryAdmin):
         else:
             return ''
 
+    ansvarig_fullname.short_description = "Ansvarig"
+
     def has_underlag(self, obj):
 
         #if obj.titel_på_kodverk == "VGRKV_StatusKliniskProcess": set_trace()
