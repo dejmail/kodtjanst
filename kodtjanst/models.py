@@ -112,7 +112,7 @@ class Kodverk(models.Model):
     kategori = models.CharField(max_length=255,null=True)
     underlag = models.FileField(null=True,blank=True, upload_to='')
     länk = models.URLField(null=True,blank=True)
-    kodverk_variant = models.CharField(max_length=26, null=True, blank=True, choices=kodverk_typ)
+    kodverk_variant = models.CharField(max_length=26, null=True, blank=True, choices=kodverk_typ, help_text='Kodtext fält kommer ändras efter sparande, beroende på valet.')
     status = models.CharField(max_length=25, blank=True, null=True, choices=statuser)
     uppdateringsintervall =  models.CharField(max_length=20, null=True, choices=intervall, blank=True)
         

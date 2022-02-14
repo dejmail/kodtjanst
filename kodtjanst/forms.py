@@ -51,12 +51,12 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
+def return_helptext():
+    return 'can contain text attributes here'
+
 class KodverkAdminForm(forms.ModelForm):
 
     ansvarig = UserModelChoiceField(User.objects.filter(first_name__isnull=False).exclude(first_name__exact='').order_by('first_name', 'last_name'), required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(KodverkAdminForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Kodverk

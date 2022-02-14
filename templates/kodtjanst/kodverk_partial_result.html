@@ -10,18 +10,14 @@
             <thead>
             <tr>
                 <th>Kodverk</th>
-                <th>Syfte</th>
+                <th>Beskrivning av innehållet</th>
             </tr>
             </thead>
             <tbody id="myTable">
             {% for info in kodverk %}
                 <tr>
                     <td><a href="{% url 'kodverk_komplett_metadata' info.id %}" id={{info.id}}>{{info.titel_på_kodverk}}</td>
-                        {% if info.kodverk_variant == "Externt kodverk hänvisning" %}
-                            <td><a href="{{info.länk}}" target="_blank" rel="noopener noreferrer">{{info.länk|truncatechars:50}}</a></td>
-                        {% elif info.kodverk_variant != "Externt kodverk hänvisning" %}
-                            <td>{{info.syfte}}</td>
-                        {% endif %}
+                    <td>{{info.beskrivning_av_innehållet}}</td>
                 </tr>
             {% endfor %}    
             </tbody>

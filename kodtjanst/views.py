@@ -56,7 +56,7 @@ def retur_general_sök(url_parameter):
                                       Q(kodtext__annan_kodtext__icontains=url_parameter) |
                                       Q(kodtext__definition__icontains=url_parameter)).distinct().values('id',
                                                                                                         'titel_på_kodverk',
-                                                                                                        'syfte',
+                                                                                                        'beskrivning_av_innehållet',
                                                                                                         'länk',
                                                                                                         'kodverk_variant')
 
@@ -152,7 +152,7 @@ def kodverk_sok(request):
 
         kodverk_column_names = ['id',
                         'titel_på_kodverk',
-                        'syfte']
+                        'beskrivning_av_innehållet']
 
         if url_parameter == '*all':
             queryset = retur_alla_kodverk(url_parameter)
@@ -597,36 +597,28 @@ def structure_kodverk_queryset_as_json(queryset):
 
     kodverk = queryset
 
-    suggestion_dict = {'kodverk': {}}
+    suggestion_dict = []
+
     kodverk_fields = ['id','titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status']
     kodtext_fields = ['id','kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
     codeableconcept_fields = ['ägare_till_kodverk', 'ansvarig_förvaltare','källa', 'version_av_källa']
 
-    for entry in kodverk:
+    for idx, entry in enumerate(kodverk):
+
+        suggestion_dict.append({'metadata' : {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}})
+
+        suggestion_dict[idx]['codeable_concept'] = []
+        for concept in entry.codeableconceptattributes_set.values():
+            suggestion_dict[idx]['codeable_concept'].append({attr:value for attr,value in concept.items() if attr in codeableconcept_fields})
         
-        if suggestion_dict.get(entry.pk) is None:
-            suggestion_dict['kodverk'][entry.pk] = {}
-
-        if suggestion_dict['kodverk'][entry.pk].get('metadata') is None:
-            suggestion_dict['kodverk'][entry.pk]['metadata'] = {}
-
-        if suggestion_dict['kodverk'][entry.pk].get('kodverk') is None:
-            suggestion_dict['kodverk'][entry.pk]['kodverk'] = []
-
-        if suggestion_dict['kodverk'][entry.pk].get('metadata') is not None:
-            suggestion_dict['kodverk'][entry.pk]['metadata'] = {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}
-            suggestion_dict['kodverk'][entry.pk]['metadata']['codeable_concept'] = {}
-            
-            for codeconcept_idx, codeableconcept in enumerate(entry.codeableconceptattributes_set.values(), 1):
-                suggestion_dict['kodverk'][entry.pk]['metadata']['codeable_concept'][codeconcept_idx] = {key:value for key,value in codeableconcept.items() if key in codeableconcept_fields}                
-
-            nyckelord = [i.get('nyckelord') for i in entry.nyckelord_set.values() if i is not None]
-            if len(nyckelord) > 0:
-                suggestion_dict['kodverk'][entry.pk]['metadata']['sökord'] = nyckelord
-
-        if suggestion_dict['kodverk'][entry.pk].get('kodverk') is not None:
-            for kodtext_number, kodtext in enumerate(entry.kodtext_set.values(), 1):
-                suggestion_dict['kodverk'][entry.pk]['kodverk'].append({attr:value for attr,value in kodtext.items() if attr in kodtext_fields})
+        suggestion_dict[idx]['nyckelord'] = []
+        nyckelord = [i.get('nyckelord') for i in entry.nyckelord_set.values() if i is not None]
+        if len(nyckelord) > 0:
+            suggestion_dict[idx]['nyckelord'] = nyckelord
+        
+        suggestion_dict[idx]['kodverk'] = []
+        for kodtext in entry.kodtext_set.values():
+            suggestion_dict[idx]['kodverk'].append({attr:value for attr,value in kodtext.items() if attr in kodtext_fields})
     
     sorted_date_list = sorted([i[0] for i in kodverk.all().values_list('senaste_ändring')], reverse=True)
     

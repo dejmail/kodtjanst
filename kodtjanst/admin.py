@@ -321,7 +321,6 @@ class KodverkManager(SimpleHistoryAdmin):
     fieldsets = [
         ['Main', {
         'fields': [('titel_på_kodverk', 'kodverk_variant'),
-        ('syfte'),
         ('beskrivning_av_innehållet'),
         ('identifierare', 'uppdateringsintervall', 'användning_av_kodverk'),
         ('status', 'version'), 

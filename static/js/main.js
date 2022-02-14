@@ -6,7 +6,7 @@ var currentPage = window.document.domain;
 function endpoint_check() {
 
     if (document.domain == "127.0.0.1") { 
-		const endpoint = '';
+		const endpoint = '/';
 		return endpoint
     } else {
 		const endpoint = document.URL;
@@ -22,7 +22,6 @@ let scheduled_function = true
 
 user_input.keyup(function () {
 	
-	// changeBrowserURL('', '/');
 	$("#mitten-span-middle-column").empty();
 
 	const request_parameters = {
@@ -33,6 +32,7 @@ user_input.keyup(function () {
 	if (request_parameters.q.length > 1) {
 
 	var ajax_call = function (endpoint, request_parameters) {
+		changeBrowserURL('', endpoint_check());
 		$("#term_förklaring_tabell").remove();
 		$("#mitten-span-middle-column").empty();
 		var skapad_url = (endpoint + '?' + Object.keys(request_parameters) + '=' + Object.values(request_parameters));
