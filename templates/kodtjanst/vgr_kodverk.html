@@ -19,10 +19,6 @@
                 <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
             </tr>
             <tr>
-                <td colspan="2">Syfte</td>
-                <td colspan="6">{{kodverk_full.syfte}}</td>
-            </tr>
-            <tr>
                 <td colspan="2">Beskrivning av innehållet</td>
                 <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
             </tr>
@@ -38,6 +34,14 @@
                                 {% endfor %}
                 </td>
             </tr>
+            {% if kodverk_full.identifierare %}
+            <tr>
+                <td colspan="2">Identifierare</td>
+                <td colspan="6">{{kodverk_full.identifierare}}</td>
+            </tr>
+            {% endif %}
+
+
             <tr>
                 <td colspan="2">Giltig från</td>
                 <td colspan="6">{{kodverk_full.giltig_från}}</td>

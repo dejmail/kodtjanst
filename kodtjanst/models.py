@@ -106,7 +106,7 @@ class Kodverk(models.Model):
     syfte = models.TextField(max_length=1000, null=True)
     beskrivning_av_innehållet = models.TextField(null=True,blank=True, verbose_name='Beskrivning av innehållet')
     identifierare = models.CharField(max_length=255,null=True, blank=True)
-    titel_på_kodverk = models.CharField(max_length=255, null=True)
+    titel_på_kodverk = models.CharField(max_length=255, null=True, verbose_name="Namn")
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
     
     kategori = models.CharField(max_length=255,null=True)
