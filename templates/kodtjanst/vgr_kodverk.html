@@ -1,0 +1,140 @@
+{% load zip %}
+
+
+<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-left-column text-centered col-centered">
+                
+    <div class="row">
+        <div class="col-12 text-center">
+            <button class="btn btn-sm bg-info text-white" id="kodverk">
+                <strong>Kodverk</strong>
+            </button>
+        </div>
+    </div>
+        
+    <div class="row justify-content-md-center top-buffer-10 pr-1">
+    <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
+    <tbody>
+            <tr>
+                <td colspan="2">Namn</td>
+                <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+            </tr>
+            <tr>
+                <td colspan="2">Beskrivning av innehållet</td>
+                <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Användning</td>
+                <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Ägare till kodverket</td>
+                <td colspan="6">
+                                {% for attribute in codeconcept %}
+                                    {{attribute.ägare_till_kodverk}}<br>
+                                {% endfor %}
+                </td>
+            </tr>
+            {% if kodverk_full.identifierare %}
+            <tr>
+                <td colspan="2">Identifierare</td>
+                <td colspan="6">{{kodverk_full.identifierare}}</td>
+            </tr>
+            {% endif %}
+
+
+            <tr>
+                <td colspan="2">Giltig från</td>
+                <td colspan="6">{{kodverk_full.giltig_från}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Giltig tom</td>
+                <td colspan="6">{{kodverk_full.giltig_tom}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Senaste ändring</td>
+                <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Status</td>
+                <td colspan="6">{{kodverk_full.status}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Beslutsunderlag dokument</td>
+                <td colspan="6" style="vertical-align:middle;">
+                    {% if  kodverk_full.underlag|length > 0 %}
+                        <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
+                            <span class="fas fa-file-download fa-2x">
+                            </span>                            
+                        </a>
+                    {% else %}
+                        Dokumentet saknas för tillfället
+                    {% endif %}
+                </td>
+            </tr>
+        
+            <tr>
+                <td colspan="2">Underlag länk</td>
+                <td colspan="6">
+                {% if kodverk_full.länk|length > 0 %}
+                    <a href="{{kodverk_full.länk}}">{{kodverk_full.länk|slice:":50"}}</a>
+                {% else %}
+                    Ingen länk
+                {% endif %}
+                </td>
+            </tr>
+            
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Själva kodtext -->
+
+<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-right-column col-centered">
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <button class="btn btn-sm bg-info text-white" id="kodverk">
+                <strong>Kodtexter</strong>
+            </button>
+        </div>
+    </div>
+
+
+    <div class="row justify-content-md-center top-buffer-20 pl-1">
+        <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Kod</th>
+                    <th>Kodtext</th>
+                    <th>                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                        {% if i.definition|length > 1 %}
+                            Definition
+                        {% elif i.annan_kodtext|length > 1 %}
+                            Annan kodtext
+                        {% else %}
+                            Övrig
+                        {% endif %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for i in kodtext_full %}
+            <tr>
+                <td>{{i.kod|default_if_none:"Ingen" }}</td>
+                <td>{{i.kodtext}}</td>
+                <td>{%if i.definition|length > 1 %}
+                        {{i.definition}}
+                    {% elif i.annan_kodtext|length > 1 %}
+                        {{i.annan_kodtext}}
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>

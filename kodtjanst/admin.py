@@ -9,6 +9,8 @@ from django.core.validators import URLValidator
 from django.forms import ModelChoiceField, ValidationError
 from django.forms.models import BaseInlineFormSet
 
+from django.contrib.admin.options import *
+
 from django.shortcuts import render
 from django.template import response
 from django.template.response import TemplateResponse
@@ -16,11 +18,13 @@ from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django.forms import Textarea
 
 from simple_history.admin import SimpleHistoryAdmin
 
 from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter, SwedishLettersinKodFilter
-from .forms import ExternaKodtextForm, KodverkAdminForm, MultiMappingForm, KommentarAdminForm, ArbetsKommentarForm
+from .forms import KodverkAdminForm, MultiMappingForm, KommentarAdminForm, ArbetsKommentarForm
+#ExternaKodtextForm
 from .models import *
 from .models import Kodtext, Kodverk, ArbetsKommentar
 
@@ -36,7 +40,6 @@ class KodtextManager(SimpleHistoryAdmin):
                     'kodverk_grupp',
                     'definition',
                     'annan_kodtext',
-                    'extra_data'
                     )
 
     list_filter = ('status', DuplicateKodtextFilter, SwedishLettersinKodFilter)
@@ -174,6 +177,10 @@ class ArbetsKommentarInline(admin.TabularInline):
     }
     ]]
 
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':10, 'cols':40})}
+    }
+
 
 
 class NyckelordManager(admin.ModelAdmin):
@@ -262,6 +269,19 @@ class CodeableConceptInline(admin.TabularInline):
     }
     ]]
     
+class ExternaKodtextInline(admin.TabularInline):
+
+    model = ExternaKodtext
+    extra = 1
+    fieldsets = [
+    [None, {
+    'fields':[('mappad_id', 'mappad_text', 'resolving_url', 'kommentar')]
+    }
+    ]]
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':10, 'cols':40})}
+    }
+
 
 class CodeableConceptManager(SimpleHistoryAdmin):
 
@@ -279,58 +299,61 @@ class KodverkManager(SimpleHistoryAdmin):
             }   
 
     change_form_template = 'change_form_autocomplete.html'
-    form = KodverkAdminForm
-
-    inlines = [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
-    
+    form = KodverkAdminForm    
     save_on_top = True
-
     list_display = ('id', 
                     'titel_på_kodverk',
-                    'safe_syfte',
+                    'beskrivning_av_innehållet',
                     'status',
+                    'kodverk_variant',
                     'version',
                     'clean_ägare',
                     'ansvarig_fullname',
                     'clean_källa',
                     'datum_skapat',
                     'has_underlag')
-
     list_display_links = ('titel_på_kodverk',)
-
     exclude = ['ändrad_av',]
-
     actions = [make_aktiv, make_inaktiv]
-
     list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
-
     search_fields = ('titel_på_kodverk',)
-
     history_list_display = ['changed_fields']
-
     fieldsets = [
         ['Main', {
         'fields': [('titel_på_kodverk', 'kodverk_variant'),
-        ('syfte'),
         ('beskrivning_av_innehållet'),
         ('identifierare', 'uppdateringsintervall', 'användning_av_kodverk'),
         ('status', 'version'), 
         ('giltig_från', 'giltig_tom'),
         ('ansvarig'),
-        ('underlag', 'länk_till_underlag'),
+        ('underlag', 'länk'),
         ]}],
-        ['Extra', {
+        ['Övriga attribut', {
+        'classes': ('collapse',),
         'fields': [('extra_data')],
         }],
     ]
+
+    def get_inlines(self, request, obj):
+        
+        if obj is None:
+            return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
+        else:
+            if obj.kodverk_variant == 'VGR codeable concept':
+                return [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
+            elif obj.kodverk_variant == 'Externt kodverk hänvisning':
+                return [NyckelOrdInline, ArbetsKommentarInline]
+            else:
+                #elif not ExternaKodtext.objects.filter(kodverk__titel_på_kodverk=obj.titel_på_kodverk):
+                return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
 
     def changed_fields(self, obj):
         if obj.prev_record:
             delta = obj.diff_against(obj.prev_record)
             return_text = ""
             for field in delta.changed_fields:
-                return_text += f"""{field} - <span class="text_highlight_red">{getattr(delta.old_record, field)}</span></br>
-                --> <span class="text_highlight_green">{getattr(delta.new_record, field)}</span>"""
+                return_text += f"""<p><strong>{field}</strong> ändrad från --> <span class="text_highlight_yellow">{getattr(delta.old_record, field)}</span>
+                till --> <span class="text_highlight_green">{getattr(delta.new_record, field)}</span></p>"""
             return mark_safe(return_text)
         return None
 
@@ -362,12 +385,6 @@ class KodverkManager(SimpleHistoryAdmin):
         return mark_safe(return_string)
 
     clean_källa.short_description = "Källa"
-
-    def safe_syfte(self, obj):
-
-        return mark_safe(obj.syfte)
-
-    safe_syfte.short_description = "Syfte"
     
     def ansvarig_fullname(self, obj):
         if obj.ansvarig:
@@ -375,9 +392,10 @@ class KodverkManager(SimpleHistoryAdmin):
         else:
             return ''
 
+    ansvarig_fullname.short_description = "Ansvarig"
+
     def has_underlag(self, obj):
 
-        #if obj.titel_på_kodverk == "VGRKV_StatusKliniskProcess": set_trace()
         if (obj.underlag != None) and (obj.underlag.name != ''):
             return format_html(f'''<a href={obj.underlag}>
                                     <i class="fas fa-file-download">
@@ -400,15 +418,15 @@ class ArbetsKommentarManager(admin.ModelAdmin):
     form = ArbetsKommentarForm
 
     def save_model(self, request, obj, form, change):
-        set_trace()
+        #set_trace()
         super(ArbetsKommentarManager, self).save_model(request, obj, form, change)
 
-    def get_formsets_with_inlines(self, request, obj):
-        set_trace()
-        return super().get_formsets_with_inlines(request, obj=obj)
+    # def get_formsets_with_inlines(self, request, obj):
+    #     #set_trace()
+    #     return super().get_formsets_with_inlines(request, obj=obj)
 
     def get_inline_formsets(self, request, formsets, inline_instances, obj):
-        set_trace()
+        #set_trace()
         return super().get_inline_formsets(request, formsets, inline_instances, obj=obj)
 
     # def save_new_objects(self, commit=True):
@@ -428,69 +446,19 @@ class KodtextIdandTextField(forms.ModelChoiceField):
      def label_from_instance(self, obj):
          return f"{obj.id} - {obj.kodtext}"
 
+from django.contrib.admin import helpers, widgets
+
 class ExternaKodtextManager(admin.ModelAdmin):
 
-    form = ExternaKodtextForm
-
-    
-    list_display = ('get_kodtext',
-                    'mappad_id',
+    list_display = ('mappad_id',
                     'mappad_text',
                     'clickable_url',                    
-                    'kommentar',
-                    'kodverk_grupp')
-    
-    def get_kodtext(self, obj):
-        
-        return obj.kodtext
-
-    get_kodtext.short_description = 'Kodtext'
-
+                    'kodverk')
 
     def clickable_url(self, obj):
         return format_html("<a href='{url}' target='_blank' rel='noopener noreferrer'>{url}</a>", url=obj.resolving_url)
 
     clickable_url.short_description = "URL"
-    
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):    
-
-        if db_field.name == "kodtext":
-            kwargs["queryset"] = Kodtext.objects.all()
-            return KodtextIdandTextField(queryset=Kodtext.objects.all())
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(ExternaKodtextManager, self).get_form(request, obj, **kwargs)
-        if obj is None:
-            form.base_fields['kodverk'].initial = Kodverk.objects.all()
-            form.base_fields['kodtext'].initial = Kodtext.objects.none()
-        else:
-            
-            form.base_fields['kodverk'].initial =  Kodverk.objects.filter(titel_på_kodverk=obj.kodtext.kodverk.titel_på_kodverk).values()[0].get('titel_på_kodverk')
-        return form
-    
-    def save(self, commit=True):
-        extra_field = self.cleaned_data.get('kodverk', None)
-        return super(form, self).save(commit=commit)
-
-    def save_model(self, request, obj, form, change):
-
-        #remove the extra field from the form
-        del form.fields['kodverk']
-        super(ExternaKodtextManager, self).save_model(request, obj, form, change)
-    
-    def kodverk_grupp(self, obj):
-        
-        
-        display_text = ", ".join([
-            "<a href={}>{}</a>".format(
-                reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'kodverk'),
-                args=(obj.kodtext.id,)),
-                obj.kodtext.kodverk.titel_på_kodverk)
-           
-        ]).replace(' ' ,'_')
-            
-    kodverk_grupp.short_description = 'Kodverk'
 
 class CommentedKodverkManager(admin.ModelAdmin):
     

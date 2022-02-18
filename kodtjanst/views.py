@@ -40,7 +40,7 @@ RE_PATTERN = re.compile(r'\s+')
 
 def retur_alla_kodverk(url_parameter):
 
-    queryset = Kodverk.objects.filter(status='Aktiv').values_list('id','titel_på_kodverk','syfte')
+    queryset = Kodverk.objects.filter(status='Aktiv').values('id','titel_på_kodverk','syfte','länk','kodverk_variant')
 
     return queryset
 
@@ -54,9 +54,11 @@ def retur_general_sök(url_parameter):
                                       Q(nyckelord__nyckelord__icontains=url_parameter) |
                                       Q(kodtext__kodtext__icontains=url_parameter) |
                                       Q(kodtext__annan_kodtext__icontains=url_parameter) |
-                                      Q(kodtext__definition__icontains=url_parameter)).distinct().values_list('id',
-                                                                                                              'titel_på_kodverk',
-                                                                                                              'syfte')
+                                      Q(kodtext__definition__icontains=url_parameter)).distinct().values('id',
+                                                                                                        'titel_på_kodverk',
+                                                                                                        'beskrivning_av_innehållet',
+                                                                                                        'länk',
+                                                                                                        'kodverk_variant')
 
     return queryset
 
@@ -83,7 +85,7 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
                             'ansvarig_id',
                             'urval_referens_id',
                             'underlag',
-                            'länk_till_underlag',
+                            'länk',
                             'nyckelord__nyckelord')
     
     return queryset
@@ -97,6 +99,20 @@ def return_kodtext_related_to_kodverk(url_parameter):
                                                                             'kodtext',
                                                                             'position')
 
+    return queryset
+
+def return_external_kodtext_related_to_kodverk(url_parameter):
+
+    queryset = ExternaKodtext.objects.filter(kodverk_id=url_parameter).values('id',
+                                                                                        'mappad_id',
+                                                                                        'mappad_text',
+                                                                                        'resolving_url')
+    return queryset
+
+def return_kommentar_related_to_kodverk(url_parameter):
+
+    queryset = ArbetsKommentar.objects.filter(kodverk_id=url_parameter).values('id',
+                                                                                'kommentar')
     return queryset
 
 def attach_column_names_to_search_result(search_result, search_column_names):
@@ -136,21 +152,22 @@ def kodverk_sok(request):
 
         kodverk_column_names = ['id',
                         'titel_på_kodverk',
-                        'syfte']
+                        'beskrivning_av_innehållet']
 
         if url_parameter == '*all':
-            sql_search = retur_alla_kodverk(url_parameter)
+            queryset = retur_alla_kodverk(url_parameter)
         else:
-            sql_search = retur_general_sök(url_parameter)
+            queryset = retur_general_sök(url_parameter)
         
         #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
         
-        search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
+        #search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
         # search_result = highlight_search_term_i_definition(url_parameter, search_result)
-        search_result = make_dictionary_field_html_safe(search_result, fields=['syfte'])
+        
+        search_result = make_dictionary_field_html_safe(queryset, fields=['syfte','länk'])
 
         html = render_to_string(
-            template_name="kodverk_partial_result.html", context={'kodverk': search_result,                                                            
+            template_name="kodverk_partial_result.html", context={'kodverk': queryset,
                                                                   'searched_for_term' : url_parameter})
 
         return JsonResponse(data=html, safe=False)
@@ -226,7 +243,7 @@ def return_komplett_metadata(request, kodverk_id):
                             'ansvarig_id',
                             'urval_referens_id',
                             'underlag',
-                            'länk_till_underlag',
+                            'länk',
                             'nyckelord']
         
         return_list_dict = []
@@ -245,6 +262,8 @@ def return_komplett_metadata(request, kodverk_id):
 
         kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
 
+        externa_kodtext = return_external_kodtext_related_to_kodverk(kodverk_id)
+
         if all([kodtext['position'] for kodtext in kodtext_dict]):
             kodtext_dict = sorted(kodtext_dict, key = lambda i: i['position'])
         elif all([kodtext['kod'] for kodtext in kodtext_dict]):
@@ -254,13 +273,15 @@ def return_komplett_metadata(request, kodverk_id):
         
         kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])        
 
-        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk_till_underlag'])           
+        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk'])           
 
         template_context = {'kodverk_full': return_list_dict[0],
                             'kodverk_id' : kodverk_id,
                             'kodtext_full' : kodtext_dict,
                             'nyckelord' : nyckelord_string,
-                            'codeconcept' : codeconcept_dict} 
+                            'codeconcept' : codeconcept_dict,
+                            'external_kodtext' : externa_kodtext,
+                            'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)} 
         
         html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
 
@@ -576,36 +597,28 @@ def structure_kodverk_queryset_as_json(queryset):
 
     kodverk = queryset
 
-    suggestion_dict = {}
-    kodverk_fields = ['titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status']
-    kodtext_fields = ['kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
+    suggestion_dict = []
+
+    kodverk_fields = ['id','titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status']
+    kodtext_fields = ['id','kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
     codeableconcept_fields = ['ägare_till_kodverk', 'ansvarig_förvaltare','källa', 'version_av_källa']
 
-    for entry in kodverk:
+    for idx, entry in enumerate(kodverk):
+
+        suggestion_dict.append({'metadata' : {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}})
+
+        suggestion_dict[idx]['codeable_concept'] = []
+        for concept in entry.codeableconceptattributes_set.values():
+            suggestion_dict[idx]['codeable_concept'].append({attr:value for attr,value in concept.items() if attr in codeableconcept_fields})
         
-        if suggestion_dict.get(entry.pk) is None:
-            suggestion_dict[entry.pk] = {}
-
-        if suggestion_dict[entry.pk].get('metadata') is None:
-            suggestion_dict[entry.pk]['metadata'] = {}
-
-        if suggestion_dict[entry.pk].get('kodverk') is None:
-            suggestion_dict[entry.pk]['kodverk'] = {}
-
-        if suggestion_dict[entry.pk].get('metadata') is not None:
-            suggestion_dict[entry.pk]['metadata'] = {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}
-            suggestion_dict[entry.pk]['metadata']['codeable_concept'] = {}
-            
-            for codeconcept_idx, codeableconcept in enumerate(entry.codeableconceptattributes_set.values(), 1):
-                suggestion_dict[entry.pk]['metadata']['codeable_concept'][codeconcept_idx] = {key:value for key,value in codeableconcept.items() if key in codeableconcept_fields}                
-
-            nyckelord = [i.get('nyckelord') for i in entry.nyckelord_set.values() if i is not None]
-            if len(nyckelord) > 0:
-                suggestion_dict[entry.pk]['metadata']['sökord'] = nyckelord
-
-        if suggestion_dict[entry.pk].get('kodverk') is not None:
-            for kodtext_number, kodtext in enumerate(entry.kodtext_set.values(), 1):
-                suggestion_dict[entry.pk]['kodverk'][kodtext_number] = {attr:value for attr,value in kodtext.items() if attr in kodtext_fields} 
+        suggestion_dict[idx]['nyckelord'] = []
+        nyckelord = [i.get('nyckelord') for i in entry.nyckelord_set.values() if i is not None]
+        if len(nyckelord) > 0:
+            suggestion_dict[idx]['nyckelord'] = nyckelord
+        
+        suggestion_dict[idx]['kodverk'] = []
+        for kodtext in entry.kodtext_set.values():
+            suggestion_dict[idx]['kodverk'].append({attr:value for attr,value in kodtext.items() if attr in kodtext_fields})
     
     sorted_date_list = sorted([i[0] for i in kodverk.all().values_list('senaste_ändring')], reverse=True)
     

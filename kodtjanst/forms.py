@@ -10,7 +10,7 @@ from django.contrib.auth import (
 
 from pdb import set_trace
 
-from .models import ExternaKodtext, Kodverk
+from kodtjanst.models import ExternaKodtext, Kodverk
 
 
 class UserModelChoiceField(ModelChoiceField):
@@ -51,15 +51,15 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
+def return_helptext():
+    return 'can contain text attributes here'
+
 class KodverkAdminForm(forms.ModelForm):
 
     ansvarig = UserModelChoiceField(User.objects.filter(first_name__isnull=False).exclude(first_name__exact='').order_by('first_name', 'last_name'), required=False)
     användning_av_kodverk = forms.ChoiceField(choices=(("anpassat för verksamhet","anpassat för verksamhet"),
                                                        ("anpassat för system","anpassat för system"),
                                                        ("kodverk för VGR:s referensinformationsarkitektur","kodverk för VGR:s referensinformationsarkitektur")))
-
-    def __init__(self, *args, **kwargs):
-        super(KodverkAdminForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Kodverk
@@ -89,13 +89,35 @@ class KommentarAdminForm(forms.ModelForm):
         super(KommentarAdminForm, self).__init__(*args, **kwargs)
 
 
-class ExternaKodtextForm(forms.ModelForm):
+# class ExternaKodtextForm(forms.ModelForm):
 
-    kodverk = forms.CharField(disabled=True)
+    #kodverk = forms.ChoiceField(choices=[(i.get('id'),i.get('titel_på_kodverk')) for i in Kodverk.objects.all().values('id','titel_på_kodverk')])#queryset=Kodverk.objects.all())
 
-    class Meta:
-        model = ExternaKodtext
-        fields = '__all__'
+    # class Meta:
+    #     model = ExternaKodtext
+    #     fields = ['kodverk','mappad_id','mappad_text', 'resolving_url','kommentar']
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     #self.fields['kodtext'].queryset = Kodtext.objects.none()
+
+    #     if 'kodverk' in self.data:
+    #         try:
+    #             kodverk_id = int(self.data.get('kodverk'))
+    #      #       self.fields['kodtext'].queryset = Kodtext.objects.filter(kodverk_id=kodverk_id)
+    #         except (ValueError, TypeError):
+    #             pass  # invalid input from the client; ignore and fallback to empty City queryset
+    #     #elif self.instance.pk:
+        #    self.fields['kodtext'].queryset =  Kodtext.objects.filter(kodverk_id=self.instance.kodtext.kodverk_id)
+
+        # if 'country' in self.data:
+        #     try:
+        #         country_id = int(self.data.get('country'))
+        #         self.fields['city'].queryset = City.objects.filter(country_id=country_id).order_by('name')
+        #     except (ValueError, TypeError):
+        #         pass  # invalid input from the client; ignore and fallback to empty City queryset
+        # elif self.instance.pk:
+        #     self.fields['city'].queryset = self.instance.country.city_set.order_by('name')
         
 def beslutad_kodtext_choices():
     beslutad_kodtext = Kodtext.objects.filter(kodverk__status='Beslutad').all().values('id','kod','kodtext')

@@ -123,7 +123,17 @@
                             {% endif %}
                         </td>
                     </tr>
-
+                
+                    <tr>
+                        <td colspan="2">Underlag länk</td>
+                        <td colspan="6">
+                        {% if kodverk_full.länk|length > 0 %}
+                            <a href="{{kodverk_full.länk}}">{{kodverk_full.länk|slice:":50"}}</a>
+                        {% else %}
+                            Ingen länk
+                        {% endif %}
+                        </td>
+                    </tr>
                     
                 </tbody>
                 </table>
