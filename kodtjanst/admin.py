@@ -213,6 +213,12 @@ def make_inaktiv(modeladmin, request, queryset):
     queryset.update(status='Inaktiv')
 make_inaktiv.short_description = "Markera kodverk som Inaktiv"
 
+def change_variant_vgr(modeladmin, request, queryset):
+    
+    queryset.update(kodverk_variant='VGR kodverk')
+change_variant_vgr.short_description = "Markera kodverk_variant som VGR kodverk"
+
+
 
 class CodeableConceptFormSet(BaseInlineFormSet):
 
