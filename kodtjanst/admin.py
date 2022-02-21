@@ -348,7 +348,7 @@ class KodverkManager(SimpleHistoryAdmin):
             if self.get_queryset(request).get(pk=object_id).kodverk_variant == 'VGR codeable concept':
                 self.inlines = [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
             elif self.get_queryset(request).get(pk=object_id).kodverk_variant == 'Externt kodverk hänvisning':
-                self.inlines = [NyckelOrdInline, ArbetsKommentarInline]
+                self.inlines = [NyckelOrdInline, CodeableConceptInline, ArbetsKommentarInline]
             else:
                 self.inlines = [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
             return super(KodverkManager, self).change_view(request, object_id, form_url, extra_context)
