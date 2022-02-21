@@ -339,7 +339,6 @@ class KodverkManager(SimpleHistoryAdmin):
         if object_id is None:
             return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
         else:
-            set_trace()
             if self.get_queryset(request).get(pk=object_id).kodverk_variant == 'VGR codeable concept':
                 self.inlines = [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
             elif self.get_queryset(request).get(pk=object_id).kodverk_variant == 'Externt kodverk hänvisning':
