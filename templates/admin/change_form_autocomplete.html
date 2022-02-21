@@ -1,12 +1,14 @@
 {% extends 'admin/change_form.html' %}
 {% load static %}
 
-{% block extra_js %}
+{% block extrahead %}
+{{block.super}}
 
 <script src="{% static 'js/jquery-ui.js' %}"></script>
 
 <script>
 (function($) {
+
     $(document).ready(function($) {
         
         var fields = ["ägare_till_kodverk", "källa", "ansvarig_förvaltare"];
@@ -52,4 +54,4 @@
     
 })(django.jQuery);
 </script>
-{% endblock extra_js %}
+{% endblock extrahead %}

@@ -566,7 +566,7 @@ def load_kodtext(request, kodverk_id):
 
 def previous_codeconcept_values_json(request):
 
-    ägare = CodeableConceptAttributes.objects.filter(kodverk_from__status="Beslutad")
+    ägare = CodeableConceptAttributes.objects.filter(kodverk_from__status="Aktiv")
     
     suggestion_dict = {}
     fields = ['källa','version_av_källa','ansvarig_förvaltare','ägare_till_kodverk']
@@ -580,7 +580,6 @@ def previous_codeconcept_values_json(request):
 
     for key,values in suggestion_dict.items():
         suggestion_dict[key] = list(set(values))
-
     return JsonResponse(suggestion_dict, safe=False)
 
 
