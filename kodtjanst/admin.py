@@ -320,7 +320,7 @@ class KodverkManager(SimpleHistoryAdmin):
                     'has_underlag')
     list_display_links = ('titel_på_kodverk',)
     exclude = ['ändrad_av',]
-    actions = [make_aktiv, make_inaktiv]
+    actions = [make_aktiv, make_inaktiv, change_variant_vgr]
     list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
     search_fields = ('titel_på_kodverk',)
     history_list_display = ['changed_fields']
