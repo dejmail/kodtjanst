@@ -334,18 +334,20 @@ class KodverkManager(SimpleHistoryAdmin):
         }],
     ]
 
-    def get_inlines(self, request, obj):
+    def change_view(self, request, object_id, form_url='', extra_context=None):
         
-        if obj is None:
+        if object_id is None:
             return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
         else:
-            if obj.kodverk_variant == 'VGR codeable concept':
-                return [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
-            elif obj.kodverk_variant == 'Externt kodverk hänvisning':
-                return [NyckelOrdInline, ArbetsKommentarInline]
+            set_trace()
+            if self.get_queryset(request).get(pk=object_id).kodverk_variant == 'VGR codeable concept':
+                self.inlines = [NyckelOrdInline, CodeableConceptInline, ExternaKodtextInline, ArbetsKommentarInline]
+            elif self.get_queryset(request).get(pk=object_id).kodverk_variant == 'Externt kodverk hänvisning':
+                self.inlines = [NyckelOrdInline, ArbetsKommentarInline]
             else:
-                #elif not ExternaKodtext.objects.filter(kodverk__titel_på_kodverk=obj.titel_på_kodverk):
-                return [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
+                self.inlines = [NyckelOrdInline, CodeableConceptInline, KodtextInline, ArbetsKommentarInline]
+            return super(KodverkManager, self).change_view(request, object_id, form_url, extra_context)
+
 
     def changed_fields(self, obj):
         if obj.prev_record:
