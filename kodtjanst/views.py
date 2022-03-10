@@ -58,7 +58,8 @@ def retur_general_sök(url_parameter):
                                                                                                         'titel_på_kodverk',
                                                                                                         'beskrivning_av_innehållet',
                                                                                                         'länk',
-                                                                                                        'kodverk_variant')
+                                                                                                        'kodverk_variant',
+                                                                                                        'användning_av_kodverk')
 
     return queryset
 
@@ -150,21 +151,12 @@ def kodverk_sok(request):
         
     if request.is_ajax():
 
-        kodverk_column_names = ['id',
-                        'titel_på_kodverk',
-                        'beskrivning_av_innehållet']
-
         if url_parameter == '*all':
             queryset = retur_alla_kodverk(url_parameter)
         else:
             queryset = retur_general_sök(url_parameter)
         
-        #mäta_sök_träff(sök_term=url_parameter,sök_data=return_list_dict, request=request)
-        
-        #search_result = attach_column_names_to_search_result(sql_search, kodverk_column_names)
         # search_result = highlight_search_term_i_definition(url_parameter, search_result)
-        
-        search_result = make_dictionary_field_html_safe(queryset, fields=['syfte','länk'])
 
         html = render_to_string(
             template_name="kodverk_partial_result.html", context={'kodverk': queryset,
