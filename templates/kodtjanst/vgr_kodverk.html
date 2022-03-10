@@ -22,7 +22,13 @@
                 <td colspan="2">Beskrivning av innehållet</td>
                 <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
             </tr>
-            <tr>
+            {% if "verksamhet" in kodverk_full.användning_av_kodverk %}
+                <tr class="row-verksamhet">
+            {% elif "system" in kodverk_full.användning_av_kodverk %}
+                <tr class="row-system">
+            {% else %}
+                <tr>
+            {% endif %}
                 <td colspan="2">Användning</td>
                 <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
             </tr>

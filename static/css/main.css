@@ -115,6 +115,16 @@ nav {
     background-color: rgb(222,234,246);
   }
 
+ 
+ #komplett_metadata_tabell > tbody > tr.row-verksamhet {
+  background-color: #648FFF;
+}
+
+#komplett_metadata_tabell > tbody > tr.row-system {
+  background-color: #FFB000;
+}
+
+
   ul:nth-of-type(1) {
     list-style-position: inside;
     padding: 0;
