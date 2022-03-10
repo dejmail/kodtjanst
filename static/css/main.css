@@ -120,7 +120,17 @@ nav {
   background-color: #648FFF;
 }
 
+#definition_table  > tbody > tr.row-verksamhet {
+  background-color: #648FFF;
+  color: white;
+}
+
+
 #komplett_metadata_tabell > tbody > tr.row-system {
+  background-color: #FFB000;
+}
+
+#definition_table  > tbody > tr.row-system {
   background-color: #FFB000;
 }
 

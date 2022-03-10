@@ -15,7 +15,13 @@
             </thead>
             <tbody id="myTable">
             {% for info in kodverk %}
-                <tr>
+                {% if "verksamhet" in info.användning_av_kodverk %}
+                    <tr class="row-verksamhet">
+                {% elif "system" in info.användning_av_kodverk %}
+                    <tr class="row-system">
+                {% else %}
+                    <tr>
+                {% endif %}
                     <td><a href="{% url 'kodverk_komplett_metadata' info.id %}" id={{info.id}}>{{info.titel_på_kodverk}}</td>
                     <td>{{info.beskrivning_av_innehållet}}</td>
                 </tr>
