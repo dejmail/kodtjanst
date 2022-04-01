@@ -622,7 +622,7 @@ def structure_kodverk_queryset_as_json(queryset):
 
 def all_kodverk_and_kodtext_as_json(request):
 
-    kodverk = Kodverk.objects.prefetch_related('kodtext_set').filter(status="Aktiv")
+    kodverk = Kodverk.objects.all().filter(status="Aktiv")
 
     response = structure_kodverk_queryset_as_json(kodverk)
 

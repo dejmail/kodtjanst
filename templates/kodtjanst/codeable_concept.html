@@ -1,60 +1,63 @@
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="mitten-span-middle-column col-centered text-center">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="mitten-span-middle-column col-centered text-center">   
 
-    <div class="row justify-content-md-center top-buffer-10 pr-1">
+    <div class="row">
+        <div class="mx-auto">
+            <div class="table-info bg-info rounded text-white text-center p-2">Urval ur externt kodverk</div>
+        </div>
+    </div>
+    
+    <div class="row">
 
-        <div class="table-info bg-info p-2 rounded text-white text-center">Urval ur externt kodverk</div>
 
-        <div class="row mt21">
-            <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
-            <tbody>
+    
+        <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
+        <tbody>
+                <tr>
+                    <td colspan="1">Namn</td>
+                    <td colspan="1"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="1">Beskrivning av innehållet</td>
+                    <td colspan="1">{{kodverk_full.beskrivning_av_innehållet }}</td>
+                </tr>
+                <tr>
+                    <td colspan="1">Ägare till kodverket</td>
+                    <td colspan="1">{{kodverk_full.ägare_till_kodverk}}</td>
+                </tr>
+                {% if kodverk_full.länk %}
+                <tr>
+                    <td colspan="1">Länk</td>
+                    <td colspan="1"><a href={{kodverk_full.länk}}>{{kodverk_full.länk|truncatechars:50}}</a></td>                    
+                </tr>
+                {% endif %}
+                <!-- <tr>
+                    <td colspan="2">Beslutsunderlag dokument</td>
+                    <td colspan="6" style="vertical-align:middle;">
+                        {% if  kodverk_full.underlag|length > 0 %}
+                            <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
+                                <span class="fas fa-file-download fa-2x">
+                                </span>                            
+                            </a>
+                        {% else %}
+                            Dokumentet saknas för tillfället
+                        {% endif %}
+                    </td>
+                </tr> -->
+                {% if external_kodtext %}
                     <tr>
-                        <td colspan="1">Namn</td>
-                        <td colspan="1"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
-                    </tr>
-                    <tr>
-                        <td colspan="1">Beskrivning av innehållet</td>
-                        <td colspan="1">{{kodverk_full.beskrivning_av_innehållet }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1">Ägare till kodverket</td>
-                        <td colspan="1">{{kodverk_full.ägare_till_kodverk}}</td>
-                    </tr>
-                    {% if kodverk_full.länk %}
-                    <tr>
-                        <td colspan="1">Länk</td>
-                        <td colspan="1"><a href={{kodverk_full.länk}}>{{kodverk_full.länk|truncatechars:50}}</a></td>                    
-                    </tr>
-                    {% endif %}
-                    <!-- <tr>
-                        <td colspan="2">Beslutsunderlag dokument</td>
-                        <td colspan="6" style="vertical-align:middle;">
-                            {% if  kodverk_full.underlag|length > 0 %}
-                                <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
-                                    <span class="fas fa-file-download fa-2x">
-                                    </span>                            
-                                </a>
-                            {% else %}
-                                Dokumentet saknas för tillfället
-                            {% endif %}
+                        <td colspan="1">Källa</td>
+                        <td colspan="1">
+                            <ul>
+                            {% for kodtext in external_kodtext %}
+                                <li><a href="{{kodtext.resolving_url}}" target="_blank" rel="noopener noreferrer">{{kodtext.mappad_id}} | {{kodtext.mappad_text|truncatechars:50}}</a></li>
+                            {% endfor %}
+                            </ul>
                         </td>
-                    </tr> -->
-                    {% if external_kodtext %}
-                        <tr>
-                            <td colspan="1">Källa</td>
-                            <td colspan="1">
-                                <ul>
-                                {% for kodtext in external_kodtext %}
-                                    <li><a href="{{kodtext.resolving_url}}" target="_blank" rel="noopener noreferrer">{{kodtext.mappad_id}} | {{kodtext.mappad_text|truncatechars:50}}</a></li>
-                                {% endfor %}
-                                </ul>
-                            </td>
-                        </tr>
-                    {% endif %}
+                    </tr>
+                {% endif %}
     
             </tbody>
         </table>
     </div>
 </div>
 
-
-</div>

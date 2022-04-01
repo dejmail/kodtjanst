@@ -103,6 +103,10 @@ nav {
     background-color: rgb(241, 241, 131);
   }
 
+  .table-blue{
+    background-color: #8eaadb;
+  }
+
   .table-success-light{
     background-color: rgb(114, 211, 127);
   }
@@ -117,23 +121,20 @@ nav {
 
  
  #komplett_metadata_tabell > tbody > tr.row-verksamhet {
-  background-color: #648FFF;
+  background-color:#ffeeba;
 }
 
 #definition_table  > tbody > tr.row-verksamhet {
-  background-color: #648FFF;
-  color: white;
+  background-color:#ffeeba;
 }
 
-
-#komplett_metadata_tabell > tbody > tr.row-system {
-  background-color: #FFB000;
+#definition_table  > tbody > tr.table-blue {
+  background-color: #8eaadb;
 }
 
-#definition_table  > tbody > tr.row-system {
-  background-color: #FFB000;
+#komplett_metadata_tabell > tbody > tr.table-blue {
+  background-color: #8eaadb;
 }
-
 
   ul:nth-of-type(1) {
     list-style-position: inside;
