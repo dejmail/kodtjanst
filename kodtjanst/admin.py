@@ -40,6 +40,7 @@ class KodtextManager(SimpleHistoryAdmin):
                     'kodverk_grupp',
                     'definition',
                     'annan_kodtext',
+                    'status'
                     )
 
     list_filter = ('status', DuplicateKodtextFilter, SwedishLettersinKodFilter)
@@ -309,6 +310,7 @@ class KodverkManager(SimpleHistoryAdmin):
     save_on_top = True
     list_display = ('id', 
                     'titel_på_kodverk',
+                    'användning_av_kodverk',
                     'beskrivning_av_innehållet',
                     'status',
                     'kodverk_variant',

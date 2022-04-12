@@ -93,7 +93,8 @@ def retur_komplett_förklaring_custom_sql(url_parameter):
 
 def return_kodtext_related_to_kodverk(url_parameter):
 
-    queryset = Kodtext.objects.filter(kodverk_id=url_parameter).values_list('id',
+    queryset = Kodtext.objects.filter(Q(kodverk_id=url_parameter),
+                                     ~Q(status='Publicera ej')).values_list('id',
                                                                             'annan_kodtext',
                                                                             'definition',
                                                                             'kod',
@@ -590,8 +591,9 @@ def structure_kodverk_queryset_as_json(queryset):
 
     suggestion_dict = []
 
-    kodverk_fields = ['id','titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status']
+    kodverk_fields = ['id','titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status', 'användning_av_kodverk']
     kodtext_fields = ['id','kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
+    externa_kodtext_fields = ['mappad_id', 'mappad_text', 'resolving_url']
     codeableconcept_fields = ['ägare_till_kodverk', 'ansvarig_förvaltare','källa', 'version_av_källa']
 
     for idx, entry in enumerate(kodverk):
@@ -608,9 +610,15 @@ def structure_kodverk_queryset_as_json(queryset):
             suggestion_dict[idx]['nyckelord'] = nyckelord
         
         suggestion_dict[idx]['kodverk'] = []
-        for kodtext in entry.kodtext_set.values():
-            suggestion_dict[idx]['kodverk'].append({attr:value for attr,value in kodtext.items() if attr in kodtext_fields})
-    
+        if entry.kodtext_set.values():
+            for kodtext in entry.kodtext_set.values():
+                suggestion_dict[idx]['kodverk'].append({attr:value for attr,value in kodtext.items() if attr in kodtext_fields})
+        elif entry.externakodtext_set.all():
+            for extern_kodtext in entry.externakodtext_set.all():
+                suggestion_dict[idx]['kodverk'].append({attr:getattr(extern_kodtext, attr) for attr in externa_kodtext_fields})
+        else:
+            suggestion_dict[idx]['kodverk'].append({'message' : 'No kodtext associated'})
+
     sorted_date_list = sorted([i[0] for i in kodverk.all().values_list('senaste_ändring')], reverse=True)
     
     last_modified = {'Last-Modified': sorted_date_list[0].strftime('%Y-%m-%d %H:%M:%S')}
