@@ -1,3 +1,5 @@
+{% load split %}
+
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="mitten-span-middle-column text-centered col-centered">
                 
     <div class="row">
@@ -26,7 +28,29 @@
             </tr>
             <tr>
                 <td colspan="2">Källa</td>
-                <td colspan="6"><a href="{{kodverk_full.länk}}" target="_blank" rel="noopener noreferrer">{{kodverk_full.länk|truncatechars:50}}</a></td>
+                {% if codeconcept %}
+                    {% for entry in codeconcept %}
+                        <td colspan="6">
+                            {% with källa=entry.källa|split:'=' %}
+                                {% if källa.länk %}
+                                    <a href="{{källa.länk}}" target="_blank" rel="noopener noreferrer">
+                                        {{källa.klartext|truncatechars:50}}
+                                    </a>
+                                {% elif källa.klartext %}
+                                    {{källa.klartext|truncatechars:50}}
+                                {% else %}
+                                    {{källa}}
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                    {% endfor %}
+                {% else %}
+                    <td colspan="6">
+                        <a href="{{kodverk_full.länk}}" target="_blank" rel="noopener noreferrer">
+                            {{kodverk_full.länk|truncatechars:50}}
+                        </a>
+                    </td>
+                {% endif %}
             </tr>
     </tbody>
     </table>
