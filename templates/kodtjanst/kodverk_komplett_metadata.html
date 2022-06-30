@@ -251,7 +251,7 @@ if (document.body.contains(document.getElementById("ElementId2")) == true) {
 
     document.getElementById("underlagfil").addEventListener("click", function() {
     e.preventDefault();  //stop the browser from following
-    window.location.href = "/kodtjanst/media/{{kodverk.underlag.path}}";
+    window.location.href = "/kodtjanst/media/{{kodverk.underlag.url}}";
     console.log( "File served" );
     });
 } else {
