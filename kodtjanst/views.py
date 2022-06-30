@@ -18,7 +18,7 @@ from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 
-from .models import Kodverk, Kodtext, ExternaKodtext, CommentedKodverk, CodeableConceptAttributes, ArbetsKommentar
+from .models import Kodverk, Kodtext, ExternaKodtext, CommentedKodverk, CodeableConceptAttributes, ArbetsKommentar, ValidatedBy
 from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
 
 from io import BytesIO
@@ -65,41 +65,23 @@ def retur_general_sök(url_parameter):
 
 def retur_komplett_förklaring_custom_sql(url_parameter):
 
-    queryset = Kodverk.objects.filter(id=url_parameter).values_list('syfte',
-                            'beskrivning_av_innehållet',
-                            'identifierare',
-                            'titel_på_kodverk',
-                            'codeableconceptattributes__ägare_till_kodverk',
-                            'version',
-                            'codeableconceptattributes__källa',
-                            'codeableconceptattributes__version_av_källa',
-                            'kodverk_variant',
-                            'kategori',
-                            'användning_av_kodverk',
-                            'status',
-                            'uppdateringsintervall',
-                            'codeableconceptattributes__ansvarig_förvaltare',
-                            'senaste_ändring',
-                            'giltig_från',
-                            'giltig_tom',
-                            'ändrad_av_id',
-                            'ansvarig_id',
-                            'urval_referens_id',
-                            'underlag',
-                            'länk',
-                            'nyckelord__nyckelord')
+    queryset = Kodverk.objects.get(
+        id=url_parameter
+        )
     
     return queryset
 
-def return_kodtext_related_to_kodverk(url_parameter):
+def get_kodtext_related_to_kodverk(url_parameter):
 
-    queryset = Kodtext.objects.filter(Q(kodverk_id=url_parameter),
-                                     ~Q(status='Publicera ej')).values_list('id',
-                                                                            'annan_kodtext',
-                                                                            'definition',
-                                                                            'kod',
-                                                                            'kodtext',
-                                                                            'position')
+    queryset = Kodtext.objects.filter(
+        Q(kodverk_id=url_parameter),
+        ~Q(status='Publicera ej')).values(
+                                        'id',
+                                        'annan_kodtext',
+                                        'definition',
+                                        'kod',
+                                        'kodtext',
+                                        'position').order_by('position')
 
     return queryset
 
@@ -196,84 +178,12 @@ def convert_list_of_tuples_to_string(tuple_list, start=None, stop=None, single_p
 def return_komplett_metadata(request, kodverk_id):
 
     if kodverk_id:
-        exact_kodverk_request = retur_komplett_förklaring_custom_sql(kodverk_id)
-        
-        nyckelord = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
-                                                                start=-1, 
-                                                                stop=0)
 
-        nyckelord_string = convert_list_of_tuples_to_string(nyckelord, single_position=0)
-        
-        codeconcept_attributes = extract_columns_from_query_and_return_set(search_result=exact_kodverk_request, 
-                                                                            ind_items=[4,6,8,13])
-
-        codeconcept_column_names = ['ägare_till_kodverk',
-                                    'källa',
-                                    'version_av_källa', 
-                                    'ansvarig_förvaltare']
-
-        codeconcept_dict = attach_column_names_to_search_result(codeconcept_attributes,codeconcept_column_names)
-
-
-        result_column_names = ['syfte',
-                            'beskrivning_av_innehållet',
-                            'identifierare',
-                            'titel_på_kodverk',
-                            'ägare_till_kodverk',
-                            'version',
-                            'källa',
-                            'version_av_källa',
-                            'kodverk_variant',
-                            'kategori',
-                            'användning_av_kodverk',
-                            'status',
-                            'uppdateringsintervall',
-                            'ansvarig_förvaltare',
-                            'senaste_ändring',
-                            'giltig_från',
-                            'giltig_tom',
-                            'ändrad_av_id',
-                            'ansvarig_id',
-                            'urval_referens_id',
-                            'underlag',
-                            'länk',
-                            'nyckelord']
-        
-        return_list_dict = []
-        
-        for return_result in exact_kodverk_request:
-            return_list_dict.append(dict(zip(result_column_names, return_result)))
-
-        kodtext_search_result = return_kodtext_related_to_kodverk(kodverk_id)
-
-        kodtext_column_names = ['id',
-                               'annan_kodtext',
-                               'definition',
-                               'kod',
-                               'kodtext',
-                               'position']
-
-        kodtext_dict = attach_column_names_to_search_result(kodtext_search_result,kodtext_column_names)
-
-        externa_kodtext = return_external_kodtext_related_to_kodverk(kodverk_id)
-
-        if all([kodtext['position'] for kodtext in kodtext_dict]):
-            kodtext_dict = sorted(kodtext_dict, key = lambda i: i['position'])
-        elif all([kodtext['kod'] for kodtext in kodtext_dict]):
-            kodtext_dict = sorted(kodtext_dict, key = lambda i: i['kod'])
-        else:
-            kodtext_dict = sorted(kodtext_dict, key = lambda i: i['kodtext'])
-        
-        kodtext_dict = make_dictionary_field_html_safe(kodtext_dict, fields=['definition','kodtext'])        
-
-        return_list_dict = make_dictionary_field_html_safe(return_list_dict, fields=['syfte', 'beskrivning_av_innehållet', 'länk'])           
-
-        template_context = {'kodverk_full': return_list_dict[0],
+        kodverk_queryset = retur_komplett_förklaring_custom_sql(kodverk_id)        
+        kodtext_queryset = get_kodtext_related_to_kodverk(kodverk_id)        
+        template_context = {'kodverk': kodverk_queryset,
                             'kodverk_id' : kodverk_id,
-                            'kodtext_full' : kodtext_dict,
-                            'nyckelord' : nyckelord_string,
-                            'codeconcept' : codeconcept_dict,
-                            'external_kodtext' : externa_kodtext,
+                            'kodtext' : kodtext_queryset,
                             'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)} 
         
         html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
@@ -587,8 +497,7 @@ def return_number_of_recent_comments(request):
 
 def structure_kodverk_queryset_as_json(queryset):
 
-    kodverk = queryset
-
+    kodverk = queryset[0]
     suggestion_dict = []
 
     kodverk_fields = ['id','titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status', 'användning_av_kodverk']
@@ -597,7 +506,6 @@ def structure_kodverk_queryset_as_json(queryset):
     codeableconcept_fields = ['ägare_till_kodverk', 'ansvarig_förvaltare','källa', 'version_av_källa']
 
     for idx, entry in enumerate(kodverk):
-
         suggestion_dict.append({'metadata' : {attr:getattr(entry, attr) for attr in kodverk_fields if attr in kodverk_fields}})
 
         suggestion_dict[idx]['codeable_concept'] = []
@@ -619,8 +527,9 @@ def structure_kodverk_queryset_as_json(queryset):
         else:
             suggestion_dict[idx]['kodverk'].append({'message' : 'No kodtext associated'})
 
-    sorted_date_list = sorted([i[0] for i in kodverk.all().values_list('senaste_ändring')], reverse=True)
     
+    sorted_date_list = sorted([i.senaste_ändring for i in kodverk], reverse=True)
+
     last_modified = {'Last-Modified': sorted_date_list[0].strftime('%Y-%m-%d %H:%M:%S')}
 
     response =  JsonResponse(suggestion_dict, safe=False, json_dumps_params={'ensure_ascii': False})
@@ -630,7 +539,9 @@ def structure_kodverk_queryset_as_json(queryset):
 
 def all_kodverk_and_kodtext_as_json(request):
 
-    kodverk = Kodverk.objects.all().filter(status="Aktiv")
+    kodverk = Kodverk.objects.all().filter(Q(status="Aktiv"),
+                                           Q(kodverk_variant='VGR kodverk')),
+                                          
 
     response = structure_kodverk_queryset_as_json(kodverk)
 

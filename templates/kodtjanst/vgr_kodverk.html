@@ -1,6 +1,5 @@
 {% load zip %}
 
-
 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="mitten-span-left-column text-centered col-centered">
                 
     <div class="row">
@@ -16,21 +15,21 @@
     <tbody>
             <tr>
                 <td colspan="2">Namn</td>
-                <td colspan="6"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+                <td colspan="6"><strong>{{kodverk.titel_på_kodverk}}</strong></td>
             </tr>
             <tr>
                 <td colspan="2">Beskrivning av innehållet</td>
-                <td colspan="6">{{kodverk_full.beskrivning_av_innehållet }}</td>
+                <td colspan="6">{{kodverk.beskrivning_av_innehållet }}</td>
             </tr>
-            {% if "verksamhet" in kodverk_full.användning_av_kodverk %}
+            {% if "verksamhet" in kodverk.användning_av_kodverk %}
                 <tr class="table-warning">
-            {% elif "system" in kodverk_full.användning_av_kodverk %}
+            {% elif "system" in kodverk.användning_av_kodverk %}
                 <tr class="table-blue">
             {% else %}
                 <tr class="table-success">
             {% endif %}
                 <td colspan="2">Användning</td>
-                <td colspan="6">{{kodverk_full.användning_av_kodverk}}</td>
+                <td colspan="6">{{kodverk.användning_av_kodverk}}</td>
             </tr>
             <tr>
                 <td colspan="2">Ägare till kodverket</td>
@@ -40,35 +39,35 @@
                                 {% endfor %}
                 </td>
             </tr>
-            {% if kodverk_full.identifierare %}
+            {% if kodverk.identifierare %}
             <tr>
                 <td colspan="2">Identifierare</td>
-                <td colspan="6">{{kodverk_full.identifierare}}</td>
+                <td colspan="6">{{kodverk.identifierare}}</td>
             </tr>
             {% endif %}
 
 
             <tr>
                 <td colspan="2">Giltig från</td>
-                <td colspan="6">{{kodverk_full.giltig_från}}</td>
+                <td colspan="6">{{kodverk.giltig_från}}</td>
             </tr>
             <tr>
                 <td colspan="2">Giltig tom</td>
-                <td colspan="6">{{kodverk_full.giltig_tom}}</td>
+                <td colspan="6">{{kodverk.giltig_tom}}</td>
             </tr>
             <tr>
                 <td colspan="2">Senaste ändring</td>
-                <td colspan="6">{{kodverk_full.senaste_ändring}}</td>
+                <td colspan="6">{{kodverk.senaste_ändring}}</td>
             </tr>
             <tr>
                 <td colspan="2">Status</td>
-                <td colspan="6">{{kodverk_full.status}}</td>
+                <td colspan="6">{{kodverk.status}}</td>
             </tr>
             <tr>
                 <td colspan="2">Beslutsunderlag dokument</td>
                 <td colspan="6" style="vertical-align:middle;">
-                    {% if  kodverk_full.underlag|length > 0 %}
-                        <a href="/kodtjanst/media/{{kodverk_full.underlag}}" id="underlagfil">
+                    {% if  kodverk.underlag|length > 0 %}
+                        <a href="/kodtjanst/media/{{kodverk.underlag}}" id="underlagfil">
                             <span class="fas fa-file-download fa-2x">
                             </span>                            
                         </a>
@@ -76,13 +75,12 @@
                         Dokumentet saknas för tillfället
                     {% endif %}
                 </td>
-            </tr>
-        
+            </tr>        
             <tr>
                 <td colspan="2">Underlag länk</td>
                 <td colspan="6">
-                {% if kodverk_full.länk|length > 0 %}
-                    <a href="{{kodverk_full.länk}}">{{kodverk_full.länk|slice:":50"}}</a>
+                {% if kodverk.länk|length > 0 %}
+                    <a href="{{kodverk.länk}}">{{kodverk.länk|slice:":50"}}</a>
                 {% else %}
                     Ingen länk
                 {% endif %}
@@ -105,39 +103,42 @@
             </button>
         </div>
     </div>
+    
 
 
     <div class="row justify-content-md-center top-buffer-20 pl-1">
-        <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:100%">
+        <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:95%">
             <thead>
                 <tr>
                     <th>Kod</th>
                     <th>Kodtext</th>
                     <th>                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                        {% if i.definition|length > 1 %}
+                        {% if kodtext.definition|length > 1 %}
                             Definition
-                        {% elif i.annan_kodtext|length > 1 %}
+                        {% elif kodtext.annan_kodtext|length > 1 %}
                             Annan kodtext
                         {% else %}
                             Övrig
                         {% endif %}
                     </th>
+                    <th class="d-none">Position</th>
                 </tr>
             </thead>
             <tbody>
-            {% for i in kodtext_full %}
-            <tr>
-                <td>{{i.kod|default_if_none:"Ingen" }}</td>
-                <td>{{i.kodtext}}</td>
-                <td>{%if i.definition|length > 1 %}
-                        {{i.definition}}
-                    {% elif i.annan_kodtext|length > 1 %}
-                        {{i.annan_kodtext}}
-                    {% else %}
-                        &nbsp;
-                    {% endif %}
-                </td>
-            </tr>
+            {% for i in kodtext %}
+                <tr>
+                    <td>{{i.kod|default_if_none:"Ingen" }}</td>
+                    <td>{{i.kodtext}}</td>
+                    <td>{%if i.definition|length > 1 %}
+                            {{i.definition}}
+                        {% elif i.annan_kodtext|length > 1 %}
+                            {{i.annan_kodtext}}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                    <td class="d-none">{{i.position}}</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>

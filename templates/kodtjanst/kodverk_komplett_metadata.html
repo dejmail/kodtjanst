@@ -4,7 +4,7 @@
 {% load crispy_forms_filters %}
 
 {% block mitten-span %}
-{% if kodverk_full  %}
+{% if kodverk  %}
 
         <div class="row top-buffer-10">
                 <div class="col-12 text-center">
@@ -37,11 +37,11 @@
 
         <!-- Alla metadata attribut -->
 
-        {% if kodverk_full.kodverk_variant == "Externt kodverk hänvisning" %}
+        {% if kodverk.kodverk_variant == "Externt kodverk hänvisning" %}
 
             {% include "externt_kodverk_hanvisning.html" %}
 
-        {% elif kodverk_full.kodverk_variant == "VGR codeable concept" %}
+        {% elif kodverk.kodverk_variant == "VGR codeable concept" %}
 
             {% include "multi_value_attributes.html" %}
 
@@ -90,6 +90,10 @@ function format (d) {
             '<td>Annan kodtext:</td>'+
             '<td>'+d.annan_kodtext+'</td>'+
         '</tr>'+
+        '<tr>'+
+            '<td>Position:</td>'+
+            '<td>'+d.position+'</td>'+
+        '</tr>'+
     '</table>';
 };
 
@@ -112,13 +116,33 @@ function format (d) {
 
  $( document ).ready(function() {
              
-    var table = $('#kodtext_tabell').removeAttr('width').DataTable({
-        fixedColumns: true,
+    var table = $('#kodtext_tabell').DataTable({
+        order: [[3, 'asc']],
+        fixedColumns: false,
         columnDefs: [
-            { width: 50, targets: 0},
-            { width: 50, targets: 1},
-            {targets: 1,
-            className: 'breaklongline'}
+            {
+                name: 'Kod',
+                width: 50, 
+                target: 0
+            },
+            {
+                name: 'Kodtext',
+                width: 50, 
+                target: 1,
+            },
+            {
+                name: 'Övrig',
+                target: 1, 
+                className: 'breaklongline',
+            },
+            {
+                name: 'Position',
+                visible: false, 
+                sortable: false, 
+                target: 2,
+                className: 'notToggleVis'
+
+            },
         ],
         "stateSave" : true,
         "retrieve" : true,
@@ -227,7 +251,7 @@ if (document.body.contains(document.getElementById("ElementId2")) == true) {
 
     document.getElementById("underlagfil").addEventListener("click", function() {
     e.preventDefault();  //stop the browser from following
-    window.location.href = "/kodtjanst/media/{{kodverk_full.underlag}}";
+    window.location.href = "/kodtjanst/media/{{kodverk.underlag}}";
     console.log( "File served" );
     });
 } else {
