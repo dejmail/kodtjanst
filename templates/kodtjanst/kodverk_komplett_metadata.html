@@ -247,10 +247,10 @@ $("#open_verifiera_button").click(function(){
                     });
 });
 
-if (document.body.contains(document.getElementById("ElementId2")) == true) {
+if (document.body.contains(document.getElementById("underlagfil")) == true) {
 
-    document.getElementById("underlagfil").addEventListener("click", function() {
-    e.preventDefault();  //stop the browser from following
+    document.getElementById("underlagfil").addEventListener("click", function(event) {
+    event.preventDefault();  //stop the browser from following
     window.location.href = "{{kodverk.underlag.url}}";
     console.log( "File served" );
     });
