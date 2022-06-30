@@ -45,9 +45,9 @@
                         </td>
                     {% endfor %}
                 {% else %}
-                    <td colspan="2">Beslutsunderlag</td>
+                    <td colspan="2">Beslutsunderlag dokument</td>
                     <td colspan="6">
-                        <a href="{{kodverk.länk}}" target="_blank" rel="noopener noreferrer">
+                        <a href="{{kodverk.underlag.path}}" target="_blank" rel="noopener noreferrer">
                             {{kodverk.länk|truncatechars:50}}
                         </a>
                     </td>
