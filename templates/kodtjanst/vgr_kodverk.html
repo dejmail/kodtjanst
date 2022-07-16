@@ -34,7 +34,7 @@
             <tr>
                 <td colspan="2">Ägare till kodverket</td>
                 <td colspan="6">
-                                {% for attribute in codeconcept %}
+                                {% for attribute in kodverk.codeableconceptattributes_set.all %}
                                     {{attribute.ägare_till_kodverk}}<br>
                                 {% endfor %}
                 </td>
