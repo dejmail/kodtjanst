@@ -47,8 +47,12 @@
                 {% else %}
                     <td colspan="2">Beslutsunderlag dokument</td>
                     <td colspan="6">
-                        <a href="{{kodverk.underlag.url}}" target="_blank" rel="noopener noreferrer">
+                        {% if kodverk.underlag %}
+                            <a href="{{kodverk.underlag.url}}" target="_blank" rel="noopener noreferrer">
                             {{kodverk.underlag.title|truncatechars:50}}
+                        {% else %}
+                            Dokument saknas
+                        {% endif %}
                         </a>
                     </td>
                 {% endif %}

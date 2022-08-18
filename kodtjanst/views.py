@@ -87,16 +87,26 @@ def get_kodtext_related_to_kodverk(url_parameter):
 
 def return_external_kodtext_related_to_kodverk(url_parameter):
 
-    queryset = ExternaKodtext.objects.filter(kodverk_id=url_parameter).values('id',
-                                                                                        'mappad_id',
-                                                                                        'mappad_text',
-                                                                                        'resolving_url')
+    queryset = ExternaKodtext.objects.filter(
+        kodverk_id=url_parameter
+        ).values(
+            'id',
+            'mappad_id',
+            'mappad_text',
+            'resolving_url'
+            )
+
     return queryset
 
 def return_kommentar_related_to_kodverk(url_parameter):
 
-    queryset = ArbetsKommentar.objects.filter(kodverk_id=url_parameter).values('id',
-                                                                                'kommentar')
+    queryset = ArbetsKommentar.objects.filter(
+        kodverk_id=url_parameter
+        ).values(
+            'id',
+            'kommentar'
+            )
+
     return queryset
 
 def attach_column_names_to_search_result(search_result, search_column_names):
@@ -186,8 +196,6 @@ def return_komplett_metadata(request, kodverk_id):
                             'kodtext' : kodtext_queryset,
                             'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)} 
         
-        html = render_to_string(template_name="kodverk_komplett_metadata.html", context=template_context)
-
         return template_context
     else:
         return None
@@ -195,6 +203,7 @@ def return_komplett_metadata(request, kodverk_id):
 def kodverk_komplett_metadata(request, kodverk_id):
     
     if request.is_ajax():
+        
         template_context = return_komplett_metadata(request, kodverk_id) 
         return render(request, "kodverk_komplett_metadata.html", context=template_context)
     elif request.method == 'GET':
