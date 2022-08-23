@@ -204,7 +204,8 @@ def kodverk_komplett_metadata(request, kodverk_id):
     
     if request.is_ajax():
         
-        template_context = return_komplett_metadata(request, kodverk_id) 
+        template_context = return_komplett_metadata(request, kodverk_id)
+        
         return render(request, "kodverk_komplett_metadata.html", context=template_context)
     elif request.method == 'GET':
         template_context = return_komplett_metadata(request, kodverk_id) 
@@ -212,26 +213,6 @@ def kodverk_komplett_metadata(request, kodverk_id):
     else:
         kodverk = Kodverk.objects.none()
         return render(request, "kodverk.html", {'kodverk': kodverk})
-
-
-def extract_columns_from_query_and_return_set(search_result, **kwargs):
-
-    reduced_list = []
-    for record in search_result:
-        if kwargs.get('ind_items'):
-            temp_list = []
-            for i in kwargs.get('ind_items'):
-                temp_list.append(record[i])
-            reduced_list.append(temp_list)
-        if kwargs.get('start')==0:
-            reduced_list.append(record[:kwargs.get('stop')])
-        elif kwargs.get('stop')==0:
-            reduced_list.append(record[kwargs.get('start'):])
-        elif kwargs.get('start') and kwargs.get('stop'):
-            reduced_list.append(record[kwargs.get('start'):kwargs.get('stop')])
-   
-    reduced_set = set([tuple(i) for i in reduced_list])
-    return reduced_set
 
 def return_kodtext_as_json(request):
 
