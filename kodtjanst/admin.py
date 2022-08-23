@@ -306,7 +306,7 @@ class KodverkManager(SimpleHistoryAdmin):
             }   
 
     change_form_template = 'change_form_autocomplete.html'
-    form = KodverkAdminForm    
+    form = KodverkAdminForm
     save_on_top = True
     list_display = ('id', 
                     'titel_på_kodverk',
@@ -319,7 +319,7 @@ class KodverkManager(SimpleHistoryAdmin):
                     'ansvarig_fullname',
                     'clean_källa',
                     'datum_skapat',
-                    'has_underlag')
+                    'has_link')
     list_display_links = ('titel_på_kodverk',)
     exclude = ['ändrad_av',]
     actions = [make_aktiv, make_inaktiv, change_variant_vgr]
@@ -334,7 +334,7 @@ class KodverkManager(SimpleHistoryAdmin):
         ('status', 'version'), 
         ('giltig_från', 'giltig_tom'),
         ('ansvarig'),
-        ('underlag', 'länk'),
+        ('länk'),
         ]}],
         ['Övriga attribut', {
         'classes': ('collapse',),
@@ -403,10 +403,10 @@ class KodverkManager(SimpleHistoryAdmin):
 
     ansvarig_fullname.short_description = "Ansvarig"
 
-    def has_underlag(self, obj):
+    def has_link(self, obj):
 
-        if (obj.underlag != None) and (obj.underlag.name != ''):
-            return format_html(f'''<a href={obj.underlag}>
+        if (obj.länk != None) and (obj.länk != ''):
+            return format_html(f'''<a href={obj.länk}>
                                     <i class="fas fa-file-download">
                                     </i>
                                     </a>''')
@@ -415,7 +415,7 @@ class KodverkManager(SimpleHistoryAdmin):
                                     <i class="fas fa-exclamation-triangle"  style="color:red">
                                     </i>
                                     ''')
-    has_underlag.short_description = "Underlag fil"
+    has_link.short_description = "Länk"
 
     def save_model(self, request, obj, form, change):
         

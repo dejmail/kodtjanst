@@ -45,13 +45,14 @@
                         </td>
                     {% endfor %}
                 {% else %}
-                    <td colspan="2">Beslutsunderlag dokument</td>
+                    <td colspan="2">Länk</td>
                     <td colspan="6">
-                        {% if kodverk.underlag %}
-                            <a href="{{kodverk.underlag.url}}" target="_blank" rel="noopener noreferrer">
-                            {{kodverk.underlag.title|truncatechars:50}}
+                        
+                        {% if kodverk.länk|length > 0 %}
+                            <a href="{{kodverk.länk}}" target="_blank" rel="noopener noreferrer">
+                            {{kodverk.länk|truncatechars:50}}
                         {% else %}
-                            Dokument saknas
+                            Länk saknas
                         {% endif %}
                         </a>
                     </td>
