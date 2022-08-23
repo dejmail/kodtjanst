@@ -110,7 +110,7 @@ class Kodverk(models.Model):
     version = models.FloatField(validators=[MinValueValidator(0.01)], null=True, default=None)
     
     kategori = models.CharField(max_length=255,null=True)
-    underlag = models.FileField(upload_to='',null=True, blank=True)
+    underlag = models.FileField(null=True,blank=True, upload_to='')
     länk = models.URLField(null=True,blank=True)
     kodverk_variant = models.CharField(max_length=26, null=True, blank=True, choices=kodverk_typ, help_text='Kodtext fält kommer ändras efter sparande, beroende på valet.')
     status = models.CharField(max_length=25, blank=True, null=True, choices=statuser)
@@ -138,13 +138,13 @@ class Kodverk(models.Model):
     def get_absolute_url(self):
         return reverse('kodverk_komplett_metadata', kwargs={'kodverk_id' : str(self.id)})
 
-    @property
-    def underlag(self):
-        try:
-            underlag = self.underlag.url
-        except:
-            url=None
-        return url
+    # @property
+    # def underlag(self):
+    #     try:
+    #         underlag = self.underlag.url
+    #     except:
+    #         url=None
+    #     return url
 
 pre_save.connect(has_uploaded_file_been_deleted, sender=Kodverk)
 
