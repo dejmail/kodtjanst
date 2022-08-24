@@ -14,20 +14,20 @@
         <tbody>
                 <tr>
                     <td colspan="1">Namn</td>
-                    <td colspan="1"><strong>{{kodverk_full.titel_på_kodverk}}</strong></td>
+                    <td colspan="1"><strong>{{kodverk.titel_på_kodverk}}</strong></td>
                 </tr>
                 <tr>
                     <td colspan="1">Beskrivning av innehållet</td>
-                    <td colspan="1">{{kodverk_full.beskrivning_av_innehållet }}</td>
+                    <td colspan="1">{{kodverk.beskrivning_av_innehållet }}</td>
                 </tr>
                 <tr>
                     <td colspan="1">Ägare till kodverket</td>
-                    <td colspan="1">{{kodverk_full.ägare_till_kodverk}}</td>
+                    <td colspan="1">{{kodverk.ägare_till_kodverk}}</td>
                 </tr>
-                {% if kodverk_full.länk %}
+                {% if kodverk.länk %}
                 <tr>
                     <td colspan="1">Länk</td>
-                    <td colspan="1"><a href={{kodverk_full.länk}}>{{kodverk_full.länk|truncatechars:50}}</a></td>                    
+                    <td colspan="1"><a href={{kodverk.länk}}>{{kodverk.länk|truncatechars:50}}</a></td>                    
                 </tr>
                 {% endif %}
                 {% if external_kodtext %}
