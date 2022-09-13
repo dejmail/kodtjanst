@@ -28,7 +28,7 @@ SECRET_KEY = 'c8-vxfv$-i!yruqix%jn1!3b6-2#a_wgc=fsym4s@=)lm$q5q1'
 
 ALLOWED_HOSTS = ['vgrinformatik.se', '127.0.0.1', 'localhost']
 
-
+DEFAULT_AUTO_FIELD =  'django.db.models.BigAutoField'
 
 # Application definition
 

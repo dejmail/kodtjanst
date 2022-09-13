@@ -1,3 +1,4 @@
+from http.client import HTTPResponse
 from pdb import set_trace
 import requests
 import re
@@ -15,18 +16,22 @@ from django.shortcuts import render
 from django.template import response
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.forms import Textarea
 
+from django.db.models import F, ExpressionWrapper, DurationField
+
 from simple_history.admin import SimpleHistoryAdmin
 
-from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter, SwedishLettersinKodFilter
+from .custom_filters import DuplicateKodtextFilter, DuplicatKodverkFilter, SwedishLettersinKodFilter, NeedsUpdatingFilter
 from .forms import KodverkAdminForm, MultiMappingForm, KommentarAdminForm, ArbetsKommentarForm
 #ExternaKodtextForm
 from .models import *
 from .models import Kodtext, Kodverk, ArbetsKommentar
+from datetime import datetime
 
 admin.site.site_header = "KOLLI Admin"
 admin.site.site_title = "KOLLI Admin Portal"
@@ -310,20 +315,21 @@ class KodverkManager(SimpleHistoryAdmin):
     save_on_top = True
     list_display = ('id', 
                     'titel_på_kodverk',
+                    'uppdateringsintervall',
+                    'needs_updating',
                     'användning_av_kodverk',
                     'beskrivning_av_innehållet',
                     'status',
                     'kodverk_variant',
                     'version',
                     'clean_ägare',
-                    'ansvarig_fullname',
-                    'clean_källa',
-                    'datum_skapat',
+                    'senaste_ändring',
                     'has_link')
+    
     list_display_links = ('titel_på_kodverk',)
     exclude = ['ändrad_av',]
     actions = [make_aktiv, make_inaktiv, change_variant_vgr]
-    list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status')
+    list_filter = ('kodverk_variant', DuplicatKodverkFilter, 'status', NeedsUpdatingFilter)
     search_fields = ('titel_på_kodverk',)
     history_list_display = ['changed_fields']
     fieldsets = [
@@ -416,6 +422,21 @@ class KodverkManager(SimpleHistoryAdmin):
                                     </i>
                                     ''')
     has_link.short_description = "Länk"
+
+    @admin.display(
+        description='Behöver uppdateras',
+        boolean=True,
+    )
+    def needs_updating(self,obj):
+
+        delta = datetime.now().date()- obj.senaste_ändring
+        logger.info(f'Time difference - {delta}')
+        if (delta.days > 180) & (delta.days < 365) and (obj.uppdateringsintervall == 'Halvårsvis'):
+            return True
+        elif (delta.days > 365) and (obj.uppdateringsintervall == 'Årligen'):
+            return True
+        else:
+            return False
 
     def save_model(self, request, obj, form, change):
         
@@ -551,10 +572,10 @@ class MultiKodtextMappingManager(admin.ModelAdmin):
     
     kodtext_map_to.short_description = 'Kodtext till'
 
+
 admin.site.register(Kodverk, KodverkManager)
 admin.site.register(Kodtext, KodtextManager)
 admin.site.register(ExternaKodtext, ExternaKodtextManager)
-#admin.site.register(ExternaKodverk)
 admin.site.register(Nyckelord, NyckelordManager)
 admin.site.register(ArbetsKommentar, ArbetsKommentarManager)
 admin.site.register(CommentedKodverk, CommentedKodverkManager)

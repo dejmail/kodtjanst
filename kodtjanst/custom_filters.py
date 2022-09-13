@@ -3,6 +3,14 @@ from django.db.models import Count
 
 from pdb import set_trace
 from .models import Kodtext
+from datetime import datetime
+from django.utils import timezone
+
+
+from django.db.models.expressions import ExpressionWrapper, F
+from django.db.models.fields import DurationField
+from django.db.models import Q
+
 
 class DuplicatKodverkFilter(SimpleListFilter):
     """
@@ -48,7 +56,6 @@ class DuplicateKodtextFilter(SimpleListFilter):
 
             return duplicate_objects
 
-
 class SwedishLettersinKodFilter(SimpleListFilter):
 
     title = "Svenska bokstäver i kod"
@@ -69,3 +76,43 @@ class SwedishLettersinKodFilter(SimpleListFilter):
         for letter in ['ÄÅÖ']:
             queryset.filter(kod__icontains=letter)
         return queryset
+
+
+class NeedsUpdatingFilter(SimpleListFilter):
+    title = 'Behövs uppdatering'
+    parameter_name = 'needs_updating'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('True', 'True'),
+            ('False', 'False'),
+        )
+
+    def queryset(self, request, queryset):
+
+        value = self.value()
+        queryset = queryset.annotate(delta=ExpressionWrapper(timezone.now().date() - F('senaste_ändring'), DurationField()))
+
+        if value == 'True':
+            for obj in queryset:
+                if not (
+                    obj.delta.days > 180 and obj.uppdateringsintervall == 'Halvårsvis'
+                ) and not (
+                    obj.delta.days > 365 and obj.uppdateringsintervall == 'Årligen'
+                    ):
+                    queryset = queryset.exclude(id=obj.id)
+            
+            return queryset
+        elif value == 'False':
+            for obj in queryset:
+                if not (
+                    obj.uppdateringsintervall == 'Vid behov'
+                ) and not (
+                    obj.delta.days < 180 and obj.uppdateringsintervall == 'Halvårsvis'
+                ) and not (
+                    (obj.delta.days > 180 and obj.delta.days < 365) and  obj.uppdateringsintervall == 'Årligen'
+                ):
+                    queryset = queryset.exclude(id=obj.id)
+            return queryset
+        else:
+            return queryset
