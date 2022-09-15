@@ -15,6 +15,11 @@ function endpoint_check() {
 
 }
 
+function toggle_element(element_id, status) {
+    var x = document.getElementById(element_id);
+    x.style.display = status;
+    }
+
 const endpoint = endpoint_check();
 
 const delay_by_in_ms = 750
@@ -23,6 +28,7 @@ let scheduled_function = true
 user_input.keyup(function () {
 	
 	$("#mitten-span-middle-column").empty();
+	toggle_element("helpInfo", "none");
 
 	const request_parameters = {
 		
@@ -34,7 +40,7 @@ user_input.keyup(function () {
 	var ajax_call = function (endpoint, request_parameters) {
 		changeBrowserURL('', endpoint_check());
 		$("#term_förklaring_tabell").remove();
-		$("#mitten-span-middle-column").empty();
+		$("#mitten-span-middle-column").empty();		
 		var skapad_url = (endpoint + '?' + Object.keys(request_parameters) + '=' + Object.values(request_parameters));
 		console.log('skapad_url is', skapad_url)
 		$.getJSON(endpoint, request_parameters)
@@ -69,6 +75,8 @@ user_input.keyup(function () {
 	scheduled_function = setTimeout(ajax_call, delay_by_in_ms, endpoint, request_parameters)
 
 });
+
+
 
 document.body.addEventListener("click", function(e) {
 	// e.target was the clicked element

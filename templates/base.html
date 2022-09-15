@@ -67,6 +67,11 @@
                   <path d="M5.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-3-8.5a1 1 0 0 1 1-1c5.523 0 10 4.477 10 10a1 1 0 1 1-2 0 8 8 0 0 0-8-8 1 1 0 0 1-1-1zm0 4a1 1 0 0 1 1-1 6 6 0 0 1 6 6 1 1 0 1 1-2 0 4 4 0 0 0-4-4 1 1 0 0 1-1-1z"></path>
                   </svg>
                 </a>
+
+              <button onclick="scrollToHelp()"type="button" style="font-family: frutiger; background-color:#006298;" class="btn btn-info btn-md">
+                  Hjälp!
+              </button>
+
             {% endblock header_right_column %}
           </div>
         </div>
@@ -79,7 +84,6 @@
         </div>
       </div>
     {% endblock second_header_row %}
-    </div>
   {% endblock header %}
   
   {% block search_bar %}
@@ -106,11 +110,34 @@
   {% endblock mitten-span %}   
   {% block footer %}
   {% endblock footer %}
+
+  {% include "kodtjanst/help_text.html" %}
+
 </div>
 {% block endbody %}
 </body>
 </html>
 {% endblock endbody %}
+
+
 {% block extra_javascript %}
 <script type="text/javascript" src="{% static '/js/main.js' %}"></script>
+
+<script>
+function scrollToHelp()
+{
+  
+  $('#mitten-span-middle-column').empty(); 
+  var x = document.getElementById("helpInfo");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+  var elmnt = document.getElementById("helpInfo");
+  elmnt.scrollIntoView({behavior : 'smooth'});
+}
+
+</script>
+
 {% endblock extra_javascript %}

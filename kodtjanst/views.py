@@ -54,13 +54,8 @@ def retur_general_sök(url_parameter):
                                       Q(nyckelord__nyckelord__icontains=url_parameter) |
                                       Q(kodtext__kodtext__icontains=url_parameter) |
                                       Q(kodtext__annan_kodtext__icontains=url_parameter) |
-                                      Q(kodtext__definition__icontains=url_parameter)).distinct().values('id',
-                                                                                                        'titel_på_kodverk',
-                                                                                                        'beskrivning_av_innehållet',
-                                                                                                        'länk',
-                                                                                                        'kodverk_variant',
-                                                                                                        'användning_av_kodverk')
-
+                                      Q(kodtext__definition__icontains=url_parameter)).distinct()
+    
     return queryset
 
 def get_codeset_by_id(url_parameter):
@@ -135,8 +130,8 @@ def make_dictionary_field_html_safe(result_list_of_dictionaries=[], fields=[]):
 
     for index, entry in enumerate(result_list_of_dictionaries):
         for field in fields:
-            if entry.get(f'{field}') is not None:
-                result_list_of_dictionaries[index].update({f'{field}' : format_html(entry.get(f'{field}'))})
+            if entry[0].get(field) is not None:
+                result_list_of_dictionaries[index][field] = format_html(entry[0].get(field))
     return result_list_of_dictionaries
 
 def kodverk_sok(request):
@@ -148,8 +143,6 @@ def kodverk_sok(request):
             queryset = retur_alla_kodverk(url_parameter)
         else:
             queryset = retur_general_sök(url_parameter)
-        
-        # search_result = highlight_search_term_i_definition(url_parameter, search_result)
 
         html = render_to_string(
             template_name="kodverk_partial_result.html", context={'kodverk': queryset,

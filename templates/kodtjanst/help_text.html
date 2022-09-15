@@ -1,0 +1,134 @@
+{% block endbody %}
+{% load static %}
+
+<div id="helpInfo" style="display: none;"> 
+  <div class="container-fluid">
+  <div class="row" style="text-align: center;">
+   <div class="col-sm-1"></div> 
+  <div class="col-sm-3">
+    <h4>Om KOLLI</h4>
+      <div class="card">
+      <div class="card-body text-justify" style="font-family: Calibri;">
+        KOLLI är Västra Götalandsregionens kodverkstjänst, en sökfunktion över kodverk inom hälso- och sjukvård i regionen.  
+
+        Med kodverk menas ett urval av värden som valalternativ för att svara på en fråga och som syns i IT-system i form av rullistor, kryssrutor och liknande.  
+        
+        Kodverken representerar olika urval inom olika domäner som är relaterade till vård.  
+        
+        KOLLI innehåller dels kodverk som enheten Informatik och standardisering har tagit fram och förvaltar (kodverk som inleds med VGRKV_), dels kodverk som ägs och förvaltas utanför regionen (ex Snomed CT urval). 
+        
+        KOLLI är tänkt att användas som uppslagsverk och stöd för en enhetlig kodverkshantering inom regionen. Oavsett vilket system som används ska alternativen vara lika och koderna ska kunna återanvändas. Om kodverk behöver anpassas efter din verksamhet, vänligen kontakta oss via informatik@vgregion.se eller använd lämna synpunkter-knappen på respektive kodverk. 
+      </div>
+    </div>
+
+    <div class="top-buffer-15">
+    <h4>Kontakta oss</h4>
+    <div class="card">
+      <div class="card-body text-justify" style="font-family: Calibri;">
+        Om ni har frågor eller funderingar gällande KOLLI kodverkstjänst 
+        får ni gärna maila oss på <span style="color:blue">informatik@vgregion.se</span>
+      </div>
+    </div>
+    </div>
+    
+
+</div>
+
+  <div class="col-sm-7">
+    <h4>Använda KOLLI</h4>
+    <div class="card">
+      <div class="card-body text-justify" style="font-family: Calibri;" ><p>
+        <p class="p">
+
+            Skriv in sökord i sökfältet. En lista med kodverk som innehåller sökordet visas under sökfältet. Sökresultatet visar kodverkets namn och beskrivning av innehållet. 
+
+            När man söker i KOLLI görs sökningen i kodverkets namn, beskrivning och värden (valalternativen). 
+            
+            Det finns tre varianter av kodverk i KOLLI. I sökresultatet märks varianterna med färg. 
+            
+            När man klickar på ett kodverk i sökresultatet visas all information om kodverket. Följande rubriker används:
+        </p>            
+
+        <table class="table table-striped table-bordered table-help">
+            
+            <table class="table table-bordered">
+            <tbody>
+                <tr>
+                <td>Namn</td>
+                <td><span style="font-weight:bold">VGRKV_xx </span>Kodverk som börjar med VGRKV i namnet förvaltas av Informatik och standardisering. <span style="font-weight:bold">SNOMED CT </span>Kodverk som börjar med Snomed CT förvaltas av Socialstyrelsen.  Övriga kodverk som finns i KOLLI är namngivna enligt förvaltande organisation av kodverket.</td>
+                </tr>
+              <tr>
+                <td>VGRKV_xx</td>
+                <td>Kodverk som börjar med VGRKV i namnet förvaltas av Informatik och standardisering. </td>
+              </tr>
+              <tr>
+                <td>SNOMED CT</td>
+                <td>Kodverk som börjar med Snomed CT förvaltas av Socialstyrelsen.</td>
+              </tr>
+              <tr>
+                <td class="text-left">Beskrivning av innehållet</td>
+                <td>Kortfattad beskrivning av hur kodverket ska användas och ibland även var koderna är tagna ifrån. </td>
+              </tr>
+              <tr>
+                <td>Användning</td>
+                <td><span style="font-weight:bold">Kodverk som är en del av VGRs referensinformationsarkitektur. </span>
+                    <p class="table-success">
+                        Dessa kodverk är kopplade till referensinformationsmodellen som är framtagen av enheten Informatik och standardisering. Referensinformationsmodellen är en modell över information som används inom hälso- och sjukvården inom regionen. Man kan se det som en ritning över begrepp och kodverk. Dessa kodverk ska kunna användas oavsett domän så länge det handlar om samma sorts information. Det kan hända att kodverken kan vara svåra att omsätta i systemkonfiguration på egen hand. Dessa kodverk rekommenderas men man kan behöva hjälp med att tolka och göra  urval. Exempelvis när resultatet pekar på ett Snomed CT-begrepp (Snomed CT är ett internationellt begreppssystem) med många underliggande begrepp, i vissa fall hundratals, så rekommenderar IoS att verksamheten väljer ut begrepp som är aktuella.
+                    </p>
+                        
+                    <span style="font-weight:bold">Kodverk som är anpassade efter verksamhet. </span>
+                    
+                    <p class="table-warning">
+                        Dessa kodverk har utgått från referenskodverken men har anpassats efter verksamhetens behov. Till exempel kan referenskodverket innehålla 100 värden men verksamheten har bara behov för 10 av dessa. Då sparas det i KOLLI som ett eget kodverk, anpassad för just en specifik verksamhet.  Dessa kodverk kan användas men inte justeras på egen hand. Vid behov av att anpassa kodverket efter verksamheten, kontakta enheten via <a href="mailto:informatik@vgregion.se" target="_blank" rel="noopener noreferrer">informatik@vgregion.se</a> eller ”lämna synpunkter”-knappen. 
+                    </p>
+                        
+                    
+                        <span style="font-weight:bold">Kodverk som är anpassade efter system. </span>
+                        <p class="table-blue">    
+                        Dessa kodverk är framtagna efter systemets förutsättningar och kan vara grundade i referenskodverken.  Dessa kodverk kan användas men inte justeras på egen hand. Vid behov av att anpassa kodverket efter verksamheten, kontakta enheten via <a href="mailto:informatik@vgregion.se" target="_blank" rel="noopener noreferrer">informatik@vgregion.se</a> eller ”lämna synpunkter”-knappen.
+                    </p>
+                    </td>
+              </tr>
+              <tr>
+                <td class="text-left">Ägare till kodverket</td>
+                <td>Anger vem som äger och förvaltar kodverket. </td>
+              </tr>
+              <tr>
+                <td>Giltig från</td>
+                <td>Startdatum för kodverkets giltighetsperiod. </td>
+              </tr>
+              <tr>
+                <td>Giltig tom</td>
+                <td>Slutdatum för kodverkets giltighetsperiod. </td>
+              </tr>
+              <tr>
+                <td>Senast ändring</td>
+                <td>Datum när senaste uppdatering har gjorts. </td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>Endast aktiva kodverk syns i KOLLI. </td>
+              </tr>
+              <tr>
+                <td>Beslutsunderlag</td>
+                <td>Beslutsunderlag i form av word-fil för nedladdning. </td>
+              </tr>
+              <tr>
+                <td>Underlag länk</td>
+                <td>Beslutsunderlag länkat till enhetens SOFIA-yta. Endast tillgängliga för de med VGR-nät. </td>
+              </tr>
+            </tbody>
+            </table>
+        
+      </div>
+  </div>
+</div>
+  
+  <div class="col-sm-1"></div> 
+  </div>
+  
+</div>
+</div>
+
+
+{% endblock endbody %}

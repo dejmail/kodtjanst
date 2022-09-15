@@ -23,7 +23,7 @@
                     <tr class="table-success">
                 {% endif %}
                     <td><a href="{% url 'kodverk_komplett_metadata' info.id %}" id={{info.id}}>{{info.titel_på_kodverk}}</td>
-                    <td>{{info.beskrivning_av_innehållet}}</td>
+                    <td>{{info.beskrivning_av_innehållet_html}}</td>
                 </tr>
             {% endfor %}    
             </tbody>

@@ -8,6 +8,7 @@ from django.urls import reverse
 from pdb import set_trace
 import datetime
 import os
+from kodtjanst.utils import make_string_html_safe
 
 from simple_history.models import HistoricalRecords
 
@@ -131,6 +132,10 @@ class Kodverk(models.Model):
 
     def get_absolute_url(self):
         return reverse('kodverk_komplett_metadata', kwargs={'kodverk_id' : str(self.id)})
+
+    @property
+    def beskrivning_av_innehållet_html(self):
+        return make_string_html_safe(self.beskrivning_av_innehållet)
 
 class CodeableConceptAttributes(models.Model):
 
