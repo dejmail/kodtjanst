@@ -23,40 +23,26 @@
                 <td colspan="6">{{kodverk.beskrivning_av_innehållet}}</td>
             </tr>
             <tr>
-                <td colspan="2">Ägare till kodverket</td>
-                <td colspan="6">{{kodverk.ägare_till_kodverk}}</td>
-            </tr>
-            <tr>
-                {% if kodverk.codeableconceptattributes_set|length > 0 %}
-                    <td colspan="2">Källa</td>
-                    {% for entry in  kodverk.codeableconceptattributes_set.all %}
-                        <td colspan="6">
-                            {% with källa=entry.källa|split:'=' %}
-                                {% if källa.länk %}
-                                    <a href="{{källa.länk}}" target="_blank" rel="noopener noreferrer">
-                                        {{källa.klartext|truncatechars:50}}
-                                    </a>
-                                {% elif källa.klartext %}
-                                    {{källa.klartext|truncatechars:50}}
-                                {% else %}
-                                    {{källa}}
-                                {% endif %}
-                            {% endwith %}
-                        </td>
-                    {% endfor %}
-                {% else %}
-                    <td colspan="2">Länk</td>
+                    <td colspan="2">Ägare till kodverket</td>
+                {% if kodverk.codeableconceptattributes_set.all %}
                     <td colspan="6">
-                        
-                        {% if kodverk.länk|length > 0 %}
-                            <a href="{{kodverk.länk}}" target="_blank" rel="noopener noreferrer">
-                            {{kodverk.länk|truncatechars:50}}
-                        {% else %}
-                            Länk saknas
-                        {% endif %}
-                        </a>
+                {% for entry in  kodverk.codeableconceptattributes_set.all %}
+                        {{entry.ägare_till_kodverk}}
+                {% endfor %}
                     </td>
                 {% endif %}
+            </tr>
+            <td colspan="2">Länk</td>
+            <td colspan="6">
+            {% if kodverk.länk|length > 0 %}
+                <a href="{{kodverk.länk}}" target="_blank" rel="noopener noreferrer">
+                {{kodverk.länk|truncatechars:50}}</a>
+            {% else %}
+                Länk saknas
+            {% endif %}
+                
+            </td>
+            
             </tr>
     </tbody>
     </table>

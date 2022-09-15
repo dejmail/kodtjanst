@@ -22,7 +22,13 @@
                 </tr>
                 <tr>
                     <td colspan="1">Ägare till kodverket</td>
-                    <td colspan="1">{{kodverk.ägare_till_kodverk}}</td>
+                    {% if kodverk.codeableconceptattributes_set.all %}
+                        <td colspan="1">
+                    {% for entry in  kodverk.codeableconceptattributes_set.all %}
+                            {{entry.ägare_till_kodverk}}
+                    {% endfor %}
+                        </td>
+                    {% endif %}
                 </tr>
                 {% if kodverk.länk %}
                 <tr>

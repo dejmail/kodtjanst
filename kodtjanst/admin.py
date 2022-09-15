@@ -37,6 +37,9 @@ admin.site.site_header = "KOLLI Admin"
 admin.site.site_title = "KOLLI Admin Portal"
 admin.site.index_title = "Välkommen till KOLLI Portalen"
 
+import logging
+logger = logging.getLogger(__name__)
+
 class KodtextManager(SimpleHistoryAdmin):
 
     list_display = ('id',
