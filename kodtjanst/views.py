@@ -63,7 +63,7 @@ def retur_general_sök(url_parameter):
 
     return queryset
 
-def retur_komplett_förklaring_custom_sql(url_parameter):
+def get_codeset_by_id(url_parameter):
 
     queryset = Kodverk.objects.get(
         id=url_parameter
@@ -189,8 +189,9 @@ def return_komplett_metadata(request, kodverk_id):
 
     if kodverk_id:
 
-        kodverk_queryset = retur_komplett_förklaring_custom_sql(kodverk_id)        
-        kodtext_queryset = get_kodtext_related_to_kodverk(kodverk_id)        
+        kodverk_queryset = get_codeset_by_id(kodverk_id)
+        kodtext_queryset = get_kodtext_related_to_kodverk(kodverk_id)
+
         template_context = {'kodverk': kodverk_queryset,
                             'kodverk_id' : kodverk_id,
                             'kodtext' : kodtext_queryset,
