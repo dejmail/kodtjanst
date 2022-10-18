@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {# start of the row containing the search bar #}
 {% block search_bar %}
 <div class="container-fluid">
@@ -14,9 +13,19 @@
 	{% block search-middle-column %}
 		<div class="col-6" id="search-middle-column">
 			<form class="form-inline" onsubmit="return false;">
-			<i id="search-icon" class="fas fa-search" style="position:relative; left:-0.5%;" aria-hidden="true"></i>
-			<input id="user-input" class="form-control form-control-md" style="flex:2;" type="text" placeholder="Sök" aria-label="Sök">
+				<i id="search-icon" class="fas fa-search" style="position:relative; left:-0.5%;" aria-hidden="true"></i>
+				<input id="user-input" class="form-control form-control-md" style="flex:2;" type="text" placeholder="Sök" aria-label="Sök">
 			</form>
+
+			<div class="row justify-content-between mt-2" id="codeset_letter_filter">
+					{% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'|make_list %}
+							<div class="d-flex flex-wrap">
+								<a href="{% url 'kodverk_sok'  %}?q={{letter}}&filter=True">
+									{{letter}}
+								</a>
+							</div>
+					{% endfor %}
+			</div>
 		</div>
 	{% endblock search-middle-column %}
 

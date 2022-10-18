@@ -22,61 +22,97 @@ function toggle_element(element_id, status) {
 
 const endpoint = endpoint_check();
 
-const delay_by_in_ms = 750
-let scheduled_function = true
+function search_ajax_call(endpoint, request_parameters, skapad_url) {
 
-user_input.keyup(function () {
+		changeBrowserURL('', endpoint_check());
+		$("#term_förklaring_tabell").remove();
+		$("#mitten-span-middle-column").empty();
+		if(typeof skapad_url !== 'undefined'){
+			var skapad_url = (endpoint + skapad_url);
+		} else {
+			var skapad_url = (endpoint + '?q=' + request_parameters);
+		}
+		console.log('skapad_url is', skapad_url)
+
+		$.ajax({
+			type: "GET",
+			dataType: "html",
+			url: skapad_url,
+		}).done(function(data, textStatus, jqXHR) {
+			$("#mitten-span-middle-column").empty();
+			//var data = data.replace('\n','').replace('  ', '').replace(/[\r\n]/gm, '');
+			document.getElementById('user-input').value = '';
+			clean_data = JSON.parse(data).payload.replaceAll('\n','');
+			$('#mitten-span-middle-column').html(clean_data);
+			
+			changeBrowserURL(response.payload, skapad_url);
+			// fade out the target_div, then:
+			target_div.fadeTo('fast', 0).promise().then(() => {
+				// replace the HTML contents
+				target_div.html(response.payload);
+				// fade-in the div with new contents
+				target_div.fadeTo('fast', 1);
+				// stop animating search icon
+				search_icon.removeClass('blink');
+				popStateHandler();
+			})
+		})
+		.fail(function(data,textStatus,jqXHR) {        
+			  $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R");
+			});
+		};
+
+		  
+		// $.getJSON(endpoint, request_parameters)
+		// 	.done(response => {
+		// 		console.log("document.URL", document.URL)
+		//         console.log("endpoint", endpoint);
+		// 		changeBrowserURL(response.payload, skapad_url);
+		// 		// fade out the target_div, then:
+		// 		target_div.fadeTo('fast', 0).promise().then(() => {
+		// 			// replace the HTML contents
+		// 			target_div.html(response.payload);
+		// 			// fade-in the div with new contents
+		// 			target_div.fadeTo('fast', 1);
+		// 			// stop animating search icon
+		// 			search_icon.removeClass('blink');
+		// 			popStateHandler();
+		// 		})
+		// 	});
+		// popStateHandler();
+	// }
+
+function debounce( callback, delay ) {
+		let timeout;
+		return function() {
+			clearTimeout( timeout );
+			timeout = setTimeout( callback, delay );
+		}
+	}
+
+const searchInput = document.getElementById("user-input");
+
+//user_input.keyup(function () {
+function send_search() {
 	
 	$("#mitten-span-middle-column").empty();
 	toggle_element("helpInfo", "none");
-
-	const request_parameters = {
-		
-		q: $(this).val() // value of user_input: the HTML element with ID user-input
-	}
-	
-	if (request_parameters.q.length > 1) {
-
-	var ajax_call = function (endpoint, request_parameters) {
-		changeBrowserURL('', endpoint_check());
-		$("#term_förklaring_tabell").remove();
-		$("#mitten-span-middle-column").empty();		
-		var skapad_url = (endpoint + '?' + Object.keys(request_parameters) + '=' + Object.values(request_parameters));
-		console.log('skapad_url is', skapad_url)
-		$.getJSON(endpoint, request_parameters)
-			.done(response => {
-				console.log("document.URL", document.URL)
-		        console.log("endpoint", endpoint);
-				changeBrowserURL(response, skapad_url);
-				// fade out the target_div, then:
-				target_div.fadeTo('fast', 0).promise().then(() => {
-					// replace the HTML contents
-					target_div.html(response);
-					// fade-in the div with new contents
-					target_div.fadeTo('fast', 1);
-					// stop animating search icon
-					search_icon.removeClass('blink');
-					popStateHandler();
-				})
-			});
-		popStateHandler();
-	}
-} 
-	
 	// start animating the search icon with the CSS class
 	search_icon.addClass('blink')
+		
+	if (searchInput.value.length > 1) {
+		var ajax_call = search_ajax_call(
+			endpoint,
+			searchInput.value
+		);
+	} 
+	
+	};
 
-	// if scheduled_function is NOT false, cancel the execution of the function
-	if (scheduled_function) {
-		clearTimeout(scheduled_function)
-	}
-
-	// setTimeout returns the ID of the function to be executed
-	scheduled_function = setTimeout(ajax_call, delay_by_in_ms, endpoint, request_parameters)
-
-});
-
-
+document.getElementById("user-input").addEventListener(
+		"keyup",
+		debounce(send_search, 500 )
+	);
 
 document.body.addEventListener("click", function(e) {
 	// e.target was the clicked element
@@ -101,16 +137,17 @@ document.body.addEventListener("click", function(e) {
 function getPage(link_url) {
 
 	console.log('entering ajax getPage function');
-	
 	$.ajax({
 		type: "GET",
 		dataType: "html",
 		url: link_url,
 	}).done(function(data, textStatus, jqXHR) {
 		$("#mitten-span-middle-column").empty();
-		var data = data.replace('\n','').replace('  ', '').replace('\"', "");
-		$('#mitten-span-middle-column').html(data.slice(1,-1));
-		changeBrowserURL(data, this.url);
+		//var data = data.replace('\n','').replace('  ', '').replace(/[\r\n]/gm, '');
+		document.getElementById('user-input').value = '';
+		clean_data = JSON.parse(data).payload.replaceAll('\n','');
+		$('#mitten-span-middle-column').html(clean_data);
+		changeBrowserURL(clean_data, this.url);
 	}).fail(function(data,textStatus,jqXHR) {        
 		  $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R");
 		});

@@ -58,6 +58,17 @@ def retur_general_sök(url_parameter):
     
     return queryset
 
+
+def return_codesets_by_letter(url_parameter):
+
+    vgrkv_filter = Kodverk.objects.filter(Q(status='Aktiv'),Q(titel_på_kodverk__istartswith=f'VGRKV_{url_parameter}')).distinct()
+    letter_filter = Kodverk.objects.filter(Q(status='Aktiv'),Q(titel_på_kodverk__istartswith=url_parameter)).distinct()
+
+    queryset = vgrkv_filter | letter_filter
+    
+    return queryset
+
+
 def get_codeset_by_id(url_parameter):
 
     queryset = Kodverk.objects.get(
@@ -136,19 +147,38 @@ def make_dictionary_field_html_safe(result_list_of_dictionaries=[], fields=[]):
 
 def kodverk_sok(request):
     url_parameter = request.GET.get("q")
-        
-    if request.is_ajax():
+    filter = request.GET.get("filter")
 
+    if request.is_ajax():
+        
         if url_parameter == '*all':
             queryset = retur_alla_kodverk(url_parameter)
         else:
             queryset = retur_general_sök(url_parameter)
 
         html = render_to_string(
-            template_name="kodverk_partial_result.html", context={'kodverk': queryset,
-                                                                  'searched_for_term' : url_parameter})
+            template_name="kodverk_partial_result.html", context={
+                'kodverk': queryset,
+                'searched_for_term' : url_parameter
+                }
+                )
+        
+        if filter == 'True':
+            
+            queryset = return_codesets_by_letter(url_parameter)
 
-        return JsonResponse(data=html, safe=False)
+            html = render_to_string(
+                template_name="kodverk_partial_result.html", context={
+                    'kodverk': queryset,
+                    'searched_for_term' : url_parameter
+                    }
+                    )
+
+        
+        #html = html.replace('\"','').strip('\n')
+        #re.sub('\r\n','', html)
+
+        return JsonResponse(data={'payload' : html}, safe=True)
 
     # elif request.method == 'GET':
     #     data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
@@ -484,7 +514,7 @@ def structure_kodverk_queryset_as_json(queryset):
     kodverk = queryset[0]
     suggestion_dict = []
 
-    kodverk_fields = ['id','titel_på_kodverk', 'syfte', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status', 'användning_av_kodverk']
+    kodverk_fields = ['id','titel_på_kodverk', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status', 'användning_av_kodverk','länk']
     kodtext_fields = ['id','kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
     externa_kodtext_fields = ['mappad_id', 'mappad_text', 'resolving_url']
     codeableconcept_fields = ['ägare_till_kodverk', 'ansvarig_förvaltare','källa', 'version_av_källa']
@@ -524,8 +554,7 @@ def structure_kodverk_queryset_as_json(queryset):
 def all_kodverk_and_kodtext_as_json(request):
 
     kodverk = Kodverk.objects.all().filter(Q(status="Aktiv"),
-                                           Q(kodverk_variant='VGR kodverk')),
-                                          
+                                           Q(kodverk_variant='VGR kodverk'))
 
     response = structure_kodverk_queryset_as_json(kodverk)
 
