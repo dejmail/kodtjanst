@@ -131,7 +131,7 @@ function format (d) {
                 target: 1,
             },
             {
-                name: 'Övrig',
+                name: 'Definition',
                 target: 1, 
                 className: 'breaklongline',
             },
@@ -147,7 +147,7 @@ function format (d) {
         "stateSave" : true,
         "retrieve" : true,
         "initComplete": function(){ 
-        $("#kodtext_tabell").show(); 
+            $("#kodtext_tabell").show(); 
     },
         "language": {
             "url": "{% url 'translation_text' %}",

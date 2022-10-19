@@ -40,16 +40,16 @@ function search_ajax_call(endpoint, request_parameters, skapad_url) {
 			url: skapad_url,
 		}).done(function(data, textStatus, jqXHR) {
 			$("#mitten-span-middle-column").empty();
-			//var data = data.replace('\n','').replace('  ', '').replace(/[\r\n]/gm, '');
-			document.getElementById('user-input').value = '';
-			clean_data = JSON.parse(data).payload.replaceAll('\n','');
-			$('#mitten-span-middle-column').html(clean_data);
+			//document.getElementById('user-input').value = '';
+			//debugger;
+			//clean_data = data.payload.replaceAll('\n','');
+			$('#mitten-span-middle-column').html(data);
 			
-			changeBrowserURL(response.payload, skapad_url);
+			changeBrowserURL(data, skapad_url);
 			// fade out the target_div, then:
 			target_div.fadeTo('fast', 0).promise().then(() => {
 				// replace the HTML contents
-				target_div.html(response.payload);
+				target_div.html(data);
 				// fade-in the div with new contents
 				target_div.fadeTo('fast', 1);
 				// stop animating search icon
@@ -62,26 +62,6 @@ function search_ajax_call(endpoint, request_parameters, skapad_url) {
 			});
 		};
 
-		  
-		// $.getJSON(endpoint, request_parameters)
-		// 	.done(response => {
-		// 		console.log("document.URL", document.URL)
-		//         console.log("endpoint", endpoint);
-		// 		changeBrowserURL(response.payload, skapad_url);
-		// 		// fade out the target_div, then:
-		// 		target_div.fadeTo('fast', 0).promise().then(() => {
-		// 			// replace the HTML contents
-		// 			target_div.html(response.payload);
-		// 			// fade-in the div with new contents
-		// 			target_div.fadeTo('fast', 1);
-		// 			// stop animating search icon
-		// 			search_icon.removeClass('blink');
-		// 			popStateHandler();
-		// 		})
-		// 	});
-		// popStateHandler();
-	// }
-
 function debounce( callback, delay ) {
 		let timeout;
 		return function() {
@@ -92,7 +72,6 @@ function debounce( callback, delay ) {
 
 const searchInput = document.getElementById("user-input");
 
-//user_input.keyup(function () {
 function send_search() {
 	
 	$("#mitten-span-middle-column").empty();
@@ -106,7 +85,6 @@ function send_search() {
 			searchInput.value
 		);
 	} 
-	
 	};
 
 document.getElementById("user-input").addEventListener(
@@ -115,19 +93,19 @@ document.getElementById("user-input").addEventListener(
 	);
 
 document.body.addEventListener("click", function(e) {
+	
 	// e.target was the clicked element
-	if(e.target && e.target.nodeName == "A") {
+	if( (e.target && e.target.nodeName == "A") || (e.target.parentNode == 'A') ) {
 
-		if (e.target.hostname == currentPage) {	
+		if (e.target.hostname == currentPage || e.target.parentNode.hostname == currentPage) {	
 			// catch only internal A clicks, allow external links to proceed
 			// Stop the browser redirecting to  the HREF value.
-			e.preventDefault();    
+			e.preventDefault();
 			console.log("sending", e.target.id, "ID to URL", e.target.href);
 			// Attach event listeners for browser history and hash changes.
 		
-			//changeBrowserURL(null, e.target.href);            
+			//changeBrowserURL(null, e.target.href);
 			// Get page and replace current content.
-			//debugger;
 			getPage(e.target.href);
 			popStateHandler();
 		}
@@ -143,11 +121,10 @@ function getPage(link_url) {
 		url: link_url,
 	}).done(function(data, textStatus, jqXHR) {
 		$("#mitten-span-middle-column").empty();
-		//var data = data.replace('\n','').replace('  ', '').replace(/[\r\n]/gm, '');
-		document.getElementById('user-input').value = '';
-		clean_data = JSON.parse(data).payload.replaceAll('\n','');
-		$('#mitten-span-middle-column').html(clean_data);
-		changeBrowserURL(clean_data, this.url);
+		var data = data.replace('\n','').replace('  ', '').replace('/[\r\n]/gm', '');
+		//document.getElementById('user-input').value = '';
+		$('#mitten-span-middle-column').html(data);
+		changeBrowserURL(data, this.url);
 	}).fail(function(data,textStatus,jqXHR) {        
 		  $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R");
 		});
@@ -180,8 +157,7 @@ function popStateHandler() {
 	  console.log('popStateHandler  - history.pushState variable exists');
 	  window.addEventListener("popstate", function(e) {
 		// Get the URL from the address bar and fetch the page.
-		console.log('popstateHandler eventlistener fired, next stop getPage function')
-		//debugger;
+		console.log('popstateHandler eventlistener fired, next stop getPage function');
 		$('#mitten-span-middle-column').html(history.state);
 		//getPage(document.URL);
 	  });

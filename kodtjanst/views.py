@@ -178,7 +178,7 @@ def kodverk_sok(request):
         #html = html.replace('\"','').strip('\n')
         #re.sub('\r\n','', html)
 
-        return JsonResponse(data={'payload' : html}, safe=True)
+        return HttpResponse(html)
 
     # elif request.method == 'GET':
     #     data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
@@ -229,8 +229,9 @@ def kodverk_komplett_metadata(request, kodverk_id):
     if request.is_ajax():
         
         template_context = return_komplett_metadata(request, kodverk_id)
-        
         return render(request, "kodverk_komplett_metadata.html", context=template_context)
+
+
     elif request.method == 'GET':
         template_context = return_komplett_metadata(request, kodverk_id) 
         return render(request, "kodverk_komplett_metadata_direct_get.html", context=template_context)
@@ -260,6 +261,7 @@ def return_translation_text(request):
                           "sLoadingRecords": "Kodtext laddar...",
                           "sProcessing": "Arbetar...",
                           "sSearch": "Sök",
+                          "None" : "Ingen",
                           "sZeroRecords": "Inga resultat",
                           "oPaginate": {
                             "sFirst": "Första",

@@ -90,45 +90,25 @@
             </button>
         </div>
     </div>
-    
-
 
     <div class="row justify-content-md-center top-buffer-20 pl-1">
-        <table id="kodtext_tabell" name="kodtext_tabell" class="display" style="width:95%">
+        <table id="kodtext_tabell" name="kodtext_tabell" style="width:95%">
             <thead>
-                <tr>
-                    <th>Kod</th>
-                    <th>Kodtext</th>
-                    <th>                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                        {% if kodtext.definition|length > 1 %}
-                            Definition
-                        {% elif kodtext.annan_kodtext|length > 1 %}
-                            Annan kodtext
-                        {% else %}
-                            Övrig
-                        {% endif %}
-                    </th>
-                    <th class="d-none">Position</th>
-                </tr>
+                <th>Kod</th>
+                <th>Kodtext</th>
+                <th>Definition</th>
+                <th class="d-none">Position</th>
             </thead>
             <tbody>
-            {% for i in kodtext %}
+            {% for i in kodtext.all %}
                 <tr>
                     <td>{{i.kod|default_if_none:"Ingen" }}</td>
                     <td>{{i.kodtext}}</td>
-                    <td>{%if i.definition|length > 1 %}
-                            {{i.definition}}
-                        {% elif i.annan_kodtext|length > 1 %}
-                            {{i.annan_kodtext}}
-                        {% else %}
-                            &nbsp;
-                        {% endif %}
-                    </td>
+                    <td>{{i.definition|default_if_none:"Ingen"}}</td>
                     <td class="d-none">{{i.position}}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
 </div>

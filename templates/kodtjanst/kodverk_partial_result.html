@@ -47,17 +47,14 @@
     } else if ('{{searched_for_term}}'.length > 2) {
         console.log("Results table has loaded!");
         const $box = document.getElementById('myTable');
-
         const regex = new RegExp('{{searched_for_term}}', 'gi');
-
         let text = $box.innerHTML;
         text = text.replace(/(<mark class="highlight">|<\/mark>)/gim, '');
-
         const newText = text.replace(regex, '<mark class="highlight">$&</mark>');
         $box.innerHTML = newText;
-
+        $("#definition_table").removeClass('d-none');
     }
-
+    
 </script>
 
 {% endblock extra_javascript %}
