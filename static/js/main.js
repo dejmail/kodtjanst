@@ -95,7 +95,7 @@ document.getElementById("user-input").addEventListener(
 document.body.addEventListener("click", function(e) {
 	
 	// e.target was the clicked element
-	if( (e.target && e.target.nodeName == "A") || (e.target.parentNode == 'A') ) {
+	if( (e.target && e.target.nodeName == "A") || (e.target.parentNode.nodeName == 'A') ) {
 
 		if (e.target.hostname == currentPage || e.target.parentNode.hostname == currentPage) {	
 			// catch only internal A clicks, allow external links to proceed
@@ -106,7 +106,12 @@ document.body.addEventListener("click", function(e) {
 		
 			//changeBrowserURL(null, e.target.href);
 			// Get page and replace current content.
-			getPage(e.target.href);
+			if (e.target.href) {
+				getPage(e.target.href);
+			} else if (e.target.parentNode.href){
+				getPage(e.target.parentNode.href);
+			}
+			
 			popStateHandler();
 		}
 	}
