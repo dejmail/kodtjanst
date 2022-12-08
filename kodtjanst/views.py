@@ -231,7 +231,6 @@ def kodverk_komplett_metadata(request, kodverk_id):
         template_context = return_komplett_metadata(request, kodverk_id)
         return render(request, "kodverk_komplett_metadata.html", context=template_context)
 
-
     elif request.method == 'GET':
         template_context = return_komplett_metadata(request, kodverk_id) 
         return render(request, "kodverk_komplett_metadata_direct_get.html", context=template_context)
@@ -513,7 +512,7 @@ def return_number_of_recent_comments(request):
 
 def structure_kodverk_queryset_as_json(queryset):
 
-    kodverk = queryset[0]
+    kodverk = queryset
     suggestion_dict = []
 
     kodverk_fields = ['id','titel_på_kodverk', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status', 'användning_av_kodverk','länk']
@@ -557,7 +556,7 @@ def all_kodverk_and_kodtext_as_json(request):
 
     kodverk = Kodverk.objects.all().filter(Q(status="Aktiv"),
                                            Q(kodverk_variant='VGR kodverk'))
-
+    
     response = structure_kodverk_queryset_as_json(kodverk)
 
     return response
