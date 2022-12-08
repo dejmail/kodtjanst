@@ -12,9 +12,25 @@ body {
   body {
   /* default is 1rem or 16px */
   font-size: 12px;
+  height: 100%;
   }
    
   }
+
+.parent {
+  height: 200px;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
+  
+.child {
+  margin: 0 auto;
+  }
+
+.sideways-text {
+  writing-mode: vertical-rl;
+}
 
   /* The admin site delete button seems to not have 
   the correct height, so I override it here so that
@@ -23,9 +39,12 @@ body {
     height: 35px;
 }
 
-
 nav {
     margin-bottom: 4em;
+}
+
+.small-text {
+font-size: xx-small;
 }
 
 @keyframes blinker {
