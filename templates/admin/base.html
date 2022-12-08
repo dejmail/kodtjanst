@@ -11,7 +11,7 @@
 
 window.addEventListener("load", function() {
 
-	if (document.body.innerHTML.search("Välkommen till KOLLI Portalen") > -1) {
+	if (document.body.innerHTML !== null && document.body.innerHTML.search("Välkommen till KOLLI Portalen") > -1) {
 
 	function change_link_anchor_text(data) {
 		
@@ -41,10 +41,9 @@ window.addEventListener("load", function() {
 		req.send(null);
 			
 		};
-
 		check_number_of_recent_comments();
-		
 	}
-})
+	})
+
 </script>
 {% endblock responsive %}
