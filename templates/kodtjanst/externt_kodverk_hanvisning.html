@@ -22,16 +22,31 @@
                 <td colspan="2">Beskrivning av innehållet</td>
                 <td colspan="6">{{kodverk.beskrivning_av_innehållet}}</td>
             </tr>
-            <tr>
-                    <td colspan="2">Ägare till kodverket</td>
-                {% if kodverk.codeableconceptattributes_set.all %}
-                    <td colspan="6">
+            {% if kodverk.codeableconceptattributes_set.all %}
                 {% for entry in  kodverk.codeableconceptattributes_set.all %}
-                        {{entry.ägare_till_kodverk}}
-                {% endfor %}
-                    </td>
-                {% endif %}
-            </tr>
+                    
+                        {% if entry.ägare_till_kodverk|length > 0 %}
+                        <tr>
+                            <td colspan="2">
+                                Ägare till kodverket
+                            </td>
+                            <td colspan="6">
+                                {{entry.ägare_till_kodverk}}
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% if entry.källa|length > 0 %}
+                        <tr>
+                            <td colspan="2">
+                                Källa
+                            </td>
+                            <td colspan="6" id="källa_link">
+                                {{entry.källa}}
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}            
             <td colspan="2">Länk</td>
             <td colspan="6">
             {% if kodverk.länk|length > 0 %}
@@ -42,9 +57,20 @@
             {% endif %}
                 
             </td>
-            
             </tr>
     </tbody>
     </table>
     </div>
 </div>
+
+<script type="text/javascript">
+
+format_ahref_source_link();
+function format_ahref_source_link(){
+    var källa = document.querySelector("#källa_link"); 
+    var link = källa.textContent.trim('\n').split(' ');
+    http_link = link[0].split('=')[1];
+    link_description = link[1].split('=')[1];
+    källa.innerHTML = `<a href="${http_link}">${link_description}</a>`;
+};
+ </script>
