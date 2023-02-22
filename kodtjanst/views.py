@@ -379,7 +379,7 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
                         logger.debug(f'problem writing to kodverk worksheet - {e}')
                     del metadata_value
 
-        kodtexter = Kodtext.objects.filter(kodverk_id=kodverk_id).values('kod','kodtext','annan_kodtext','definition')
+        kodtexter = get_kodtext_related_to_kodverk(kodverk_id)
         
         row_num = 1
         for kodtext in kodtexter:
