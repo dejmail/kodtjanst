@@ -65,13 +65,14 @@
 
 <script type="text/javascript">
 
-format_ahref_source_link();
 function format_ahref_source_link(){
     var källa = document.querySelector("#källa_link"); 
     var link = källa.textContent.trim('\n').split(' ');
     var http_link = link[0].split('=').slice(1,).join('=');
     var link_description = link.slice(1,).join().split('=')[1];
-    // debugger;
     källa.innerHTML = `<a href="${http_link}">${link_description}</a>`;
 };
+
+format_ahref_source_link();
+
  </script>
