@@ -129,9 +129,6 @@ function getPage(link_url) {
 		var data = data.replace('\n','').replace('  ', '').replace('/[\r\n]/gm', '');
 		//document.getElementById('user-input').value = '';
 		$('#mitten-span-middle-column').html(data);
-		$("#mitten-span-middle-column").find("script").each(function(){
-			eval($(this).text());
-		});
 		changeBrowserURL(data, this.url);
 	}).fail(function(data,textStatus,jqXHR) {        
 		  $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R");
