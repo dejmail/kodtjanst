@@ -44,5 +44,4 @@ const prettyPrintJson = {
         return settings.lineNumbers ? addLineNumbers(html) : html;
     },
 };
-debugger;
 globalThis.prettyPrintJson = prettyPrintJson;
