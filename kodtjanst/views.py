@@ -216,7 +216,11 @@ def return_komplett_metadata(request, kodverk_id):
 
         template_context = {'kodverk': kodverk_queryset,
                             'kodverk_id' : kodverk_id,
-                            'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)} 
+                            'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)}  
+
+        if kodverk_queryset.kodverk_variant == "VGR codeable concept":
+            template_context['external_kodtext'] = kodverk_queryset.externakodtext_set.all()       
+
         return template_context
     else:
         return None

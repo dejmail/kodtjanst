@@ -46,18 +46,19 @@
                         </tr>
                         {% endif %}
                     {% endfor %}
-                {% endif %}            
-            <td colspan="2">Underlag länk</td>
-            <td colspan="6">
+                {% endif %}
+
             {% if kodverk.länk|length > 0 %}
-                <a href="{{kodverk.länk}}" target="_blank" rel="noopener noreferrer">
-                {{kodverk.länk|truncatechars:50}}</a>
-            {% else %}
-                Länk saknas
+                <tr>
+                    <td colspan="2">Underlag länk</td>
+                    <td colspan="6">
+                    {% if kodverk.länk|length > 0 %}
+                        <a href="{{kodverk.länk}}" target="_blank" rel="noopener noreferrer">
+                        {{kodverk.länk|truncatechars:50}}</a>
+                    {% endif %}
+                    </td>
+                </tr>
             {% endif %}
-                
-            </td>
-            </tr>
     </tbody>
     </table>
     </div>
