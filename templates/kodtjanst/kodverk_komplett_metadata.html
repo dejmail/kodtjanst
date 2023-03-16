@@ -75,7 +75,7 @@
 
 async function getCodetextAsync(){
 
-    const response = await fetch('/kodtext/table-data/{{kodverk_id}}/')
+    const response = await fetch("{% url 'codetext_table_json' kodverk_id %}")
     .then((response) => {
         return response.json();
     })
