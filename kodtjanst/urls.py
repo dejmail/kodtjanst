@@ -10,7 +10,8 @@ urlpatterns = [
     path("", views.kodverk_sok, name="kodverk_sok"),
     
     path("kodtext/as-json/", views.return_kodtext_as_json, name="kodtext_json"),
-    path("kodtext-table-translations/", views.return_translation_text, name="translation_text"),
+    path("kodtext/table-translations/", views.return_translation_text, name="translation_text"),
+    path("kodtext/table-data/<kodverk_id>/", views.get_codeset, name="codetext_table_json"),
 
     path("kodverk/metadata-och-kodtext/<kodverk_id>/", views.kodverk_komplett_metadata, name="kodverk_komplett_metadata"),
     path("kodverk/download/<kodverk_id>/", views.return_file_of_kodverk_and_kodtext, name="export_kodverk"),

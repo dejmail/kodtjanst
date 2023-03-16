@@ -37,7 +37,7 @@
 
         <!-- Alla metadata attribut -->
 
-        {% if kodverk.kodverk_variant == "Externt kodverk hänvisning" %}
+        {% if kodverk.kodverk_variant == "Externt kodverk hänvisning" %}    
 
             {% include "externt_kodverk_hanvisning.html" %}
 
@@ -67,94 +67,92 @@
 <link rel="stylesheet" href="{% static '/css/main.css' %}" media="screen">
 <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
 <link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}" media="screen">
+
+<script type="module" src="{% static '/js/pretty-print-json.js' %}"></script>
+<link rel=stylesheet href="{% static '/css/pretty-print-json.css' %}">
+
 <script>
 
-/* Formatting function for row details - modify as you need */
+async function getCodetextAsync(){
 
-function format (d) {
-    // `d` is the original data object for the row
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-        '<tr>'+
-            '<td>Kod:</td>'+
-            '<td>'+d.kod+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Kodtext:</td>'+
-            '<td>'+d.kodtext+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Definition:</td>'+
-            '<td>'+d.definition+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Annan kodtext:</td>'+
-            '<td>'+d.annan_kodtext+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Position:</td>'+
-            '<td>'+d.position+'</td>'+
-        '</tr>'+
-    '</table>';
-};
+    const response = await fetch('/kodtext/table-data/{{kodverk_id}}/')
+    .then((response) => {
+        return response.json();
+    })
+    return response;
+    }
 
- // Add event listener for opening and closing details
- $('#kodtext_tabell tbody').on('click', 'td.details-control', function () {
-     var tr = $(this).closest('tr');
-     var row = table.row( tr );
+function extractJsonData(codetext_data) {
+    var data = codetext_data;
+    var columnNames = Object.keys(data[0]);
+    let columns = [];
+    for (var i in columnNames) {
+        columns.push({data: columnNames[i], 
+                title: capitalizeFirstLetter(columnNames[i]),
+                });
+        
+    }
+    return [columns, data];
+    }
 
-     if ( row.child.isShown() ) {
-         // This row is already open - close it
-         row.child.hide();
-         tr.removeClass('shown');
-     }
-     else {
-         // Open this row
-         row.child( format(row.data()) ).show();
-         tr.addClass('shown');
-     }
- } );
+async function InstantiateCodetextTable(json_object){
 
- $( document ).ready(function() {
-             
-    var table = $('#kodtext_tabell').DataTable({
-        order: [[3, 'asc']],
-        fixedColumns: false,
-        columnDefs: [
-            {
-                name: 'Kod',
-                width: 50, 
-                target: 0
-            },
-            {
-                name: 'Kodtext',
-                width: 50, 
-                target: 1,
-            },
-            {
-                name: 'Definition',
-                target: 1, 
-                className: 'breaklongline',
-            },
-            {
-                name: 'Position',
-                visible: false, 
-                sortable: false, 
-                target: 2,
-                className: 'notToggleVis'
-
-            },
+    var columns = json_object[0]
+    var data = json_object[1];
+    let result = $('#kodtext_tabell').DataTable( {
+        columnDefs: [{"targets": [0,4], visible: false},
+            {"targets": [5],
+            "defaultContent": "",
+            "render" : function ( row, type, val, meta ) {
+                if (typeof(row) === 'object') {
+                    if (row==null) {
+                        return ""
+                    } else {
+                    let prettyString = prettyPrintJson.toHtml(row);
+                    return prettyString 
+                    }
+                } else {
+                    return row
+                }
+            }},
         ],
-        "stateSave" : true,
-        "retrieve" : true,
+        data: data,
+        columns: columns,
+        order: [[4, 'asc']],
+        fixedColumns: false,
         "initComplete": function(){ 
-            $("#kodtext_tabell").show(); 
-    },
+                    $("#kodtext_tabell").show(); 
+                },
         "language": {
-            "url": "{% url 'translation_text' %}",
-            "emptyTable": "Inga kodtexter som kan visas"
-    },
+        "url": "{% url 'translation_text' %}",
+        "emptyTable": "Inga kodtexter som kan visas",
+
+        },
     });
-});
+    
+    return await result;
+    }
+
+function capitalizeFirstLetter(string) {
+    // An ugly patch to change the name of the column. Tried
+    // other column parameters, but nothing worked.
+    if (string === "extra_data") {
+        return "ExtraInfo"
+    } else {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}}
+
+$(document).ready(function(){
+
+    getCodetextAsync()
+    .then(function (result) {
+        return result;
+    })
+    .then((jsonData) => extractJsonData(jsonData))
+    .then((jsonData) => InstantiateCodetextTable(jsonData))
+    .catch((error) => console.error(error));
+
+    });
     
 function showOptions() {
   var x = document.getElementById("showopt");
@@ -212,8 +210,6 @@ function showOptions() {
     });
 });
 
-    
-
 function get_form_function(url, div_to_replace, type_method){
         
     $.ajax({
@@ -257,8 +253,6 @@ if (document.body.contains(document.getElementById("underlagfil")) == true) {
 } else {
     console.log('underlag fil id missing, skipping addEventListener')
 }
-
-
 
 </script>
 

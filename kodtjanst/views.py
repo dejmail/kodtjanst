@@ -16,6 +16,8 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils.html import format_html
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
+
 from django.db.models import Q
 
 from .models import Kodverk, Kodtext, ExternaKodtext, CommentedKodverk, CodeableConceptAttributes, ArbetsKommentar, ValidatedBy
@@ -81,13 +83,8 @@ def get_kodtext_related_to_kodverk(url_parameter):
 
     queryset = Kodtext.objects.filter(
         Q(kodverk_id=url_parameter),
-        ~Q(status='Publicera ej')).values(
-                                        'id',
-                                        'annan_kodtext',
-                                        'definition',
-                                        'kod',
-                                        'kodtext',
-                                        'position').order_by('position')
+        ~Q(status='Publicera ej')
+        ).order_by('position')
 
     return queryset
 
@@ -208,16 +205,28 @@ def convert_list_of_tuples_to_string(tuple_list, start=None, stop=None, single_p
     elif (start is not None) and (stop is not None):
         return ', '.join([i[start:stop] for i in tuple_list])
 
+
+def get_codeset(request, kodverk_id):
+    
+    data = list(get_kodtext_related_to_kodverk(kodverk_id).values(
+        'id',
+        'kod',
+        'kodtext',
+        'definition',
+        'position',
+        'extra_data')
+        )
+
+    return JsonResponse(data, safe=False)
+
 def return_komplett_metadata(request, kodverk_id):
 
     if kodverk_id:
 
         kodverk_queryset = get_codeset_by_id(kodverk_id)
-        kodtext_queryset = get_kodtext_related_to_kodverk(kodverk_id)
 
         template_context = {'kodverk': kodverk_queryset,
                             'kodverk_id' : kodverk_id,
-                            'kodtext' : kodtext_queryset,
                             'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)} 
         
         return template_context

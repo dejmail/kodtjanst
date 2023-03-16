@@ -26,7 +26,13 @@ class Kodtext(models.Model):
     annan_kodtext = models.CharField(max_length=255, null=True, blank=True)
     datum_skapat = models.DateField(auto_now_add=True)
     definition = models.TextField(max_length=500, null=True, blank=True)
-    extra_data = JSONField(null=True, blank=True, help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"} <br> t.ex {"millenium_code_value": 22897599} och kan ha hierarkiska nivåer')
+    extra_data = JSONField(
+        null=True, 
+        blank=True, 
+        help_text='Data behöver vara i JSON format dvs {"nyckel" : "värde"}`\
+          <br> t.ex {"Alternativ kod": 22897599} och kan ha flera, hierarkiska nivåer',
+        verbose_name="ExtraInfo")
+
     kod = models.CharField(max_length=255, null=True,blank=True)
     kodtext = models.CharField(max_length=255, null=True)
     kodverk = models.ForeignKey(to='Kodverk', to_field='id', on_delete=models.CASCADE)
