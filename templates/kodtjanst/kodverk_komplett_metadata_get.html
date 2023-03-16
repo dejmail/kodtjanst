@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_filters %}
+
+{% block mitten-span %}
+{% if kodverk  %}
+
+        <div class="row top-buffer-10">
+                <div class="col-12 text-center">
+                <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
+                    <span class="fas fa-comment" style="font-size:smaller;"></span>&nbsp;Lämna synpunkter
+                </button>        
+                
+                <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
+                    <span class="fas fa-user-check" style="font-size:smaller;"> </span>&nbsp;Verifiera användning
+                </button>
+                
+                <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
+                    <span class="fas fa-download" style="font-size:smaller;"></span>&nbsp;Ladda ner
+                </button>
+                
+                <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
+                    <span class="fas fa-question-circle" style="font-size:smaller;"></span>&nbsp;Hjälp
+                    <form id="opponera_term_form" action="{% url 'verify_comment_form' %}", method='POST'>{% csrf_token %}
+                        {{ opponera|crispy }}
+                </button>
+            </div>
+        </div>
+
+    <hr>
+
+
+    <div class="container-fluid">
+
+     <div class="row" id="mitten-span-row">
+
+        <!-- Alla metadata attribut -->
+
+        {% if kodverk.kodverk_variant == "Externt kodverk hänvisning" %}    
+
+            {% include "externt_kodverk_hanvisning.html" %}
+
+        {% elif kodverk.kodverk_variant == "VGR codeable concept" %}
+
+            {% include "multi_value_attributes.html" %}
+
+        {% else  %}
+
+            {% include "vgr_kodverk.html" %}
+
+        {% endif %}
+
+    {% block help %}
+        {% include "help.html" %}  
+    {% endblock help %}
+        
+{% else %}
+        <p>Ingen definition hittades...</p>
+{% endif %}
+
+{% endblock mitten-span %}
+     
+{% block extra_javascript %}
+{{ super }}
+
+<link rel="stylesheet" href="{% static '/css/main.css' %}" media="screen">
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+<link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}" media="screen">
+
+<script type="module" src="{% static '/js/pretty-print-json.js' %}"></script>
+<link rel=stylesheet href="{% static '/css/pretty-print-json.css' %}">
+
+<script>
+
+async function getCodetextAsync(){
+
+    const response = await fetch('/kodtext/table-data/{{kodverk_id}}/')
+    .then((response) => {
+        return response.json();
+    })
+    return response;
+    }
+
+function extractJsonData(codetext_data) {
+    var data = codetext_data;
+    var columnNames = Object.keys(data[0]);
+    let columns = [];
+    for (var i in columnNames) {
+        columns.push({data: columnNames[i], 
+                title: capitalizeFirstLetter(columnNames[i]),
+                });
+        
+    }
+    return [columns, data];
+    }
+
+async function InstantiateCodetextTable(json_object){
+
+    var columns = json_object[0]
+    var data = json_object[1];
+    let result = $('#kodtext_tabell').DataTable( {
+        columnDefs: [{"targets": [0,4], visible: false},
+            {"targets": [5],
+            "defaultContent": "",
+            "render" : function ( row, type, val, meta ) {
+                if (typeof(row) === 'object') {
+                    if (row==null) {
+                        return ""
+                    } else {
+                    let prettyString = prettyPrintJson.toHtml(row);
+                    return prettyString 
+                    }
+                } else {
+                    return row
+                }
+            }},
+        ],
+        data: data,
+        columns: columns,
+        order: [[4, 'asc']],
+        fixedColumns: false,
+        "initComplete": function(){ 
+                    $("#kodtext_tabell").show(); 
+                },
+        "language": {
+        "url": "{% url 'translation_text' %}",
+        "emptyTable": "Inga kodtexter som kan visas",
+
+        },
+    });
+    
+    return await result;
+    }
+
+function capitalizeFirstLetter(string) {
+    // An ugly patch to change the name of the column. Tried
+    // other column parameters, but nothing worked.
+    if (string === "extra_data") {
+        return "ExtraInfo"
+    } else {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}}
+
+$(document).ready(function(){
+
+    getCodetextAsync()
+    .then(function (result) {
+        return result;
+    })
+    .then((jsonData) => extractJsonData(jsonData))
+    .then((jsonData) => InstantiateCodetextTable(jsonData))
+    .catch((error) => console.error(error));
+
+    });
+    
+function showOptions() {
+  var x = document.getElementById("showopt");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+	
+	$("#opponera_term_form").submit(function(event){
+		event.preventDefault(); //prevent default action 
+		var post_url = $(this).attr("action"); //get form action url
+		var request_method = $(this).attr("method"); //get form GET/POST method
+		var form_data = $(this).serialize(); //Encode form elements for submission
+		
+		$.ajax({
+			url : post_url,
+			type: request_method,
+			data : form_data
+		}).done(function(response){ 
+			$("#mitten-span-middle-column").html(response);
+			setTimeout(function(){
+				$("#mitten-span-middle-column").html('<div id="mitten-span-middle-column"></div>')}, 2500);
+		});
+    });
+    
+ 
+    $("#beställ_form").submit(function(event){
+    event.preventDefault();
+    var post_url = $(this).attr("action");
+    var request_method = $(this).attr("method");
+    var formdata = new FormData($(this)[0]);
+    
+    $.ajax({
+        beforeSend: function (request)
+            {
+                request.setRequestHeader("X-CSRFTOKEN", "{{ csrf_token }}");
+            },
+        url : post_url,
+        type: request_method,
+        dataType: 'html',
+        contentType: false,
+        cache: false,
+        processData:false,
+        data : formdata,
+        success : function(response){
+            $("#mitten-span-middle-column").html(response);
+            history.pushState(post_url, '', post_url)
+            setTimeout(function(){
+            $("#mitten-span-middle-column").html('<div id="mitten-span-middle-column"></div>')}, 2500);
+            document.getElementById('user-input').value = '';
+            history.replaceState('', 'VGR Informatik - KOLLI Kodtjänst', '/');
+	    }
+    });
+});
+
+function get_form_function(url, div_to_replace, type_method){
+        
+    $.ajax({
+        url : url,
+        type : type_method,
+        success: function(response){
+            $(div_to_replace).html(response);
+        },
+        error: function() {
+    $(div_to_replace).html("There has been an error loading this form");
+    },
+
+    });
+
+};
+
+$(document).ready(function(){
+
+$("#open_kommentera_button").click(function(){
+    
+    get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=comment", 
+                      div_to_replace="#populate_form_comment",
+                      type_method="GET");
+                    });
+                      
+$("#open_verifiera_button").click(function(){    
+    
+    get_form_function(url="{% url 'verify_comment_form' %}?q={{kodverk_id}}&value=verify",
+                      div_to_replace="#populate_form_verify",
+                      type_method="GET"); 
+                    });
+});
+
+if (document.body.contains(document.getElementById("underlagfil")) == true) {
+
+    document.getElementById("underlagfil").addEventListener("click", function(event) {
+    event.preventDefault();  //stop the browser from following
+    window.location.href = "{{kodverk.underlag.url}}";
+    console.log( "File served" );
+    });
+} else {
+    console.log('underlag fil id missing, skipping addEventListener')
+}
+
+</script>
+
+{% endblock extra_javascript %}
+
+
+

@@ -171,18 +171,7 @@ def kodverk_sok(request):
                     }
                     )
 
-        
-        #html = html.replace('\"','').strip('\n')
-        #re.sub('\r\n','', html)
-
         return HttpResponse(html)
-
-    # elif request.method == 'GET':
-    #     data_dict, return_list_dict = hämta_data_till_begrepp_view(url_parameter)
-    #     return render(request, "term-results-partial.html", context=data_dict)
-
-    # elif request.method=='GET':
-    #     return render(request, "term_forklaring.html", context=template_context)
     
     else:
         kodverk = Kodverk.objects.none()
@@ -228,7 +217,6 @@ def return_komplett_metadata(request, kodverk_id):
         template_context = {'kodverk': kodverk_queryset,
                             'kodverk_id' : kodverk_id,
                             'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)} 
-        
         return template_context
     else:
         return None
@@ -241,8 +229,8 @@ def kodverk_komplett_metadata(request, kodverk_id):
         return render(request, "kodverk_komplett_metadata.html", context=template_context)
 
     elif request.method == 'GET':
-        template_context = return_komplett_metadata(request, kodverk_id) 
-        return render(request, "kodverk_komplett_metadata_direct_get.html", context=template_context)
+        template_context = return_komplett_metadata(request, kodverk_id)        
+        return render(request, "kodverk_komplett_metadata_get.html", context=template_context)
     else:
         kodverk = Kodverk.objects.none()
         return render(request, "kodverk.html", {'kodverk': kodverk})
