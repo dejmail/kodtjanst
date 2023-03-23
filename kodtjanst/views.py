@@ -3,7 +3,6 @@ import logging
 from datetime import datetime, date
 
 from django.utils.safestring import mark_safe
-from kodtjanst.logging import setup_logging
 
 
 from django.shortcuts import render, HttpResponse, get_object_or_404
@@ -19,6 +18,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 
 from django.db.models import Q
+
 
 from .models import Kodverk, Kodtext, ExternaKodtext, CommentedKodverk, CodeableConceptAttributes, ArbetsKommentar, ValidatedBy
 from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
@@ -315,8 +315,8 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
 
         kodtext_columns = ['kod',
                            'kodtext',
-                           'annan_kodtext',
-                           'definition']
+                           'definition',
+                           'extra_data']
         
         col_num = 0
 
@@ -380,15 +380,20 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
                         logger.debug(f'problem writing to kodverk worksheet - {e}')
                     del metadata_value
 
-        kodtexter = get_kodtext_related_to_kodverk(kodverk_id)
+        kodtext_set = get_kodtext_related_to_kodverk(kodverk_id)
         
         row_num = 1
-        for kodtext in kodtexter:
-            for col_num, (kodtext_attr, kodtext_value) in enumerate(kodtext.items()):
-                if type(kodtext_value) == dict:
-                    kodtext_value = str(kodtext_value)
+        for kodtext in kodtext_set:
+            for col_num, kodtext_attr in enumerate(kodtext_columns):
+                if type(kodtext_attr) == dict:
+                    kodtext_value = str(kodtext_attr)
                 try:
-                    kodtext_worksheet.write(row_num, col_num, kodtext_value)
+                    if kodtext_attr in kodtext_columns:
+                        kodtext_worksheet.write(
+                            row_num, 
+                            col_num, 
+                            getattr(kodtext, kodtext_attr)
+                        )
                 except TypeError as e:
                     logger.debug(f'problem writing to kodtext worksheet - {e}')
             row_num += 1      
