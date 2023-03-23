@@ -293,7 +293,6 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         kodtext_worksheet = workbook.add_worksheet('Kod+Kodtext')
         
         kodverk_columns = {'kodverk' : ['titel_på_kodverk',
-                                        'syfte',
                                         'beskrivning_av_innehållet',
                                         'status',
                                         'identifierare',
@@ -385,14 +384,17 @@ def return_file_of_kodverk_and_kodtext(request, kodverk_id):
         row_num = 1
         for kodtext in kodtext_set:
             for col_num, kodtext_attr in enumerate(kodtext_columns):
-                if type(kodtext_attr) == dict:
-                    kodtext_value = str(kodtext_attr)
                 try:
                     if kodtext_attr in kodtext_columns:
+                        kodtext_value = getattr(kodtext, kodtext_attr)
+                        if type(kodtext_value) == dict:
+                            kodtext_value = str(kodtext_value)
+                        else:
+                            kodtext_value = getattr(kodtext, kodtext_attr)
                         kodtext_worksheet.write(
                             row_num, 
                             col_num, 
-                            getattr(kodtext, kodtext_attr)
+                            kodtext_value
                         )
                 except TypeError as e:
                     logger.debug(f'problem writing to kodtext worksheet - {e}')
