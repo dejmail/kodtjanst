@@ -1,40 +1,30 @@
 import re
 import logging
-from datetime import datetime, date
-
-from django.utils.safestring import mark_safe
-
-
+from datetime import date
 from django.shortcuts import render, HttpResponse, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.core import serializers
-from django.urls import path 
-from django.db import connection, transaction
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils.html import format_html
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 
-from django.db.models import Q
-
+from django.db.models import (
+    Q, 
+    Case, 
+    When,
+    Value,
+    IntegerField
+)
 
 from .models import Kodverk, Kodtext, ExternaKodtext, CommentedKodverk, CodeableConceptAttributes, ArbetsKommentar, ValidatedBy
-from .forms import UserLoginForm, VerifyKodverk, KommenteraKodverk
+from .forms import VerifyKodverk, KommenteraKodverk
 
 from io import BytesIO
 import xlsxwriter
 
 import json
 from pdb import set_trace
-
-from django.contrib.auth import (
-    authenticate,
-    get_user_model,
-    login,
-    logout
-)
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +50,30 @@ def retur_general_sök(url_parameter):
     
     return queryset
 
+
+def sort_results_according_to_search_term(queryset, search_term):
+    
+    """Returns a sorted list based on "column" from list-of-dictionaries data.
+
+    Arguments: 
+    queryset {queryset} -- queryset containing terms to be returned to the UI
+    url_parameter {str} -- The str with which to split each term with
+    :return: Sorted queryset with annotayion
+    :rtype: queryset
+    """
+
+    qs = queryset.annotate(
+    position=Case(
+        When(Q(titel_på_kodverk__iexact=search_term), then=Value(1)),
+        When(Q(titel_på_kodverk__istartswith=search_term), then=Value(2)),
+        When(Q(titel_på_kodverk__icontains=search_term), then=Value(3)), 
+        When(Q(beskrivning_av_innehållet__icontains=search_term), then=Value(4)),
+        default=Value(5), output_field=IntegerField()
+        )
+    )
+    qs = qs.order_by('position')
+
+    return qs
 
 def return_codesets_by_letter(url_parameter):
 
@@ -152,6 +166,11 @@ def kodverk_sok(request):
             queryset = retur_alla_kodverk(url_parameter)
         else:
             queryset = retur_general_sök(url_parameter)
+
+        queryset = sort_results_according_to_search_term(
+            queryset=queryset,
+            search_term=url_parameter
+            )
 
         html = render_to_string(
             template_name="kodverk_partial_result.html", context={
