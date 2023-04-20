@@ -598,13 +598,19 @@ def content_changes_from_date(request, year, month, day):
 
 def show_kodverk_history(request, pk):
 
-    history_qs = Kodtext.history.filter(kodverk__id=pk)
-    list_of_changes = []
-    for history in history_qs:
+    kodtext_history_qs = Kodtext.history.filter(kodverk__id=pk)
+    kodverk_history_qs = Kodverk.history.filter(id=pk)
+
+    kodverk_changes = []
+    for history in kodverk_history_qs:
         if history.prev_record:
-            list_of_changes.append([history.history_date, history.diff_against(history.prev_record)])
-    
+            kodverk_changes.append([history.history_date, history.diff_against(history.prev_record)])
+
+    for history in kodtext_history_qs:
+        if history.prev_record:
+            kodverk_changes.append([history.history_date, history.diff_against(history.prev_record)])
+
     return render(request, "kodverk_historik_detaljer.html", 
-                          {"history": list_of_changes, 
-                           "kodverk" : history_qs.first().kodverk.titel_på_kodverk,
-                           "url" : get_object_or_404(Kodverk, pk=history_qs.first().kodverk_id)})
+                          {"history": kodverk_changes,
+                           "kodverk" : kodverk_history_qs.first().titel_på_kodverk,
+                           "url" : get_object_or_404(Kodverk, pk=kodverk_history_qs.first().id)})

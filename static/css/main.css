@@ -47,6 +47,10 @@ nav {
 font-size: xx-small;
 }
 
+.break-word {
+  word-break: break-word;
+}
+
 @keyframes blinker {
     from {opacity: 1.0;}
     to {opacity: 0.0;}

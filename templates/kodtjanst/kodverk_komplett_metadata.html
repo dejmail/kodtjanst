@@ -9,19 +9,23 @@
         <div class="row top-buffer-10">
                 <div class="col-12 text-center">
                 <button class="btn btn-outline-warning btn-sm" id="open_kommentera_button" data-toggle="modal" data-target="#Comment">
-                    <span class="fas fa-comment" style="font-size:smaller;"></span>&nbsp;Lämna synpunkter
-                </button>        
+                    <span class="fa-solid fa-comment" style="font-size:smaller;"></span>&nbsp;Lämna synpunkter
+                </button>
                 
                 <button class="btn btn-outline-success btn-sm" id="open_verifiera_button" data-toggle="modal" data-target="#verify">
-                    <span class="fas fa-user-check" style="font-size:smaller;"> </span>&nbsp;Verifiera användning
+                    <span class="fa-solid fa-user-check" style="font-size:smaller;"> </span>&nbsp;Verifiera användning
+                </button>
+
+                <button type="button" class="btn btn-outline-info btn-sm" id="display_kodverk_history" onclick="location.href='{% url 'show_kodverk_history' kodverk_id %}'">
+                    <span class="fa-solid fa-code-branch" style="font-size:smaller;"></span>&nbsp;Historik
                 </button>
                 
                 <button type="button" class="btn btn-outline-info btn-sm" id="download_kodverk" onclick="location.href='{% url 'export_kodverk' kodverk_id %}'">
-                    <span class="fas fa-download" style="font-size:smaller;"></span>&nbsp;Ladda ner
+                    <span class="fa-solid fa-download" style="font-size:smaller;"></span>&nbsp;Ladda ner
                 </button>
                 
                 <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#help">
-                    <span class="fas fa-question-circle" style="font-size:smaller;"></span>&nbsp;Hjälp
+                    <span class="fa-solid fa-question-circle" style="font-size:smaller;"></span>&nbsp;Hjälp
                     <form id="opponera_term_form" action="{% url 'verify_comment_form' %}", method='POST'>{% csrf_token %}
                         {{ opponera|crispy }}
                 </button>

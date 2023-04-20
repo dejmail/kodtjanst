@@ -5,6 +5,7 @@
 {% endblock search_bar %}
 
 {% block mitten-span %}
+
 <div class="row mt-10" id="mitten-span-row">
   <div class="col-2" id="mitten-span-left-column"></div>
   <div class="col-8" id="mitten-span-middle-column">
@@ -16,8 +17,8 @@
           </div>
       </div>
           
-      <div class="row justify-content-md-center top-buffer-10 pr-1">
-      <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10">
+      <div class="row justify-content-md-center top-buffer-10 pr-1 ">
+      <table id="komplett_metadata_tabell" class="table table-bordered table-striped table-md top-buffer-10 table-responsive">
       <tbody>
               <tr>
                   <th colspan="2">Datum</th>
@@ -28,52 +29,65 @@
 
               {% if history|length > 1 %}
 
-              {% for delta_date, delta in history %}
-               <tr>
-                 <td colspan="2">{{delta_date}}</td>
-                 {% if delta.changes %}
-                   {% for changes in delta.changes %}
-                     {% if forloop.counter == 1 %}
-                       <td colspan="2">{{changes.field}}</td>
-                       {% if changes.old == "" %}
-                         <td colspan="2">Tom sträng</td>
-                         {% else %}
-                         <td colspan="2">{{changes.old}}</td>
-                       {% endif %}
-                       {% if changes.new == "" %}
-                       <td colspan="2">Tom sträng</td>
-                       {% else %}
-                         <td colspan="2">{{changes.new}}</td>
-                       {% endif %}
-                     </tr>
-                     {% else %}
-                     </tr>
-                       <tr>
-                       <td></td>
-                       <td colspan="2">{{changes.field|default:'-'}}</td>
-                       {% if changes.old == "" %}
-                         <td colspan="2">Tom sträng</td>
-                         {% else %}
-                         <td colspan="2">{{changes.old}}</td>
-                       {% endif %}
-                       {% if changes.new == "" %}
-                       <td colspan="2">Tom sträng</td>
-                       {% else %}
-                         <td colspan="2">{{changes.new}}</td>
-                       {% endif %}
-                     </tr>
-                     {% endif %}
-                   {% endfor %}                    
-                 {% endif %}
-               {%endfor%}
+                  {% for delta_date, delta in history %}
+                  {% if delta.changes|length < 1 %}
 
-               {% else %}
+                  {% else %}
 
-               <tr class="table-warning">
-                <td colspan="28" class="text-center">För närvarande har inga förändringar skett i kodverket sedan publicering.</td>
-                </tr>
+                      <tr>
+                        <td colspan="2">{{delta_date}}</td>
+                          {% if delta.changes %}
+                              {% for changes in delta.changes %}
+                                  {% if forloop.counter == 1 %}
+                                      <td colspan="2">
+                                        {{delta.history_id}}
+                                        {{changes.field}}
+                                      </td>
+                                  {% if changes.old == "" %}
+                                      <td colspan="2"></td>
+                                  {% else %}
+                                      <td colspan="2" >
+                                          <div class="break-word">{{changes.old}}</div>
+                                      </td>
+                                  {% endif %}
+                                {% if changes.new == "" %}
+                                <td colspan="2">Tom sträng</td>
+                                {% else %}
+                                  <td colspan="2">
+                                    <div class="break-word">{{changes.new}}</div>
+                                  </td>
+                                {% endif %}
+                              </tr>
+                              {% else %}
+                              </tr>
+                                <tr>
+                                <td></td>
+                                <td colspan="2">{{changes.field|default:'-'}}</td>
+                                {% if changes.old == "" %}
+                                  <td colspan="2">Tom sträng</td>
+                                  {% else %}
+                                  <td colspan="2">{{changes.old}}</td>
+                                {% endif %}
+                                {% if changes.new == "" %}
+                                <td colspan="2">Tom sträng</td>
+                                {% else %}
+                                  <td colspan="2">{{changes.new}}</td>
+                                {% endif %}
+                              </tr>
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+                          {% endif %}
+                        {%endfor%}
 
-               {% endif %}
+                    {% else %}
+
+                    <tr class="table-warning">
+                        <td colspan="28" class="text-center">För närvarande har inga förändringar skett i kodverket sedan publicering.</td>
+                    </tr>
+
+                    {% endif %}
+                    
           </tbody>
           </table>
       </div>
