@@ -234,7 +234,7 @@ def format_rim_urls(rim_links: dict) -> list:
         rim_urls = rim_links.get('rim-url')
         rim_url_text = rim_links.get('rim-url-text')
         for index, url in enumerate(rim_urls):
-            formated_text.append(f"""<a href="{url}">{rim_url_text[index].replace('  ',' ')}</a>""")
+            formated_text.append(f"""<a href="{url}" target="_blank">{rim_url_text[index].replace('  ',' ')}</a>""")
         
         return [format_html(i) for i in formated_text]
     else:
