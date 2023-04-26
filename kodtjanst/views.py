@@ -227,18 +227,36 @@ def get_codeset(request, kodverk_id):
 
     return JsonResponse(data, safe=False)
 
+def format_rim_urls(rim_links: dict) -> list:
+
+    if rim_links:
+        formated_text = []
+        rim_urls = rim_links.get('rim-url')
+        rim_url_text = rim_links.get('rim-url-text')
+        for index, url in enumerate(rim_urls):
+            formated_text.append(f"""<a href="{url}">{rim_url_text[index].replace('  ',' ')}</a>""")
+        
+        return [format_html(i) for i in formated_text]
+    else:
+        return None
+
 def return_komplett_metadata(request, kodverk_id):
 
     if kodverk_id:
 
-        kodverk_queryset = get_codeset_by_id(kodverk_id)
+        kodverk_qs = get_codeset_by_id(kodverk_id)
+        rim_url_list = format_rim_urls(
+                    kodverk_qs.extra_data)
 
-        template_context = {'kodverk': kodverk_queryset,
-                            'kodverk_id' : kodverk_id,
-                            'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)}  
+        template_context = {
+            'kodverk': kodverk_qs,
+            'kodverk_id' : kodverk_id,
+            'rim_url' : rim_url_list,
+            'kommentar' : return_kommentar_related_to_kodverk(kodverk_id)
+            }
 
-        if kodverk_queryset.kodverk_variant == "VGR codeable concept":
-            template_context['external_kodtext'] = kodverk_queryset.externakodtext_set.all()       
+        if kodverk_qs.kodverk_variant == "VGR codeable concept":
+            template_context['external_kodtext'] = kodverk_qs.externakodtext_set.all()       
 
         return template_context
     else:

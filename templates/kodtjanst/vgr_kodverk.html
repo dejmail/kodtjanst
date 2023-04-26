@@ -29,7 +29,11 @@
                 <tr class="table-success">
             {% endif %}
                 <td colspan="2">Användning</td>
-                <td colspan="6">{{kodverk.användning_av_kodverk}}</td>
+                <td colspan="6">{{kodverk.användning_av_kodverk}} 
+                    {% for url in rim_url %}
+                        <br>{{ forloop.counter }} - {{url}}
+                    {% endfor %}
+                </td>
             </tr>
             <tr>
                 <td colspan="2">Ägare till kodverket</td>
