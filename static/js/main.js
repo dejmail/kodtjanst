@@ -97,6 +97,9 @@ document.body.addEventListener("click", function(e) {
 	// e.target was the clicked element
 	if( (e.target && e.target.nodeName == "A") || (e.target.parentNode.nodeName == 'A') ) {
 
+		if (e.target.target == '_blank') {
+			//pass
+		}
 		if (e.target.hostname == currentPage || e.target.parentNode.hostname == currentPage) {	
 			// catch only internal A clicks, allow external links to proceed
 			// Stop the browser redirecting to  the HREF value.
