@@ -100,7 +100,7 @@ document.body.addEventListener("click", function(e) {
 		if (e.target.target == '_blank') {
 			//pass
 		}
-		if (e.target.hostname == currentPage || e.target.parentNode.hostname == currentPage) {	
+		else if (e.target.hostname == currentPage || e.target.parentNode.hostname == currentPage) {	
 			// catch only internal A clicks, allow external links to proceed
 			// Stop the browser redirecting to  the HREF value.
 			e.preventDefault();
