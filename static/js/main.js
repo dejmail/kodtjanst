@@ -58,7 +58,7 @@ function search_ajax_call(endpoint, request_parameters, skapad_url) {
 			})
 		})
 		.fail(function(data,textStatus,jqXHR) {        
-			  $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R");
+			  $('#mitten-span-middle-column').html('<div class="row"><div class="alert alert-danger d-inline-block mx-auto">Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R</div></div>');
 			});
 		};
 
@@ -134,7 +134,7 @@ function getPage(link_url) {
 		$('#mitten-span-middle-column').html(data);
 		changeBrowserURL(data, this.url);
 	}).fail(function(data,textStatus,jqXHR) {        
-		  $('#mitten-span-middle-column').html("Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R");
+		  $('#mitten-span-middle-column').html('<div class="row"><div class="alert alert-danger d-inline-block mx-auto">Fel - Hoppsan! Jag får ingen definition från servern...finns ett problem..prova trycka Ctrl-Shift-R</div></div>');
 		});
 	  };
 

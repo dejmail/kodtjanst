@@ -20,6 +20,20 @@
                     <td colspan="1">Beskrivning av innehållet</td>
                     <td colspan="1">{{kodverk.beskrivning_av_innehållet }}</td>
                 </tr>
+                {% if "verksamhet" in kodverk.användning_av_kodverk %}
+                <tr class="table-warning">
+                {% elif "system" in kodverk.användning_av_kodverk %}
+                <tr class="table-blue">
+                {% else %}
+                <tr class="table-success">
+                {% endif %}
+                    <td colspan="1">Användning</td>
+                    <td colspan="1">{{kodverk.användning_av_kodverk}} 
+                    {% for url in rim_url %}
+                        <br> {{ forloop.counter }} - {{url}}
+                    {% endfor %}
+                    </td>
+                </tr>
                 <tr>
                     <td colspan="1">Ägare till kodverket</td>
                     {% if kodverk.codeableconceptattributes_set.all %}
