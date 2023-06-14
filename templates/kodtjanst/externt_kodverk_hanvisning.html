@@ -43,7 +43,8 @@
                 <td colspan="6">
                     <ul>
                     {% for entry in kodverk.codeableconceptattributes_set.all %} 
-                        <li><a href="{{entry.källa}}" target="_blank">{{entry.ägare_till_kodverk}}</a></li>
+                        {{entry.ägare_till_kodverk}}
+                        <li><div id="källa_link_{{forloop.counter}}">{{entry.källa}}</div></li>
                     {% endfor %}
                     </ul>
                 </td>
@@ -71,12 +72,11 @@
 
 function format_ahref_source_link(){
     var källa = document.querySelectorAll("[id^='källa_link']"); 
-    
     for(var i = 0; i < källa.length; i++) {
-        var link = källa[i].textContent.trim('\n').split(' ');
-        var http_link = link[0].split('=').slice(1,).join('=');
-        var link_description = link.slice(1,).join().split('=')[1];
-        källa[i].innerHTML = `<a href="${http_link}">${link_description}</a>`;
+        var link = källa[i].innerText.split(' ');
+        var link_text = link[1].split('=')[1];
+        var http_link = link[0].split('=')[1];
+        källa[i].outerHTML = `<a href="${http_link}">${link_text}</a>`;
     }
 };
 
