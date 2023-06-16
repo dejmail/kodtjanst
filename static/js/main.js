@@ -25,7 +25,7 @@ const endpoint = endpoint_check();
 function search_ajax_call(endpoint, request_parameters, skapad_url) {
 
 		changeBrowserURL('', endpoint_check());
-		$("#term_förklaring_tabell").remove();
+		$('#front_help_text').addClass('d-none');
 		$("#mitten-span-middle-column").empty();
 		if(typeof skapad_url !== 'undefined'){
 			var skapad_url = (endpoint + skapad_url);
