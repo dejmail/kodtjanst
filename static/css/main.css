@@ -32,6 +32,10 @@ body {
   writing-mode: vertical-rl;
 }
 
+.center-in-table {
+  text-align: center;
+}
+
   /* The admin site delete button seems to not have 
   the correct height, so I override it here so that
   its the same as the other buttons on the row. */

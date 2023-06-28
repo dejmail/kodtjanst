@@ -16,7 +16,7 @@ from django.shortcuts import render
 from django.template import response
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
-from django.utils import timezone
+from django.utils import timezone, safestring
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -309,9 +309,10 @@ class KodverkManager(SimpleHistoryAdmin):
     
         css = {
             'all': ('https://use.fontawesome.com/releases/v5.8.2/css/all.css',
+                    
                     f'{settings.STATIC_URL}css/custom_icon.css',
                     f'{settings.STATIC_URL}css/main.css',)
-            }   
+            }
 
     change_form_template = 'change_form_autocomplete.html'
     form = KodverkAdminForm
@@ -320,6 +321,7 @@ class KodverkManager(SimpleHistoryAdmin):
                     'titel_på_kodverk',
                     'uppdateringsintervall',
                     'needs_updating',
+                    'source_link_status',
                     'användning_av_kodverk',
                     'beskrivning_av_innehållet',
                     'status',
@@ -381,7 +383,6 @@ class KodverkManager(SimpleHistoryAdmin):
 
     clean_ägare.short_description = "Ägare"
 
-
     def clean_källa(self, obj):
         return_string = ''
         
@@ -440,6 +441,33 @@ class KodverkManager(SimpleHistoryAdmin):
             return True
         else:
             return False
+    
+    @admin.display(
+        description='Källa länk hälsa',
+    )
+    def source_link_status(self,obj):
+        concepts = CodeableConceptAttributes.objects.filter(
+                kodverk_from_id=obj.id
+                ).values('källa')
+        source_urls = []
+        
+        for concept in concepts:
+            if (concept.get('källa') is not None) and ('länk' in concept.get('källa')):
+                url = concept.get('källa').split(' ')[0].split('=')[1]
+                try:
+                    request = requests.get(url)
+                    if request.status_code == 200:
+                        source_urls.append('<div class="center-in-table"><img src="/static/admin/img/icon-yes.svg" alt="True" title="{}"></div>'.format(url))
+                    elif request.status_code == 423:
+                        source_urls.append('<div class="center-in-table"><img src="/static/images/icon-maybe.svg" alt="True" title="{}"></div>'.format(url))
+                    else:
+                        source_urls.append('<div class="center-in-table"><img src="/static/admin/img/icon-no.svg" alt="False" title="{}"></div>'.format(url))
+                except requests.exceptions.ConnectionError:
+                    logger.error(f'Cannot connect to {url}, continuing on')
+                    pass
+
+        return format_html(mark_safe('<br>').join(source_urls))
+        
 
     def save_model(self, request, obj, form, change):
         
