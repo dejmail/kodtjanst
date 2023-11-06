@@ -560,7 +560,7 @@ def structure_kodverk_queryset_as_json(queryset):
     kodverk = queryset
     suggestion_dict = []
 
-    kodverk_fields = ['id','titel_på_kodverk', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status', 'användning_av_kodverk','länk']
+    kodverk_fields = ['id','titel_på_kodverk', 'beskrivning_av_innehållet', 'identifierare', 'version', 'giltig_från', 'giltig_tom', 'uppdateringsintervall','status', 'användning_av_kodverk','länk', 'extra_data']
     kodtext_fields = ['id','kod', 'kodtext','annan_kodtext', 'definition', 'position', 'kommentar']
     externa_kodtext_fields = ['mappad_id', 'mappad_text', 'resolving_url']
     codeableconcept_fields = ['ägare_till_kodverk', 'ansvarig_förvaltare','källa', 'version_av_källa']
