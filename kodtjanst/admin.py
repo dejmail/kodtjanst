@@ -257,7 +257,7 @@ class CodeableConceptFormSet(BaseInlineFormSet):
                         form.add_error('källa', 'Skriv länken så länk=http://www.länk.se klartext=rubrik')
                         raise
                     try:
-                        requests.get(http_link)
+                        requests.get(http_link.strip())
                     except requests.exceptions.ConnectionError:
                         form.add_error('källa', 'HTTP länken är inte nåbar, kolla tillgänglighet och stavning')
                     
